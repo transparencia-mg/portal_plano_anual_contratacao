@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Plano Anual de Contratações - Governo de Minas Gerais</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        :root {
+            --primary-dark:     #1a3a5c;
+            --primary-darker:   #0f2a44;
+            --accent-red:       #b93c42;
+            --accent-bright:    #db233f;
+            --background-light: #f5f7fa;
+            --success-green:    #28a745;
+            --warning-yellow:   #ffc107;
+            --info-blue:        #17a2b8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html,body { width:100%; overflow-x:hidden; margin:0; padding:0; }
+        body {
+            font-family:'Montserrat',Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+            background-color:var(--background-light);
+            padding-bottom:15px;
+            overflow-x:hidden;
+        }
+        body,button,input,select,textarea,span,div { font-family:'Montserrat',sans-serif !important; }
+        .material-icons { font-family:'Material Icons' !important; font-size:14px; vertical-align:middle; }
+
+        .main-container { height:auto; min-height:auto; overflow:visible; }
+        .dashboard-container { width:100%; max-width:88%; padding:0 40px; margin:0 auto; }
+        .tab-content,.tab-pane { width:100%; height:auto; overflow:visible; }
+        .table-container { height:auto; overflow:visible; position:relative; }
+        .iframe-mode { overflow:visible !important; }
+
+        .data-atualizacao-container { display:flex; justify-content:left; align-items:center; margin:15px 0; }
+        .data-atualizacao-box {
+            background:transparent !important; border-radius:8px; padding:8px 15px;
+            display:flex; align-items:center; gap:8px; font-size:12px;
+            color:var(--primary-dark); font-weight:600;
+        }
+        .data-atualizacao-box i { font-size:14px; color:var(--accent-red); }
+
+        .filter-container {
+            background:white; border-radius:10px; box-shadow:0 3px 12px rgba(0,0,0,.08);
+            padding:20px; margin-bottom:20px; width:100%;
+        }
+        .filter-label { font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+        .form-control,.form-select {
+            border:2px solid #e9ecef; border-radius:6px; padding:10px 12px;
+            font-size:13px; transition:all .3s ease; width:100%;
+        }
+        .form-control:focus,.form-select:focus { border-color:var(--accent-red); box-shadow:0 0 0 2px rgba(185,60,66,.15); }
+        .modern-select {
+            border:1.5px solid #dfe5ec !important; border-radius:8px !important;
+            padding:10px 12px !important; font-size:13px !important; height:42px !important;
+            background-color:#fff; transition:all .2s ease; width:100%;
+        }
+        .modern-select:focus { border-color:#1a3a5c !important; box-shadow:0 0 0 2px rgba(26,58,92,.1); }
+        .filters-row { display:flex; gap:15px; width:100%; flex-wrap:wrap; }
+        .filter-group { flex:1; min-width:150px; }
+        .botoes-abaixo { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap; }
+
+        .filters-grid {
+            display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+        }
+        @media(max-width:992px){ .filters-grid{ grid-template-columns:repeat(2,1fr); } }
+        @media(max-width:600px){ .filters-grid{ grid-template-columns:1fr; } }
+
+        .metric-card {
+            background:white; border-radius:8px; border:1px solid #e5e9ef;
+            box-shadow:0 3px 12px rgba(0,0,0,.06); overflow:hidden; height:100%;
+            transition:box-shadow .25s ease,transform .25s ease;
+        }
+        .metric-card:hover { box-shadow:0 8px 24px rgba(26,58,92,.13); transform:translateY(-2px); }
+        .metric-header {
+            background:#20445d; color:white; font-size:13px; font-weight:600;
+            padding:10px 15px; display:flex; justify-content:space-between; align-items:center;
+        }
+        .metric-body { padding:12px 15px; }
+        .metric-value { font-size:18px; font-weight:700; color:#171c21; }
+        .metric-sublabel { font-size:10px; color:#94a3b8; font-weight:500; margin-top:2px; }
+
+        .metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin-bottom:20px; }
+        @media(max-width:992px){ .metrics-grid{ grid-template-columns:repeat(2,1fr); } }
+        @media(max-width:480px){ .metrics-grid{ grid-template-columns:1fr; } }
+
+        .chart-container {
+            background:white; border-radius:10px; box-shadow:0 3px 12px rgba(0,0,0,.06);
+            margin-bottom:20px; min-height:320px; padding:0; overflow:hidden;
+        }
+        .chart-header { background:#20445d; color:white; padding:12px 16px; margin:0; }
+        .chart-title { font-size:14px; font-weight:600; color:white; margin:0; }
+        .chart-wrapper {
+            height:260px; display:flex; align-items:center; justify-content:center;
+            padding:10px 15px; width:100%; position:relative;
+        }
+
+        .table-header {
+            background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary-darker) 100%);
+            color:white; padding:15px 20px; display:flex;
+            justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+        }
+        .table-title { font-size:13px; font-weight:600; margin:0; }
+        .table-badge {
+            background:#1a3a5c; color:white; padding:5px 12px;
+            border-radius:12px; font-size:12px; font-weight:600; white-space:nowrap;
+        }
+        .table-fixed-header-container { position:relative; overflow:auto; width:100%; max-height:600px; }
+        .table { width:100%; font-size:13px; border-collapse:collapse; }
+        .table th,.table td { border:1px solid #d6dee6; padding:10px; }
+        .table thead th {
+            background-color:#54697b !important; color:white !important;
+            font-weight:600; font-size:12px; padding:12px 10px;
+            text-transform:uppercase; border:1px solid #d6dee6;
+            position:sticky; top:0; z-index:10; cursor:pointer; user-select:none;
+        }
+        .table thead th:hover { background-color:#3d5566 !important; }
+        .table tbody tr { background-color:#fff; }
+        .table tbody td { vertical-align:middle; border-bottom:1px solid #f1f1f1; font-size:12px; }
+        .table tbody tr:hover { background-color:rgba(41,67,90,.04); }
+        .table tfoot { position:sticky; bottom:0; z-index:20; }
+        .table tfoot tr,.table tfoot td { background-color:#dfe3e8 !important; font-weight:700; font-size:12px; }
+        .sortable-header { cursor:pointer; position:relative; padding-right:22px !important; user-select:none; }
+        .sortable-header:hover { background-color:#3d5566 !important; }
+        .sortable-header i { font-size:13px; position:absolute; right:5px; top:50%; transform:translateY(-50%); opacity:.8; }
+        .text-right { text-align:right !important; }
+        .text-center { text-align:center !important; }
+
+        .btn-pesquisa {
+            background:linear-gradient(to right,#20445d,#20445d);
+            border:none; padding:0 16px; font-weight:600; border-radius:6px;
+            transition:all .3s ease; font-size:13px; color:white;
+            display:inline-flex; align-items:center; gap:4px;
+            cursor:pointer; height:36px; white-space:nowrap;
+        }
+        .btn-pesquisa:hover { background:linear-gradient(to right,var(--accent-red),#a32c32); transform:translateY(-1px); color:white; }
+        .btn-secondary-custom {
+            background:white; border:2px solid var(--primary-darker); color:var(--primary-darker);
+            padding:0 16px; font-weight:600; font-size:13px; border-radius:6px;
+            transition:all .3s ease; display:inline-flex; align-items:center; gap:4px;
+            cursor:pointer; height:36px; white-space:nowrap; text-decoration:none !important;
+        }
+        .btn-secondary-custom:hover { background-color:#132837 !important; color:white !important; border-color:#132837 !important; }
+        .btn-export {
+            appearance:none; -webkit-appearance:none; background:transparent !important;
+            border:1px solid #d6dee6; color:#1a3a5c; padding:0 14px; border-radius:6px;
+            font-size:13px; font-weight:500; display:inline-flex; align-items:center;
+            gap:4px; height:32px; cursor:pointer; transition:all .2s ease;
+        }
+        .btn-export i { font-size:14px !important; }
+        button.btn-export:hover,a.btn-export:hover { background-color:#1a3a5c !important; border-color:#1a3a5c !important; color:#fff !important; }
+        .btn-action {
+            padding:4px; border-radius:7px; border:1.5px solid #1a3a5c; background-color:#fff;
+            color:#1a3a5c; width:32px; height:30px; display:inline-flex; align-items:center;
+            justify-content:center; transition:all .2s ease; cursor:pointer;
+        }
+        .btn-action:hover { background-color:#1a3a5c; color:#fff; }
+        .btn-topo {
+            background:#eeeff5; color:#1a3a5c; border:1px solid #d6dee6; border-radius:12px;
+            padding:0 16px; font-size:13px; font-weight:600; display:inline-flex;
+            align-items:center; gap:4px; cursor:pointer; height:32px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08); transition:all .3s ease;
+        }
+        .btn-topo:hover { background-color:#1a3a5c; color:#fff; border-color:#1a3a5c; }
+
+        .nav-tabs-container { background:transparent; padding:10px 0; margin-top:15px; margin-bottom:15px; }
+        .nav-tabs { border:none !important; gap:10px; flex-wrap:wrap; }
+        .nav-tabs .nav-link {
+            border:none !important; background:#fff !important; border-radius:10px !important;
+            padding:8px 18px !important; font-weight:500; font-size:14px; color:#1a3a5c !important;
+            display:inline-flex !important; align-items:center; gap:6px; transition:all .25s ease;
+        }
+        .nav-tabs .nav-link:hover { background:#e6e9ed !important; }
+        .nav-tabs .nav-link.active { background:#234c63 !important; color:#fff !important; box-shadow:0 4px 10px rgba(0,0,0,.15); }
+        .nav-tabs .material-icons { font-size:14px !important; }
+
+        .modal-full-custom { max-width:82% !important; width:82% !important; }
+        .modal-creative .modal-header {
+            background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary-darker) 100%);
+            color:white !important; padding:15px 20px; border-bottom:none;
+        }
+        .modal-creative .modal-header .modal-title { color:white !important; font-weight:600; font-size:14px; display:flex; align-items:center; gap:8px; }
+        .modal-creative .modal-header .btn-close { filter:brightness(0) invert(1); opacity:1; }
+        .modal-info-banner {
+            background:linear-gradient(135deg,#20445d 0%,#162f42 100%);
+            color:white; padding:13px 18px; border-radius:10px; margin-bottom:16px;
+        }
+        .modal-info-banner .info-title { font-size:15px; font-weight:700; line-height:1.2; }
+        .modal-info-banner .info-meta { font-size:11px; opacity:.85; margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .info-section { background:#f8fafd; border-radius:10px; padding:13px 16px; margin-bottom:13px; border:1px solid #e2e8f0; }
+        .info-section h6 { font-weight:700; color:#1a3a5c; margin-bottom:8px; font-size:11px; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid #e2e8f0; padding-bottom:6px; }
+        .info-row { display:flex; padding:5px 0; border-bottom:1px solid #f0f4f8; }
+        .info-row:last-child { border-bottom:none; }
+        .info-label-modal { width:42%; font-weight:600; color:#64748b; font-size:11px; }
+        .info-value-modal { width:58%; color:#1e293b; font-size:11px; font-weight:500; word-break:break-word; }
+
+        .pagination-container {
+            display:flex; justify-content:center; align-items:center;
+            padding:12px 20px; background:white; border-top:1px solid #dee2e6;
+            width:100%; gap:16px; flex-wrap:wrap;
+        }
+        .pagination-info { font-size:12px; color:#6c757d; white-space:nowrap; }
+        .pagination { margin-bottom:0 !important; }
+        .pagination .page-link { color:var(--primary-dark); border-color:#dee2e6; font-size:13px; padding:4px 10px; }
+        .pagination .page-link:hover { color:var(--accent-red); background-color:#f8f9fa; }
+        .pagination .page-item.active .page-link { background-color:var(--primary-dark); border-color:var(--primary-dark); color:white; }
+        .items-per-page {
+            height:34px; min-width:80px; border-radius:8px; border:1px solid #d6dee6;
+            padding:4px 28px 4px 10px; font-size:13px; font-weight:600; color:#1a3a5c;
+            background-color:#fff; appearance:none; -webkit-appearance:none; cursor:pointer;
+            background-image:url("data:image/svg+xml;utf8,<svg fill='%231a3a5c' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat:no-repeat; background-position:right 6px center;
+        }
+
+        .table-search-container {
+            display:flex; align-items:center; white-space:nowrap;
+            background:#fff; border:1px solid #d6dee6; border-radius:8px;
+            padding:5px 10px; height:34px;
+        }
+        .table-search-container:hover { border-color:#1a3a5c; }
+        .table-search-input { border:none !important; outline:none; background:transparent; font-size:12px; width:180px; color:#1a3a5c; }
+        .table-search-input::placeholder { color:#94a3b8; }
+
+        .badge-categoria { padding:3px 8px; border-radius:20px; font-size:10.5px; font-weight:700; display:inline-block; letter-spacing:.2px; }
+        .badge-bens    { background:#dcf5e7; color:#0f6b3a; border:1px solid #b2e6c8; }
+        .badge-servicos{ background:#e3f2fd; color:#0d47a1; border:1px solid #90caf9; }
+        .badge-obras   { background:#fce4ec; color:#880e4f; border:1px solid #f5b8bc; }
+        .badge-ti      { background:#fff8e1; color:#7a5b00; border:1px solid #ffe082; }
+        .badge-outros  { background:#f0f2f5; color:#4a5568; border:1px solid #dce3ec; }
+
+        .badge-prioridade { padding:3px 8px; border-radius:20px; font-size:10.5px; font-weight:700; display:inline-block; }
+        .badge-alta  { background:#fde8ea; color:#8b1a22; border:1px solid #f5b8bc; }
+        .badge-media { background:#fff8e1; color:#7a5b00; border:1px solid #ffe082; }
+        .badge-baixa { background:#dcf5e7; color:#0f6b3a; border:1px solid #b2e6c8; }
+
+        .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+        .toolbar-left { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .toolbar-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+        .column-selector-popup {
+            display:none; position:absolute; background:white; border:1px solid #dce4ee;
+            border-radius:10px; z-index:2000; padding:12px; box-shadow:0 6px 22px rgba(0,0,0,.14);
+            min-width:260px; top:36px; right:0; left:auto; max-height:340px; overflow-y:auto;
+        }
+        .column-selector-popup.show { display:block; }
+        .column-selector-popup label { display:block; padding:5px 8px; cursor:pointer; font-size:12px; border-radius:6px; }
+        .column-selector-popup label:hover { background:#f0f6fb; }
+
+        .loading-overlay {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(238,241,246,.95); z-index:9999;
+            display:flex; justify-content:center; align-items:center;
+            flex-direction:column; gap:14px;
+        }
+        .loading-progress { font-size:13px; color:#20445d; font-weight:700; }
+
+        .toast-sucesso {
+            position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+            background:#e6f4ea; color:#1e4620; border-radius:12px; padding:14px 20px;
+            box-shadow:0 10px 25px rgba(0,0,0,.15); display:none;
+            align-items:center; justify-content:center; gap:10px; z-index:9999; min-width:280px;
+        }
+        .toast-content { display:flex; align-items:center; justify-content:center; width:100%; text-align:center; gap:10px; }
+        .toast-content i { color:#28a745; font-size:14px; }
+        .toast-close { cursor:pointer; font-size:14px; margin-left:10px; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+        .share-dropdown { position:relative; display:inline-block; }
+        .share-options {
+            display:none; position:absolute; right:0; top:100%; background-color:white;
+            min-width:200px; box-shadow:0 8px 16px rgba(0,0,0,.15); border-radius:8px;
+            padding:8px; z-index:1000; border:1px solid #dee2e6; margin-top:5px;
+        }
+        .share-options.show { display:block; }
+        .share-options a {
+            display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:6px;
+            font-size:13px; color:var(--primary-dark); transition:background .2s; cursor:pointer; text-decoration:none;
+        }
+        .share-options a:hover { background-color:var(--background-light); color:var(--accent-red); }
+        .share-options a i { font-size:14px; width:18px; text-align:center; }
+
+        .metadata-table { width:100%; border-collapse:collapse; font-size:12px; }
+        .metadata-table th,.metadata-table td { border:1px solid #d6dee6; padding:10px 12px; vertical-align:top; }
+        .metadata-table thead th {
+            background-color:#54697b !important; color:white !important; font-weight:600;
+            font-size:12px; padding:12px; text-transform:uppercase; border:1px solid #d6dee6;
+            position:sticky; top:0; z-index:10;
+        }
+        .metadata-table tbody tr { background-color:#fff; }
+        .metadata-table tbody td { font-size:12px; border-bottom:1px solid #f1f1f1; }
+        .metadata-table tbody tr:hover { background-color:rgba(41,67,90,.04); }
+        .metadata-table code { background:#eef2f7; color:#1a3a5c; border-radius:4px; padding:2px 6px; font-size:11.5px; font-family:'Courier New',monospace !important; font-weight:600; }
+
+        .dicionario-container { background:white; border-radius:10px; box-shadow:0 3px 12px rgba(0,0,0,.06); overflow:hidden; margin-bottom:20px; }
+        .dicionario-header { background:#20445d; color:white; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+        .dicionario-header-title { font-size:14px; font-weight:600; color:white; display:flex; align-items:center; gap:8px; margin:0; }
+        .dicionario-body { padding:16px; }
+
+        @media(max-width:768px){
+            .dashboard-container{ padding:0 10px; max-width:100%; }
+            .nav-tabs{ flex-direction:column; gap:6px; }
+            .nav-tabs .nav-link{ width:100%; justify-content:flex-start !important; }
+            .filters-row{ flex-direction:column; }
+            .filter-group{ min-width:100%; width:100%; }
+            .botoes-abaixo{ flex-direction:column; }
+            .toolbar{ flex-direction:column; align-items:stretch; }
+            .toolbar-left,.toolbar-right{ flex-wrap:wrap; gap:6px; }
+            .table-search-container{ width:100%; }
+            .table-search-input{ width:100% !important; flex:1; }
+            .pagination-container{ flex-direction:column; gap:8px; }
+            .modal-full-custom{ max-width:98% !important; width:98% !important; }
+        }
+        @media(max-width:480px){
+            .metrics-grid{ grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body class="iframe-mode">
+
+<div class="main-container">
+    <div class="dashboard-container">
+
+        <div class="nav-tabs-container">
+            <ul class="nav nav-tabs" id="dashboardTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#visao">
+                        <i class="material-icons">bar_chart</i>Visão Geral
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#consulta">
+                        <i class="material-icons">receipt</i>Consulta Individual
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#downloads">
+                        <i class="material-icons">download</i>Downloads
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="data-atualizacao-container">
+            <div class="data-atualizacao-box">
+                <i class="material-icons">event</i>
+                Atualizado em: <span id="data-atualizacao-header" style="margin-left:4px;">carregando...</span>
+            </div>
+        </div>
+
+        <div class="tab-content" id="dashboardTabsContent">
+            <div class="tab-pane fade show active" id="visao" role="tabpanel">
+                <div id="visao-content"></div>
+            </div>
+            <div class="tab-pane fade" id="consulta" role="tabpanel">
+                <div id="consulta-content"></div>
+            </div>
+            <div class="tab-pane fade" id="downloads" role="tabpanel">
+                <div id="downloads-content"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-full-custom modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content modal-creative">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="material-icons">assignment</i> Detalhamento da Contratação</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+            <div class="modal-footer" style="gap:8px;">
+                <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">
+                    <i class="material-icons">close</i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastSucesso" class="toast-sucesso">
+    <div class="toast-content">
+        <i class="material-icons">check_circle</i>
+        <span>Link copiado para a área de transferência!</span>
+    </div>
+    <span class="toast-close" onclick="fecharToast()">✖</span>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="spinner-border" role="status" style="color:#20445d;width:2.5rem;height:2.5rem;"></div>
+    <div class="loading-progress" id="loadingProgress">Carregando Plano Anual de Contratações...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// CONFIGURAÇÃO
+// ============================================================
+const PAC_URLS = {
+    2026: 'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026.csv',
+    2025: 'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025.csv',
+    2024: 'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024.csv'
+};
+
+const REPO = 'transparencia-mg/portal_plano_anual_contratacao';
+const FILE_PATH = 'dataset/data/pac_2026.csv';
+
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+let dadosCompletos = [];
+let _colunasDados  = [];  // colunas detectadas do CSV
+let timers = {};
+
+// Mapeamento semântico de colunas (detectado dinamicamente)
+let COLS = {};
+
+let filtrosVisao    = { orgao:'', categoria:'', prioridade:'' };
+let filtrosConsulta = {};
+let buscaVisao = '', buscaConsulta = '';
+let paginaVisao = 1, paginaConsulta = 1;
+let itensPorPaginaVisao = 25, itensPorPaginaConsulta = 50;
+let ordenacaoVisao     = { col:'orgao', dir:'asc' };
+let ordenacaoConsulta  = { col:'objeto', dir:'asc' };
+
+let colunasVisiveis = {};
+let _dadosFiltradosConsulta = [];
+let chartPieRef = null, chartBarRef = null;
+
+// ============================================================
+// AUXILIARES
+// ============================================================
+function mostrarLoading(show, msg) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    if (msg) document.getElementById('loadingProgress').textContent = msg;
+}
+
+function formatarMoeda(v) {
+    const n = typeof v === 'string' ? parseFloat(v.replace(',','.')) : (v||0);
+    return isNaN(n) ? 'R$ 0,00' : n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2});
+}
+
+function formatarNumero(v) {
+    const n = typeof v === 'string' ? parseFloat(v.replace(',','.')) : (v||0);
+    return isNaN(n) ? '0,00' : n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function escapar(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function v(val){ return val || '-'; }
+
+function mostrarToast() {
+    const t = document.getElementById('toastSucesso');
+    t.style.display='flex'; t.style.animation='none'; t.offsetHeight;
+    t.style.animation='fadeInUp 0.3s ease';
+    setTimeout(()=>t.style.display='none',3000);
+}
+function fecharToast(){ document.getElementById('toastSucesso').style.display='none'; }
+function voltarAoTopo(){
+    if(window.parent&&window.parent!==window) window.parent.scrollTo({top:0,behavior:'smooth'});
+    else window.scrollTo({top:0,behavior:'smooth'});
+}
+function iframeUpdateHeight(){
+    try{
+        const h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)+10;
+        if(window.parent&&window.parent!==window)
+            window.parent.postMessage({iframeHeight:h,height:h,type:'resize'},'*');
+    }catch(e){}
+}
+function debounce(key,fn,delay=400){
+    if(timers[key]) clearTimeout(timers[key]);
+    timers[key]=setTimeout(fn,delay);
+}
+
+// ============================================================
+// DATA DE ATUALIZAÇÃO
+// ============================================================
+async function setupAtualizacaoData() {
+    const el = document.getElementById('data-atualizacao-header');
+    try {
+        const r = await fetch(`https://api.github.com/repos/${REPO}/commits?path=${FILE_PATH}&per_page=1`);
+        if(r.ok){
+            const d = await r.json();
+            if(Array.isArray(d)&&d.length>0){
+                const ds = d[0].commit?.committer?.date||d[0].commit?.author?.date;
+                if(ds){ el.textContent=new Date(ds).toLocaleDateString('pt-BR'); return; }
+            }
+        }
+    }catch(e){}
+    try {
+        const r = await fetch(`https://api.github.com/repos/${REPO}/commits?per_page=1`);
+        if(r.ok){
+            const d = await r.json();
+            if(Array.isArray(d)&&d.length>0){
+                const ds = d[0].commit?.committer?.date||d[0].commit?.author?.date;
+                if(ds){ el.textContent=new Date(ds).toLocaleDateString('pt-BR'); return; }
+            }
+        }
+    }catch(e){}
+    el.textContent='Não disponível';
+}
+
+// ============================================================
+// DETECÇÃO DINÂMICA DE COLUNAS
+// ============================================================
+function detectarColunas(cabecalhos) {
+    const lower = cabecalhos.map(c=>c.toLowerCase());
+    const find = (...terms) => cabecalhos.find((_,i)=>terms.some(t=>lower[i].includes(t))) || '';
+
+    COLS = {
+        orgao:         find('orgao','unidade_org','organ','secretar','nome_orgao','orgao_nome'),
+        objeto:        find('objeto','descricao','desc_objeto','item_descri','descricao_objeto'),
+        justificativa: find('justificativa','justif'),
+        categoria:     find('categoria','tipo_item','natureza','tipo_contrat'),
+        modalidade:    find('modalidade','licitacao','modalid'),
+        prioridade:    find('prioridade','grau_prior','prior'),
+        valor_unitario:find('valor_unitario','valor_unit','valor_estim_unit','vr_unit','preco_unit'),
+        valor_total:   find('valor_total','valor_estim_total','vr_total','valor_estimado','total_estimado','estimativa_total','estimativa_preliminar_valor_total'),
+        quantidade:    find('quantidade','qtd','quant'),
+        unidade:       find('unidade_medida','unidade_forni','unid_medida','unidade'),
+        data_pretendida:find('data_pretendida','data_prevista','data_contrat','prazo'),
+        acao:          find('acao_orca','acao_orçament','acao_orcamentaria'),
+        fonte:         find('fonte_recurso','fonte'),
+        elemento:      find('elemento','subelemento'),
+        numero:        find('numero','num_ordem','numero_ordem','id','numero_item','item_numero')
+    };
+
+    // Colunas visíveis por padrão na consulta individual
+    colunasVisiveis = {};
+    cabecalhos.forEach(c => {
+        // Mostrar as colunas mais relevantes por padrão
+        const relevante = [COLS.orgao, COLS.objeto, COLS.categoria, COLS.modalidade, COLS.prioridade, COLS.valor_total, COLS.quantidade].includes(c);
+        colunasVisiveis[c] = relevante;
+    });
+    // Garantir colunas-chave sempre visíveis
+    [COLS.orgao, COLS.objeto, COLS.categoria, COLS.valor_total].forEach(c => {
+        if(c) colunasVisiveis[c] = true;
+    });
+
+    _colunasDados = cabecalhos;
+}
+
+// ============================================================
+// PARSING CSV
+// ============================================================
+function parseCSV(texto) {
+    const resultado = Papa.parse(texto.trim(), {
+        header: true,
+        delimiter: ';',
+        skipEmptyLines: true,
+        transformHeader: h => h.trim().replace(/^["']|["']$/g,'').toLowerCase().replace(/\s+/g,'_').replace(/[áàâã]/g,'a').replace(/[éèê]/g,'e').replace(/[íì]/g,'i').replace(/[óòôõ]/g,'o').replace(/[úùû]/g,'u').replace(/ç/g,'c')
+    });
+    // Detectar separador se não funcionou
+    if(!resultado.data.length || Object.keys(resultado.data[0]||{}).length < 3) {
+        const r2 = Papa.parse(texto.trim(), { header:true, delimiter:',', skipEmptyLines:true,
+            transformHeader: h => h.trim().replace(/^["']|["']$/g,'').toLowerCase().replace(/\s+/g,'_').replace(/[áàâã]/g,'a').replace(/[éèê]/g,'e').replace(/[íì]/g,'i').replace(/[óòôõ]/g,'o').replace(/[úùû]/g,'u').replace(/ç/g,'c')
+        });
+        if(r2.data.length) return r2;
+    }
+    return resultado;
+}
+
+function converterValores(dados) {
+    const camposMonetarios = [COLS.valor_total, COLS.valor_unitario].filter(Boolean);
+    const camposNumericos  = [COLS.quantidade].filter(Boolean);
+    return dados.map(row => {
+        const novo = {...row};
+        camposMonetarios.forEach(c => {
+            if(novo[c] !== undefined){
+                const s = String(novo[c]).replace(/[^\d,\.]/g,'').replace(',','.');
+                novo[c] = parseFloat(s) || 0;
+            }
+        });
+        camposNumericos.forEach(c => {
+            if(novo[c] !== undefined){
+                const s = String(novo[c]).replace(/[^\d,\.]/g,'').replace(',','.');
+                novo[c] = parseFloat(s) || 0;
+            }
+        });
+        return novo;
+    });
+}
+
+// ============================================================
+// CARGA INICIAL
+// ============================================================
+async function cargaInicial() {
+    mostrarLoading(true, 'Carregando Plano Anual de Contratações 2026...');
+    try {
+        const r = await fetch(PAC_URLS[2026]);
+        if(!r.ok) throw new Error('Erro ao carregar CSV');
+        const texto = await r.text();
+        const resultado = parseCSV(texto);
+        if(!resultado.data.length) throw new Error('CSV vazio');
+
+        const cabecalhos = Object.keys(resultado.data[0]);
+        detectarColunas(cabecalhos);
+        dadosCompletos = converterValores(resultado.data);
+
+        setupAtualizacaoData();
+        renderVisaoGeral();
+        renderDownloads();
+    } catch(e) {
+        console.error(e);
+        document.getElementById('visao-content').innerHTML = `
+            <div style="padding:40px;text-align:center;color:#b93c42;">
+                <i class="material-icons" style="font-size:48px;">error_outline</i>
+                <p style="margin-top:12px;font-size:14px;">Erro ao carregar dados: ${e.message}</p>
+                <p style="font-size:12px;color:#94a3b8;">Verifique a URL do arquivo CSV e tente novamente.</p>
+            </div>`;
+    } finally {
+        mostrarLoading(false);
+    }
+}
+
+// ============================================================
+// FILTROS
+// ============================================================
+function getOpcoes() {
+    const uniq = f => [...new Set(dadosCompletos.map(f))].filter(Boolean).sort();
+    return {
+        orgaos:      COLS.orgao      ? uniq(i=>i[COLS.orgao]) : [],
+        categorias:  COLS.categoria  ? uniq(i=>i[COLS.categoria]) : [],
+        modalidades: COLS.modalidade ? uniq(i=>i[COLS.modalidade]) : [],
+        prioridades: COLS.prioridade ? uniq(i=>i[COLS.prioridade]) : [],
+        fontes:      COLS.fonte      ? uniq(i=>i[COLS.fonte]) : [],
+        acoes:       COLS.acao       ? uniq(i=>i[COLS.acao]) : []
+    };
+}
+
+function aplicarFiltros(dados, f) {
+    return dados.filter(item => {
+        if(f.orgao      && COLS.orgao      && item[COLS.orgao]      !== f.orgao)      return false;
+        if(f.categoria  && COLS.categoria  && item[COLS.categoria]  !== f.categoria)  return false;
+        if(f.modalidade && COLS.modalidade && item[COLS.modalidade] !== f.modalidade) return false;
+        if(f.prioridade && COLS.prioridade && item[COLS.prioridade] !== f.prioridade) return false;
+        if(f.fonte      && COLS.fonte      && item[COLS.fonte]      !== f.fonte)      return false;
+        if(f.acao       && COLS.acao       && item[COLS.acao]       !== f.acao)       return false;
+        return true;
+    });
+}
+
+function buscarDados(dados, termo, campos) {
+    if(!termo) return dados;
+    const t = termo.toLowerCase();
+    return dados.filter(item => campos.filter(Boolean).some(c => (item[c]||'').toString().toLowerCase().includes(t)));
+}
+
+// ============================================================
+// BADGES
+// ============================================================
+function getCategoriaBadge(cat) {
+    if(!cat) return 'badge-outros';
+    const c = cat.toLowerCase();
+    if(c.includes('bem')||c.includes('material')||c.includes('aquisicao')) return 'badge-bens';
+    if(c.includes('servico')||c.includes('serviço')) return 'badge-servicos';
+    if(c.includes('obra')||c.includes('engenharia')) return 'badge-obras';
+    if(c.includes('ti')||c.includes('tecnologia')||c.includes('inform')) return 'badge-ti';
+    return 'badge-outros';
+}
+
+function getPrioridadeBadge(p) {
+    if(!p) return 'badge-outros';
+    const c = p.toLowerCase();
+    if(c.includes('alta')||c.includes('alto')||c.includes('urgente')) return 'badge-alta';
+    if(c.includes('media')||c.includes('médio')||c.includes('medio')||c.includes('normal')) return 'badge-media';
+    if(c.includes('baixa')||c.includes('baixo')) return 'badge-baixa';
+    return 'badge-outros';
+}
+
+// ============================================================
+// VISÃO GERAL
+// ============================================================
+function renderVisaoGeral() {
+    const opcoes = getOpcoes();
+    let dadosFilt = aplicarFiltros(dadosCompletos, filtrosVisao);
+    dadosFilt = buscarDados(dadosFilt, buscaVisao, [COLS.orgao, COLS.objeto]);
+
+    const totValor   = dadosFilt.reduce((a,i)=>a+(COLS.valor_total ? (i[COLS.valor_total]||0) : 0), 0);
+    const totItens   = dadosFilt.length;
+    const totOrgaos  = new Set(COLS.orgao ? dadosFilt.map(i=>i[COLS.orgao]).filter(Boolean) : []).size;
+
+    // Agrupar por órgão
+    const orgMap = new Map();
+    dadosFilt.forEach(item => {
+        const nome = COLS.orgao ? (item[COLS.orgao]||'Não informado') : 'Não informado';
+        if(!orgMap.has(nome)) orgMap.set(nome, {orgao:nome, itens:0, valor:0});
+        const o = orgMap.get(nome);
+        o.itens++;
+        o.valor += COLS.valor_total ? (item[COLS.valor_total]||0) : 0;
+    });
+    let tabela = Array.from(orgMap.values());
+
+    // Ordenação
+    tabela.sort((a,b) => {
+        let va = a[ordenacaoVisao.col]||'', vb = b[ordenacaoVisao.col]||'';
+        if(typeof va==='string') va=va.toLowerCase();
+        if(typeof vb==='string') vb=vb.toLowerCase();
+        return ordenacaoVisao.dir==='asc'?(va>vb?1:-1):(va<vb?1:-1);
+    });
+
+    const totalPags = Math.ceil(tabela.length/itensPorPaginaVisao);
+    paginaVisao = Math.min(paginaVisao, Math.max(1,totalPags));
+    const inicio = (paginaVisao-1)*itensPorPaginaVisao;
+    const pagina = tabela.slice(inicio, inicio+itensPorPaginaVisao);
+
+    // Dados gráfico por categoria
+    const catMap = new Map();
+    dadosFilt.forEach(item => {
+        const cat = COLS.categoria ? (item[COLS.categoria]||'Outros') : 'Outros';
+        catMap.set(cat, (catMap.get(cat)||0) + (COLS.valor_total ? (item[COLS.valor_total]||0) : 1));
+    });
+    const catLabels = [...catMap.keys()].slice(0,8);
+    const catVals   = catLabels.map(k=>catMap.get(k));
+
+    // Dados gráfico por prioridade
+    const priMap = new Map();
+    dadosFilt.forEach(item => {
+        const pri = COLS.prioridade ? (item[COLS.prioridade]||'Não informada') : 'Não informada';
+        priMap.set(pri, (priMap.get(pri)||0)+1);
+    });
+    const priLabels = [...priMap.keys()];
+    const priVals   = priLabels.map(k=>priMap.get(k));
+
+    const thSort = (col,label) => {
+        const ativo = ordenacaoVisao.col===col;
+        const ico   = ativo ? (ordenacaoVisao.dir==='asc'?'arrow_upward':'arrow_downward') : 'unfold_more';
+        return `<th class="sortable-header" onclick="ordenarVisao('${col}')">${label}<i class="material-icons">${ico}</i></th>`;
+    };
+
+    const html = `
+    <!-- FILTROS -->
+    <div class="filter-container">
+        <div class="filters-row">
+            ${COLS.orgao ? `<div class="filter-group" style="max-width:280px;">
+                <label class="filter-label">Órgão</label>
+                <select class="form-select modern-select" id="vg-orgao">
+                    <option value="">Todos</option>
+                    ${opcoes.orgaos.map(o=>`<option value="${escapar(o)}" ${filtrosVisao.orgao===o?'selected':''}>${o.length>50?o.substring(0,48)+'…':o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.categoria ? `<div class="filter-group" style="max-width:220px;">
+                <label class="filter-label">Categoria</label>
+                <select class="form-select modern-select" id="vg-categoria">
+                    <option value="">Todas</option>
+                    ${opcoes.categorias.map(o=>`<option value="${escapar(o)}" ${filtrosVisao.categoria===o?'selected':''}>${o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.prioridade ? `<div class="filter-group" style="max-width:180px;">
+                <label class="filter-label">Prioridade</label>
+                <select class="form-select modern-select" id="vg-prioridade">
+                    <option value="">Todas</option>
+                    ${opcoes.prioridades.map(o=>`<option value="${escapar(o)}" ${filtrosVisao.prioridade===o?'selected':''}>${o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+        </div>
+        <div class="botoes-abaixo">
+            <button class="btn-pesquisa" onclick="aplicarFiltroVisao()"><i class="material-icons">search</i> Pesquisar</button>
+            <button class="btn-secondary-custom" onclick="limparFiltroVisao()"><i class="material-icons">clear</i> Limpar</button>
+        </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-header">Total de Itens <i class="material-icons" style="font-size:13px;opacity:.7">info_outline</i></div>
+            <div class="metric-body">
+                <div class="metric-value">${totItens.toLocaleString('pt-BR')}</div>
+                <div class="metric-sublabel">Contratações planejadas</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-header">Órgãos <i class="material-icons" style="font-size:13px;opacity:.7">info_outline</i></div>
+            <div class="metric-body">
+                <div class="metric-value">${totOrgaos.toLocaleString('pt-BR')}</div>
+                <div class="metric-sublabel">Unidades com demandas</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-header">Valor Estimado Total <i class="material-icons" style="font-size:13px;opacity:.7">info_outline</i></div>
+            <div class="metric-body">
+                <div class="metric-value">${formatarMoeda(totValor)}</div>
+                <div class="metric-sublabel">Soma dos valores estimados</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-header">Média por Item <i class="material-icons" style="font-size:13px;opacity:.7">info_outline</i></div>
+            <div class="metric-body">
+                <div class="metric-value">${formatarMoeda(totItens ? totValor/totItens : 0)}</div>
+                <div class="metric-sublabel">Valor médio por contratação</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-7">
+            <div class="chart-container" style="min-height:320px;">
+                <div class="chart-header"><h4 class="chart-title">Valor Estimado por Categoria de Contratação</h4></div>
+                <div class="chart-wrapper"><canvas id="chartBar"></canvas></div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="chart-container" style="min-height:320px;">
+                <div class="chart-header"><h4 class="chart-title">Distribuição por Prioridade</h4></div>
+                <div class="chart-wrapper"><canvas id="chartPie"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-export" onclick="exportarVisaoCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="exportarVisaoPDF()"><i class="material-icons">print</i> PDF</button>
+            <div class="share-dropdown">
+                <button class="btn-export" onclick="toggleShare('visao')"><i class="material-icons">share</i> Compartilhar</button>
+                <div class="share-options" id="shareOptions-visao">
+                    <a onclick="copiarLink(event,'visao')"><i class="fas fa-link"></i> Copiar Link</a>
+                    <a onclick="compartilharWhatsApp(event,'visao')"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                    <a onclick="compartilharTwitter(event,'visao')"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a onclick="compartilharLinkedIn(event,'visao')"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <span class="table-badge">${tabela.length} órgãos</span>
+            <div class="table-search-container">
+                <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
+                <input class="table-search-input" placeholder="Buscar órgão..." value="${buscaVisao}"
+                    oninput="debounce('bvisao',()=>{buscaVisao=this.value;paginaVisao=1;renderVisaoGeral()})">
+            </div>
+        </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="table-container">
+        <div class="table-fixed-header-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        ${thSort('orgao','Órgão')}
+                        ${thSort('itens','Qtd. Itens')}
+                        ${COLS.valor_total ? thSort('valor','Valor Estimado Total') : ''}
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${pagina.map(o=>`<tr>
+                        <td><a class="orgao-link" style="color:#006a82;cursor:pointer;text-decoration:none;" onclick="irParaConsulta('${escapar(o.orgao)}')">${o.orgao}</a></td>
+                        <td class="text-center">${o.itens.toLocaleString('pt-BR')}</td>
+                        ${COLS.valor_total ? `<td class="text-right">${formatarMoeda(o.valor)}</td>` : ''}
+                        <td class="text-center">
+                            <button class="btn-action" title="Ver itens" onclick="irParaConsulta('${escapar(o.orgao)}')">
+                                <i class="material-icons" style="font-size:15px">visibility</i>
+                            </button>
+                        </td>
+                    </tr>`).join('')}
+                    ${!pagina.length?`<tr><td colspan="4" class="text-center" style="padding:24px;color:#94a3b8;font-size:13px;">Nenhum dado encontrado.</td></tr>`:''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>TOTAL</strong></td>
+                        <td class="text-center">${tabela.reduce((a,o)=>a+o.itens,0).toLocaleString('pt-BR')}</td>
+                        ${COLS.valor_total?`<td class="text-right">${formatarMoeda(tabela.reduce((a,o)=>a+o.valor,0))}</td>`:''}
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    <div class="pagination-container">
+        <div class="pagination-info">Página ${paginaVisao} de ${totalPags||1} — ${tabela.length} órgãos</div>
+        <nav><ul class="pagination mb-0">
+            <li class="page-item ${paginaVisao<=1?'disabled':''}">
+                <a class="page-link" href="#" onclick="mudarPagVisao(${paginaVisao-1});return false;">«</a>
+            </li>
+            ${Array.from({length:Math.min(totalPags,5)},(_,i)=>{
+                const p=Math.max(1,Math.min(paginaVisao-2,Math.max(1,totalPags-4)))+i;
+                return p<=totalPags?`<li class="page-item ${p===paginaVisao?'active':''}">
+                    <a class="page-link" href="#" onclick="mudarPagVisao(${p});return false;">${p}</a></li>`:'';
+            }).join('')}
+            <li class="page-item ${paginaVisao>=totalPags?'disabled':''}">
+                <a class="page-link" href="#" onclick="mudarPagVisao(${paginaVisao+1});return false;">»</a>
+            </li>
+        </ul></nav>
+        <select class="items-per-page" onchange="itensPorPaginaVisao=+this.value;paginaVisao=1;renderVisaoGeral()">
+            ${[10,25,50,100].map(n=>`<option value="${n}" ${itensPorPaginaVisao===n?'selected':''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao topo</button>
+    </div>`;
+
+    document.getElementById('visao-content').innerHTML = html;
+
+    // Gráfico barra — por categoria
+    setTimeout(()=>{
+        const ctx = document.getElementById('chartBar');
+        if(ctx){
+            if(chartBarRef) chartBarRef.destroy();
+            chartBarRef = new Chart(ctx,{
+                type:'bar',
+                data:{
+                    labels: catLabels.map(l=>l.length>30?l.substring(0,28)+'…':l),
+                    datasets:[{
+                        label:'Valor Estimado (R$)',
+                        data:catVals,
+                        backgroundColor:['#2f4b63','#39a585','#f28c28','#7aa6c2','#8e44ad','#c0392b','#16a085','#d35400'],
+                        borderRadius:4, borderSkipped:false
+                    }]
+                },
+                options:{
+                    responsive:true, maintainAspectRatio:false, indexAxis:'y',
+                    plugins:{
+                        legend:{display:false},
+                        tooltip:{callbacks:{label:ctx=>`${formatarMoeda(ctx.raw)}`}}
+                    },
+                    scales:{
+                        x:{beginAtZero:true,grid:{display:false},ticks:{callback:v=>formatarMoeda(v),font:{size:9}}},
+                        y:{grid:{display:false},ticks:{font:{size:10}}}
+                    }
+                }
+            });
+        }
+        const ctxP = document.getElementById('chartPie');
+        if(ctxP){
+            if(chartPieRef) chartPieRef.destroy();
+            const paleta = ['#c0392b','#f28c28','#39a585','#2f4b63','#7aa6c2','#8e44ad','#16a085'];
+            chartPieRef = new Chart(ctxP,{
+                type:'doughnut',
+                data:{
+                    labels: priLabels,
+                    datasets:[{
+                        data:priVals,
+                        backgroundColor:paleta.slice(0,priLabels.length),
+                        borderWidth:2, borderColor:'#fff'
+                    }]
+                },
+                options:{
+                    responsive:true, maintainAspectRatio:false,
+                    plugins:{
+                        legend:{position:'bottom',labels:{font:{size:11},padding:12}},
+                        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} itens`}}
+                    }
+                }
+            });
+        }
+    },100);
+
+    setTimeout(iframeUpdateHeight,400);
+}
+
+function mudarPagVisao(p){ if(p<1)return; paginaVisao=p; renderVisaoGeral(); }
+function ordenarVisao(col){ ordenacaoVisao={col,dir:ordenacaoVisao.col===col&&ordenacaoVisao.dir==='asc'?'desc':'asc'}; renderVisaoGeral(); }
+function aplicarFiltroVisao(){
+    if(COLS.orgao)      filtrosVisao.orgao      = document.getElementById('vg-orgao')?.value||'';
+    if(COLS.categoria)  filtrosVisao.categoria  = document.getElementById('vg-categoria')?.value||'';
+    if(COLS.prioridade) filtrosVisao.prioridade = document.getElementById('vg-prioridade')?.value||'';
+    paginaVisao=1; renderVisaoGeral();
+}
+function limparFiltroVisao(){ filtrosVisao={orgao:'',categoria:'',prioridade:''}; buscaVisao=''; paginaVisao=1; renderVisaoGeral(); }
+
+function irParaConsulta(orgao){
+    document.querySelector('[data-bs-target="#consulta"]').click();
+    filtrosConsulta.orgao = orgao;
+    paginaConsulta = 1;
+    setTimeout(renderConsulta, 200);
+}
+
+// ============================================================
+// CONSULTA INDIVIDUAL
+// ============================================================
+function renderConsulta() {
+    const opcoes = getOpcoes();
+    let dadosFilt = aplicarFiltros(dadosCompletos, filtrosConsulta);
+    dadosFilt = buscarDados(dadosFilt, buscaConsulta, [COLS.orgao, COLS.objeto, COLS.justificativa, COLS.categoria].filter(Boolean));
+
+    // Ordenação
+    dadosFilt.sort((a,b)=>{
+        // Mapear nome do col de ordenação para campo real
+        const colMap = { orgao:COLS.orgao, objeto:COLS.objeto, categoria:COLS.categoria, modalidade:COLS.modalidade, prioridade:COLS.prioridade, valor:COLS.valor_total, quantidade:COLS.quantidade };
+        const campo = colMap[ordenacaoConsulta.col] || _colunasDados[0];
+        let va = a[campo]||'', vb = b[campo]||'';
+        if(typeof va==='string') va=va.toLowerCase();
+        if(typeof vb==='string') vb=vb.toLowerCase();
+        return ordenacaoConsulta.dir==='asc'?(va>vb?1:-1):(va<vb?1:-1);
+    });
+
+    _dadosFiltradosConsulta = dadosFilt;
+    const total = dadosFilt.length;
+    const totalPags = Math.ceil(total/itensPorPaginaConsulta);
+    paginaConsulta = Math.min(paginaConsulta, Math.max(1,totalPags));
+    const inicio = (paginaConsulta-1)*itensPorPaginaConsulta;
+    const pagina = dadosFilt.slice(inicio, inicio+itensPorPaginaConsulta);
+
+    const totValor = dadosFilt.reduce((a,i)=>a+(COLS.valor_total?(i[COLS.valor_total]||0):0),0);
+    const colsVis  = _colunasDados.filter(c=>colunasVisiveis[c]);
+
+    const thC = (col,label) => {
+        const ativo = ordenacaoConsulta.col===col;
+        const ico   = ativo?(ordenacaoConsulta.dir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more';
+        return `<th class="sortable-header" onclick="ordenarConsulta('${col}')">${label}<i class="material-icons">${ico}</i></th>`;
+    };
+
+    // Labels legíveis para colunas
+    const labelCol = c => {
+        if(c===COLS.orgao)          return 'Órgão';
+        if(c===COLS.objeto)         return 'Objeto';
+        if(c===COLS.categoria)      return 'Categoria';
+        if(c===COLS.modalidade)     return 'Modalidade';
+        if(c===COLS.prioridade)     return 'Prioridade';
+        if(c===COLS.valor_total)    return 'Valor Estimado';
+        if(c===COLS.valor_unitario) return 'Valor Unitário';
+        if(c===COLS.quantidade)     return 'Qtd.';
+        if(c===COLS.unidade)        return 'Unidade';
+        if(c===COLS.data_pretendida)return 'Data Prevista';
+        if(c===COLS.fonte)          return 'Fonte';
+        if(c===COLS.acao)           return 'Ação Orçamentária';
+        if(c===COLS.numero)         return 'Nº';
+        return c.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    };
+
+    // Mapeamento col → chave de ordenação
+    const colToSortKey = c => {
+        if(c===COLS.orgao) return 'orgao';
+        if(c===COLS.objeto) return 'objeto';
+        if(c===COLS.categoria) return 'categoria';
+        if(c===COLS.modalidade) return 'modalidade';
+        if(c===COLS.prioridade) return 'prioridade';
+        if(c===COLS.valor_total) return 'valor';
+        if(c===COLS.quantidade) return 'quantidade';
+        return c;
+    };
+
+    const html = `
+    <!-- FILTROS -->
+    <div class="filter-container">
+        <div class="filters-grid">
+            ${COLS.orgao ? `<div>
+                <label class="filter-label">Órgão</label>
+                <select class="form-select modern-select" id="con-orgao">
+                    <option value="">Todos</option>
+                    ${opcoes.orgaos.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.orgao===o?'selected':''}>${o.length>45?o.substring(0,43)+'…':o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.categoria ? `<div>
+                <label class="filter-label">Categoria</label>
+                <select class="form-select modern-select" id="con-categoria">
+                    <option value="">Todas</option>
+                    ${opcoes.categorias.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.categoria===o?'selected':''}>${o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.modalidade ? `<div>
+                <label class="filter-label">Modalidade</label>
+                <select class="form-select modern-select" id="con-modalidade">
+                    <option value="">Todas</option>
+                    ${opcoes.modalidades.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.modalidade===o?'selected':''}>${o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.prioridade ? `<div>
+                <label class="filter-label">Prioridade</label>
+                <select class="form-select modern-select" id="con-prioridade">
+                    <option value="">Todas</option>
+                    ${opcoes.prioridades.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.prioridade===o?'selected':''}>${o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.fonte ? `<div>
+                <label class="filter-label">Fonte de Recurso</label>
+                <select class="form-select modern-select" id="con-fonte">
+                    <option value="">Todas</option>
+                    ${opcoes.fontes.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.fonte===o?'selected':''}>${o.length>40?o.substring(0,38)+'…':o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+            ${COLS.acao ? `<div>
+                <label class="filter-label">Ação Orçamentária</label>
+                <select class="form-select modern-select" id="con-acao">
+                    <option value="">Todas</option>
+                    ${opcoes.acoes.map(o=>`<option value="${escapar(o)}" ${filtrosConsulta.acao===o?'selected':''}>${o.length>40?o.substring(0,38)+'…':o}</option>`).join('')}
+                </select>
+            </div>` : ''}
+        </div>
+        <div class="botoes-abaixo">
+            <button class="btn-pesquisa" onclick="aplicarFiltroConsulta()"><i class="material-icons">search</i> Pesquisar</button>
+            <button class="btn-secondary-custom" onclick="limparFiltroConsulta()"><i class="material-icons">clear</i> Limpar</button>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-export" onclick="exportarConsultaCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="exportarConsultaPDF()"><i class="material-icons">print</i> PDF</button>
+            <div class="share-dropdown">
+                <button class="btn-export" onclick="toggleShare('consulta')"><i class="material-icons">share</i> Compartilhar</button>
+                <div class="share-options" id="shareOptions-consulta">
+                    <a onclick="copiarLink(event,'consulta')"><i class="fas fa-link"></i> Copiar Link</a>
+                    <a onclick="compartilharWhatsApp(event,'consulta')"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                    <a onclick="compartilharTwitter(event,'consulta')"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a onclick="compartilharLinkedIn(event,'consulta')"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <span class="table-badge">${total.toLocaleString('pt-BR')} registros</span>
+            <div class="table-search-container">
+                <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
+                <input class="table-search-input" placeholder="Busca rápida..." value="${buscaConsulta}"
+                    oninput="debounce('bcon',()=>{buscaConsulta=this.value;paginaConsulta=1;renderConsulta()})">
+            </div>
+            <div style="position:relative;">
+                <button class="btn-export" onclick="toggleColSel(event)">
+                    <i class="material-icons">view_column</i> Colunas
+                </button>
+                <div class="column-selector-popup" id="colSelPopup">
+                    <div style="font-size:11px;font-weight:700;color:#20445d;padding:4px 8px 8px;border-bottom:1px solid #eee;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+                        Exibir colunas
+                        <button style="font-size:10px;padding:2px 8px;border:1px solid #ccc;border-radius:4px;cursor:pointer;background:white;color:#1a3a5c;" onclick="toggleTodasColunas()">
+                            ${Object.values(colunasVisiveis).every(v=>v)?'Desmarcar todas':'Marcar todas'}
+                        </button>
+                    </div>
+                    ${_colunasDados.map(c=>`<label><input type="checkbox" ${colunasVisiveis[c]?'checked':''} onchange="toggleCol('${c}',this.checked)"> ${labelCol(c)}</label>`).join('')}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="table-container">
+        <div class="table-fixed-header-container">
+            <table class="table" id="tabConsulta">
+                <thead>
+                    <tr>
+                        ${colsVis.map(c=>`<th class="sortable-header" onclick="ordenarConsulta('${colToSortKey(c)}')">${labelCol(c)}<i class="material-icons">${ordenacaoConsulta.col===colToSortKey(c)?(ordenacaoConsulta.dir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more'}</i></th>`).join('')}
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${pagina.map((item,idx)=>{
+                        const linhaIdx = inicio+idx;
+                        return `<tr>${colsVis.map(c=>{
+                            let td = item[c]||'-';
+                            if(c===COLS.categoria) td=`<span class="badge-categoria ${getCategoriaBadge(String(item[c]||''))}">${item[c]||'-'}</span>`;
+                            else if(c===COLS.prioridade) td=`<span class="badge-prioridade ${getPrioridadeBadge(String(item[c]||''))}">${item[c]||'-'}</span>`;
+                            else if(c===COLS.valor_total||c===COLS.valor_unitario) td=`<span style="text-align:right;display:block;">${formatarMoeda(item[c])}</span>`;
+                            else if(typeof td==='string'&&td.length>60) td=`<span title="${td}">${td.substring(0,58)}…</span>`;
+                            return `<td>${td}</td>`;
+                        }).join('')}
+                        <td class="text-center">
+                            <button class="btn-action" title="Ver detalhes" onclick="abrirModal(${linhaIdx})">
+                                <i class="material-icons" style="font-size:15px">visibility</i>
+                            </button>
+                        </td>
+                        </tr>`;
+                    }).join('')}
+                    ${!pagina.length?`<tr><td colspan="${colsVis.length+1}" class="text-center" style="padding:24px;color:#94a3b8;font-size:13px;">Nenhum registro encontrado.</td></tr>`:''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        ${colsVis.map((c,i)=>{
+                            if(i===0) return `<td><strong>TOTAL GERAL</strong></td>`;
+                            if(c===COLS.valor_total) return `<td style="text-align:right"><strong>${formatarMoeda(totValor)}</strong></td>`;
+                            if(c===COLS.quantidade)  return `<td class="text-center"><strong>${dadosFilt.reduce((a,i)=>a+(i[COLS.quantidade]||0),0).toLocaleString('pt-BR')}</strong></td>`;
+                            return `<td></td>`;
+                        }).join('')}
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    <div class="pagination-container">
+        <div class="pagination-info">Página ${paginaConsulta} de ${totalPags||1} — ${total.toLocaleString('pt-BR')} registros</div>
+        <nav><ul class="pagination mb-0">
+            <li class="page-item ${paginaConsulta<=1?'disabled':''}">
+                <a class="page-link" href="#" onclick="mudarPagConsulta(${paginaConsulta-1});return false;">«</a>
+            </li>
+            ${Array.from({length:Math.min(totalPags,5)},(_,i)=>{
+                const p=Math.max(1,Math.min(paginaConsulta-2,Math.max(1,totalPags-4)))+i;
+                return p<=totalPags?`<li class="page-item ${p===paginaConsulta?'active':''}">
+                    <a class="page-link" href="#" onclick="mudarPagConsulta(${p});return false;">${p}</a></li>`:'';
+            }).join('')}
+            <li class="page-item ${paginaConsulta>=totalPags?'disabled':''}">
+                <a class="page-link" href="#" onclick="mudarPagConsulta(${paginaConsulta+1});return false;">»</a>
+            </li>
+        </ul></nav>
+        <select class="items-per-page" onchange="itensPorPaginaConsulta=+this.value;paginaConsulta=1;renderConsulta()">
+            ${[25,50,100,200].map(n=>`<option value="${n}" ${itensPorPaginaConsulta===n?'selected':''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao topo</button>
+    </div>`;
+
+    document.getElementById('consulta-content').innerHTML = html;
+    setTimeout(iframeUpdateHeight,400);
+}
+
+function mudarPagConsulta(p){ if(p<1)return; paginaConsulta=p; renderConsulta(); }
+function ordenarConsulta(col){ ordenacaoConsulta={col,dir:ordenacaoConsulta.col===col&&ordenacaoConsulta.dir==='asc'?'desc':'asc'}; renderConsulta(); }
+function aplicarFiltroConsulta(){
+    if(COLS.orgao)      filtrosConsulta.orgao      = document.getElementById('con-orgao')?.value||'';
+    if(COLS.categoria)  filtrosConsulta.categoria  = document.getElementById('con-categoria')?.value||'';
+    if(COLS.modalidade) filtrosConsulta.modalidade = document.getElementById('con-modalidade')?.value||'';
+    if(COLS.prioridade) filtrosConsulta.prioridade = document.getElementById('con-prioridade')?.value||'';
+    if(COLS.fonte)      filtrosConsulta.fonte      = document.getElementById('con-fonte')?.value||'';
+    if(COLS.acao)       filtrosConsulta.acao       = document.getElementById('con-acao')?.value||'';
+    paginaConsulta=1; renderConsulta();
+}
+function limparFiltroConsulta(){ filtrosConsulta={}; buscaConsulta=''; paginaConsulta=1; renderConsulta(); }
+
+function toggleColSel(e){
+    e.stopPropagation();
+    document.getElementById('colSelPopup').classList.toggle('show');
+}
+function toggleCol(col,val){ colunasVisiveis[col]=val; renderConsulta(); }
+function toggleTodasColunas(){
+    const todas = Object.values(colunasVisiveis).every(v=>v);
+    _colunasDados.forEach(c=>colunasVisiveis[c]=!todas);
+    renderConsulta();
+}
+
+// ============================================================
+// MODAL DETALHES
+// ============================================================
+function abrirModal(idx) {
+    const item = _dadosFiltradosConsulta[idx];
+    if(!item) return;
+
+    const labelCol = c => {
+        if(c===COLS.orgao)          return 'Órgão';
+        if(c===COLS.objeto)         return 'Descrição do Objeto';
+        if(c===COLS.justificativa)  return 'Justificativa';
+        if(c===COLS.categoria)      return 'Categoria';
+        if(c===COLS.modalidade)     return 'Modalidade de Licitação';
+        if(c===COLS.prioridade)     return 'Grau de Prioridade';
+        if(c===COLS.valor_total)    return 'Valor Estimado Total';
+        if(c===COLS.valor_unitario) return 'Valor Unitário Estimado';
+        if(c===COLS.quantidade)     return 'Quantidade';
+        if(c===COLS.unidade)        return 'Unidade de Medida';
+        if(c===COLS.data_pretendida)return 'Data Prevista';
+        if(c===COLS.fonte)          return 'Fonte de Recurso';
+        if(c===COLS.acao)           return 'Ação Orçamentária';
+        if(c===COLS.numero)         return 'Número do Item';
+        return c.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    };
+
+    const orgao  = COLS.orgao ? (item[COLS.orgao]||'Não informado') : 'Não informado';
+    const objeto = COLS.objeto ? (item[COLS.objeto]||'Não informado') : 'Não informado';
+    const priCls = COLS.prioridade ? getPrioridadeBadge(item[COLS.prioridade]||'') : '';
+    const pri    = COLS.prioridade ? (item[COLS.prioridade]||'') : '';
+
+    // Dividir campos em 2 grupos
+    const metade = Math.ceil(_colunasDados.length/2);
+    const campos1 = _colunasDados.slice(0, metade);
+    const campos2 = _colunasDados.slice(metade);
+
+    const renderRows = campos => campos.map(c => {
+        let val = item[c]||'-';
+        if(c===COLS.valor_total||c===COLS.valor_unitario) val=formatarMoeda(item[c]);
+        else if(c===COLS.prioridade&&pri) val=`<span class="badge-prioridade ${priCls}">${pri}</span>`;
+        else if(c===COLS.categoria&&item[c]) val=`<span class="badge-categoria ${getCategoriaBadge(item[c])}">${item[c]}</span>`;
+        return `<div class="info-row">
+            <div class="info-label-modal">${labelCol(c)}</div>
+            <div class="info-value-modal">${val}</div>
+        </div>`;
+    }).join('');
+
+    const html = `
+        <div class="modal-info-banner">
+            <div class="info-title">${objeto.length>120?objeto.substring(0,118)+'…':objeto}</div>
+            <div class="info-meta">
+                <span><strong>Órgão:</strong> ${orgao}</span>
+                ${pri ? `<span>|</span><span class="badge-prioridade ${priCls}">${pri}</span>` : ''}
+                ${COLS.valor_total&&item[COLS.valor_total]?`<span>|</span><span><strong>Valor:</strong> ${formatarMoeda(item[COLS.valor_total])}</span>`:''}
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-md-6">
+                <div class="info-section">
+                    <h6>Informações Gerais</h6>
+                    ${renderRows(campos1)}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-section">
+                    <h6>Detalhamento</h6>
+                    ${renderRows(campos2)}
+                </div>
+            </div>
+        </div>`;
+
+    document.getElementById('modalContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+}
+
+// ============================================================
+// DOWNLOADS
+// ============================================================
+function renderDownloads() {
+    document.getElementById('downloads-content').innerHTML = `
+    <div class="filter-container">
+        <div class="filters-row">
+            <div class="filter-group" style="max-width:200px;">
+                <label class="filter-label">ANO</label>
+                <select class="form-select modern-select" id="anoDownload">
+                    <option value="">Selecione</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+        </div>
+        <div class="botoes-abaixo">
+            <button class="btn-pesquisa" onclick="downloadAnoCSV()">
+                <i class="material-icons">download</i>Baixar CSV do Ano Selecionado
+            </button>
+            <a href="https://dados.mg.gov.br/dataset/plano-anual-de-contratacoes" target="_blank" class="btn-secondary-custom">
+                <i class="material-icons">open_in_new</i>Acessar Portal de Dados Abertos
+            </a>
+        </div>
+    </div>
+
+    <div class="dicionario-container">
+        <div class="dicionario-header">
+            <h5 class="dicionario-header-title"><i class="material-icons">menu_book</i> Dicionário de Dados</h5>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-export" style="color:white;border-color:rgba(255,255,255,.4);" onclick="baixarDicionarioCSV()">
+                    <i class="material-icons">description</i> CSV
+                </button>
+                <button class="btn-export" style="color:white;border-color:rgba(255,255,255,.4);" onclick="baixarDicionarioPDF()">
+                    <i class="material-icons">print</i> PDF
+                </button>
+            </div>
+        </div>
+        <div class="dicionario-body">
+            <table class="metadata-table">
+                <thead><tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
+                <tbody id="dicionario-tbody">
+                    <tr><td colspan="3" style="text-align:center;color:#94a3b8;padding:20px;">Carregando dicionário de campos detectados...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>`;
+
+    // Preencher dicionário com campos reais detectados
+    setTimeout(() => {
+        const tbody = document.getElementById('dicionario-tbody');
+        if(!tbody||!_colunasDados.length) return;
+        const descs = {
+            [COLS.orgao]:          ['Nome do órgão / unidade orçamentária', 'Texto'],
+            [COLS.objeto]:         ['Descrição sucinta do objeto da contratação', 'Texto'],
+            [COLS.justificativa]:  ['Justificativa para a contratação', 'Texto'],
+            [COLS.categoria]:      ['Categoria / tipo de contratação', 'Texto'],
+            [COLS.modalidade]:     ['Modalidade de licitação prevista', 'Texto'],
+            [COLS.prioridade]:     ['Grau de prioridade da contratação', 'Texto'],
+            [COLS.valor_total]:    ['Estimativa preliminar do valor total (R$)', 'Moeda'],
+            [COLS.valor_unitario]: ['Estimativa preliminar do valor unitário (R$)', 'Moeda'],
+            [COLS.quantidade]:     ['Quantidade a ser contratada', 'Número'],
+            [COLS.unidade]:        ['Unidade de medida/fornecimento', 'Texto'],
+            [COLS.data_pretendida]:['Data pretendida para a contratação', 'Data'],
+            [COLS.fonte]:          ['Fonte de recurso', 'Texto'],
+            [COLS.acao]:           ['Ação orçamentária vinculada', 'Texto'],
+            [COLS.numero]:         ['Número de ordem do item no plano', 'Número'],
+        };
+        tbody.innerHTML = _colunasDados.map(c=>{
+            const [desc,tipo] = descs[c]||['Campo do Plano Anual de Contratações', 'Texto'];
+            return `<tr><td><code>${c}</code></td><td>${desc}</td><td>${tipo}</td></tr>`;
+        }).join('');
+    }, 300);
+
+    setTimeout(iframeUpdateHeight,300);
+}
+
+function downloadAnoCSV() {
+    const year = document.getElementById('anoDownload')?.value;
+    if(!year){ alert('Selecione um ano para baixar.'); return; }
+    const url = PAC_URLS[year];
+    if(!url){ alert('Arquivo não disponível para o ano selecionado.'); return; }
+    const a = document.createElement('a'); a.href=url; a.download=`pac_${year}.csv`; a.target='_blank'; a.click();
+}
+
+function baixarDicionarioCSV() {
+    const linhas = [['Campo','Descrição','Tipo'], ..._colunasDados.map(c=>[c,'Campo do PAC','Texto'])];
+    const csv = linhas.map(l=>l.join(';')).join('\n');
+    const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dicionario_pac.csv'; a.click();
+}
+
+function baixarDicionarioPDF() {
+    const {jsPDF}=window.jspdf; const doc=new jsPDF();
+    doc.setFontSize(14); doc.text('Dicionário de Dados — Plano Anual de Contratações',14,15);
+    doc.autoTable({
+        startY:22,
+        head:[['Campo','Descrição','Tipo']],
+        body:_colunasDados.map(c=>[c,'Campo do PAC','Texto']),
+        headStyles:{fillColor:[32,68,93]}, styles:{fontSize:9}
+    });
+    doc.save('dicionario_pac.pdf');
+}
+
+// ============================================================
+// EXPORTAÇÕES
+// ============================================================
+function exportarVisaoCSV() {
+    let dadosFilt=aplicarFiltros(dadosCompletos,filtrosVisao);
+    dadosFilt=buscarDados(dadosFilt,buscaVisao,[COLS.orgao,COLS.objeto].filter(Boolean));
+    const orgMap=new Map();
+    dadosFilt.forEach(item=>{
+        const nome=COLS.orgao?(item[COLS.orgao]||'Não informado'):'Não informado';
+        if(!orgMap.has(nome)) orgMap.set(nome,{orgao:nome,itens:0,valor:0});
+        const o=orgMap.get(nome); o.itens++;
+        o.valor+=COLS.valor_total?(item[COLS.valor_total]||0):0;
+    });
+    const cab=['Órgão;Qtd. Itens;Valor Estimado Total'];
+    const linhas=Array.from(orgMap.values()).map(o=>`"${o.orgao}";${o.itens};${formatarNumero(o.valor)}`);
+    const csv=[...cab,...linhas].join('\n');
+    const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='visao_geral_pac.csv'; a.click();
+}
+
+function exportarVisaoPDF() {
+    const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
+    let dadosFilt=aplicarFiltros(dadosCompletos,filtrosVisao);
+    dadosFilt=buscarDados(dadosFilt,buscaVisao,[COLS.orgao,COLS.objeto].filter(Boolean));
+    const orgMap=new Map();
+    dadosFilt.forEach(item=>{
+        const nome=COLS.orgao?(item[COLS.orgao]||'Não informado'):'Não informado';
+        if(!orgMap.has(nome)) orgMap.set(nome,{orgao:nome,itens:0,valor:0});
+        const o=orgMap.get(nome); o.itens++;
+        o.valor+=COLS.valor_total?(item[COLS.valor_total]||0):0;
+    });
+    const rows=Array.from(orgMap.values()).map(o=>[o.orgao.substring(0,50),o.itens.toLocaleString('pt-BR'),formatarMoeda(o.valor)]);
+    doc.setFontSize(14); doc.setTextColor(26,58,92); doc.text('Visão Geral — Plano Anual de Contratações 2026',14,14);
+    doc.setFontSize(8); doc.setTextColor(100,100,100); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`,14,21);
+    doc.autoTable({startY:26,head:[['Órgão','Qtd. Itens','Valor Estimado']],body:rows,headStyles:{fillColor:[32,68,93]},styles:{fontSize:8}});
+    doc.save('visao_geral_pac.pdf');
+}
+
+function exportarConsultaCSV() {
+    const cab=_colunasDados.join(';');
+    const linhas=_dadosFiltradosConsulta.map(item=>_colunasDados.map(c=>`"${String(item[c]||'').replace(/"/g,'""')}"`).join(';'));
+    const csv=[cab,...linhas].join('\n');
+    const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='consulta_pac.csv'; a.click();
+}
+
+function exportarConsultaPDF() {
+    const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
+    doc.setFontSize(14); doc.setTextColor(26,58,92); doc.text('Consulta Individual — Plano Anual de Contratações 2026',14,14);
+    doc.setFontSize(8); doc.setTextColor(100,100,100); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`,14,21);
+    const colsPDF=[COLS.orgao,COLS.objeto,COLS.categoria,COLS.modalidade,COLS.prioridade,COLS.valor_total].filter(Boolean);
+    const head=[colsPDF.map(c=>c.replace(/_/g,' ').substring(0,18).replace(/\b\w/g,l=>l.toUpperCase()))];
+    const body=_dadosFiltradosConsulta.slice(0,500).map(item=>colsPDF.map(c=>{
+        if(c===COLS.valor_total) return formatarMoeda(item[c]);
+        const val=String(item[c]||'-'); return val.length>30?val.substring(0,28)+'…':val;
+    }));
+    doc.autoTable({startY:26,head,body,headStyles:{fillColor:[32,68,93]},styles:{fontSize:7,cellPadding:2}});
+    doc.save('consulta_pac.pdf');
+}
+
+// ============================================================
+// COMPARTILHAMENTO
+// ============================================================
+function toggleShare(id){
+    document.querySelectorAll('.share-options').forEach(o=>o.classList.remove('show'));
+    document.getElementById(`shareOptions-${id}`)?.classList.toggle('show');
+}
+function copiarLink(e,id){
+    e.preventDefault(); navigator.clipboard.writeText(window.location.href).then(mostrarToast).catch(()=>alert('Erro ao copiar'));
+    document.getElementById(`shareOptions-${id}`)?.classList.remove('show');
+}
+function compartilharWhatsApp(e,id){
+    e.preventDefault(); window.open(`https://wa.me/?text=${encodeURIComponent('Plano Anual de Contratações - MG '+window.location.href)}`, '_blank');
+    document.getElementById(`shareOptions-${id}`)?.classList.remove('show');
+}
+function compartilharTwitter(e,id){
+    e.preventDefault(); window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Plano Anual de Contratações MG')}`, '_blank');
+    document.getElementById(`shareOptions-${id}`)?.classList.remove('show');
+}
+function compartilharLinkedIn(e,id){
+    e.preventDefault(); window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank');
+    document.getElementById(`shareOptions-${id}`)?.classList.remove('show');
+}
+
+// ============================================================
+// EVENTOS
+// ============================================================
+document.addEventListener('click', e => {
+    if(!e.target.closest('#colSelPopup')&&!e.target.closest('.btn-export[onclick*="toggleColSel"]'))
+        document.querySelectorAll('.column-selector-popup').forEach(p=>p.classList.remove('show'));
+    if(!e.target.closest('.share-dropdown'))
+        document.querySelectorAll('.share-options').forEach(o=>o.classList.remove('show'));
+});
+
+document.querySelector('[data-bs-target="#consulta"]').addEventListener('shown.bs.tab', ()=>{
+    if(!document.getElementById('consulta-content').innerHTML.trim()) renderConsulta();
+});
+
+document.addEventListener('DOMContentLoaded', ()=>{ cargaInicial(); renderDownloads(); });
+
+// IFRAME RESIZE
+(function(){
+    function sendHeight(){
+        const h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)+10;
+        try{ window.parent.postMessage({iframeHeight:h,iframeResize:true,type:'resize'},'*'); }catch(e){}
+    }
+    if(window.ResizeObserver) new ResizeObserver(sendHeight).observe(document.body);
+    else{ window.addEventListener('resize',sendHeight); setInterval(sendHeight,2000); }
+    sendHeight();
+})();
+</script>
+</body>
+</html>
