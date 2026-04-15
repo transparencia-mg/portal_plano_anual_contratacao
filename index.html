@@ -5,295 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>PAC 2026 - Plano Anual de Contratações | Governo de Minas Gerais</title>
 
-    <!-- ============================================================
-         BIBLIOTECAS EXTERNAS
-    ============================================================ -->
+    <!-- Bibliotecas Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Chart.js | PapaParse | jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
-        /* ============================================================
-           1. VARIÁVEIS DE CORES
-        ============================================================ */
         :root {
-            --primary-dark:      #1a3a5c;
-            --primary-darker:    #0f2a44;
-            --accent-red:        #b93c42;
-            --accent-bright:     #db233f;
-            --background-light:  #f5f7fa;
-            --success-green:     #28a745;
-            --warning-yellow:    #ffc107;
-            --info-blue:         #17a2b8;
+            --primary-dark: #1a3a5c;
+            --primary-darker: #0f2a44;
+            --accent-red: #b93c42;
+            --accent-bright: #db233f;
+            --background-light: #f5f7fa;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --info-blue: #17a2b8;
         }
 
-        /* ============================================================
-           2. RESET E CONFIGURAÇÕES GLOBAIS
-        ============================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; height: auto; min-height: auto; }
+        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; height: auto; }
         body {
-            font-family: 'Montserrat', Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background-color: var(--background-light);
             padding-bottom: 15px;
             overflow-x: hidden;
-            min-height: auto;
-            height: auto;
-            position: relative;
         }
-        body, button, input, select, textarea, span, div { font-family: 'Montserrat', sans-serif !important; }
-        .material-icons { font-family: 'Material Icons' !important; font-size: 14px; vertical-align: middle; }
 
-        /* ============================================================
-           3. LAYOUT PRINCIPAL
-        ============================================================ */
-        .main-container { height: auto; min-height: auto; overflow: visible; position: relative; }
-        .container-fluid { width: 100%; max-width: 88% !important; padding: 0 40px; margin: 0; height: auto; min-height: auto; }
-        .container { max-width: 85% !important; }
-        .dashboard-container { width: 100%; max-width: 100%; padding: 0 40px; margin: 0 auto; height: auto; min-height: auto; }
-        .tab-content, .tab-pane { width: 100%; height: auto; min-height: auto; overflow: visible; }
-        .table-container { height: auto; min-height: auto; overflow: visible; position: relative; }
-        .iframe-mode { overflow: visible !important; }
+        .main-container { height: auto; min-height: auto; overflow: visible; }
+        .container-fluid { width: 100%; max-width: 88% !important; padding: 0 40px; margin: 0; }
+        .dashboard-container { width: 100%; max-width: 100%; padding: 0 40px; margin: 0 auto; }
 
-        /* ============================================================
-           4. DATA DE ATUALIZAÇÃO
-        ============================================================ */
-        .data-atualizacao-container { display: flex; justify-content: left; align-items: center; margin: 15px 0; }
-        .data-atualizacao-box {
-            background: transparent !important;
-            border-radius: 8px;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--primary-dark);
-            font-weight: 600;
-            box-shadow: none;
-        }
-        .data-atualizacao-box i { font-size: 14px; color: var(--accent-red); }
-
-        /* ============================================================
-           5. FILTROS
-        ============================================================ */
         .filter-container {
             background: white;
             border-radius: 10px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.08);
             padding: 20px;
             margin-bottom: 20px;
-            border-left: none;
             width: 100%;
         }
-        .filter-label { font-size: 13px; font-weight: 600; color: #1a3a5c; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a3a5c;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .filter-label i { font-size: 14px; color: var(--accent-red); }
+
         .form-control, .form-select {
             border: 2px solid #e9ecef;
             border-radius: 6px;
-            padding: 10px 12px;
+            padding: 8px 12px;
             font-size: 13px;
             transition: all 0.3s ease;
-            height: auto;
             width: 100%;
         }
-        .form-control:focus, .form-select:focus { border-color: var(--accent-red); box-shadow: 0 0 0 2px rgba(185,60,66,0.15); }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 2px rgba(185,60,66,0.15);
+        }
+
         .modern-select {
             border: 1.5px solid #dfe5ec !important;
             border-radius: 8px !important;
-            padding: 10px 12px !important;
-            font-size: 14px !important;
-            height: 48px !important;
-            line-height: 1.5 !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
             background-color: #fff;
-            transition: all 0.2s ease;
             width: 100%;
         }
-        .modern-select:focus { border-color: #1a3a5c !important; box-shadow: 0 0 0 2px rgba(26,58,92,0.1); }
-        .filters-row { display: flex; gap: 15px; width: 100%; flex-wrap: wrap; }
-        .filter-group { flex: 1; min-width: 120px; }
-        .consulta-filters-row { display: flex; flex-wrap: wrap; gap: 15px; width: 100%; }
-        .consulta-filter-group { flex: 1 1 calc(33.333% - 15px); min-width: 200px; }
-        .consulta-buttons-row { display: flex; gap: 10px; width: 100%; margin-top: 15px; justify-content: flex-start; flex-wrap: wrap; }
-        .botoes-abaixo { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
 
-        /* ============================================================
-           6. CARDS DE MÉTRICAS
-        ============================================================ */
-        .metric-card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e9ef;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-            overflow: hidden;
-            height: 100%;
-            transition: box-shadow 0.25s ease, transform 0.25s ease;
-        }
-        .metric-card:hover { box-shadow: 0 8px 24px rgba(26,58,92,0.13); transform: translateY(-2px); }
-        .metric-header {
-            background: #20445d;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px 15px;
+        .filters-row, .consulta-filters-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .metric-body { padding: 12px 15px; }
-        .metric-value { font-size: 18px; font-weight: 700; color: #171c21; }
-        .metric-sublabel { font-size: 10px; color: #94a3b8; font-weight: 500; margin-top: 2px; }
-
-        /* ============================================================
-           7. GRÁFICOS
-        ============================================================ */
-        .chart-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
-            min-height: 320px;
-            padding: 0;
-            overflow: hidden;
-        }
-        .chart-container canvas { max-width: 100%; }
-        .chart-header { background: #20445d; color: white; padding: 12px 16px; margin: 0; }
-        .chart-title { font-size: 14px; font-weight: 600; color: white; margin: 0; }
-        .chart-wrapper { height: 300px; display: flex; align-items: center; justify-content: center; padding: 10px 15px; width: 100%; }
-        .chart-container.chart-pizza-container { min-height: auto; }
-        .chart-wrapper.chart-pizza { height: auto; display: flex; align-items: center; justify-content: center; padding: 10px 20px 0 20px; }
-        .chart-pizza-layout { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; gap: 10px; padding: 10px 20px; }
-        .chart-pizza-box { width: 200px; height: 200px; flex-shrink: 0; }
-        .legend-grid { display: grid; grid-template-columns: 1fr 1fr; justify-content: center; align-items: flex-start; gap: 6px 20px; font-size: 8px; width: 100%; padding: 4px 10px 10px; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-color { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
-
-        /* ============================================================
-           8. TABELAS
-        ============================================================ */
-        .table-header {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 15px;
+            width: 100%;
             flex-wrap: wrap;
-            gap: 10px;
         }
-        .table-title { font-size: 13px; font-weight: 600; margin: 0; }
-        .table-badge { background: #1a3a5c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-        .table-fixed-header-container { position: relative; overflow: auto; width: 100%; max-height: 600px; }
-        .table-fixed-header-container table thead th {
-            background-color: #54697b !important;
-            color: white !important;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            font-weight: 600;
-            padding: 12px 10px;
-            font-size: 12px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-        .table { width: 100%; font-size: 13px; border-collapse: collapse; table-layout: auto; }
-        .table th, .table td { border: 1px solid #d6dee6; }
-        .table thead th {
-            background-color: #54697b !important;
-            color: white !important;
-            font-weight: 600;
-            font-size: 12px;
-            padding: 12px 10px;
-            text-transform: uppercase;
-            border: 1px solid #d6dee6;
-            cursor: pointer;
-            user-select: none;
-        }
-        .table thead th:first-child { border-top-left-radius: 8px; }
-        .table thead th:last-child  { border-top-right-radius: 8px; }
-        .table thead th:hover { background-color: #3d5566 !important; }
-        .sortable-header { cursor: pointer; position: relative; padding-right: 22px !important; }
-        .sortable-header:hover { background-color: #3d5566 !important; }
-        .sortable-header i { font-size: 13px; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); opacity: 0.8; }
-        .table tbody tr { background-color: #ffffff; }
-        .table tbody td { padding: 10px 10px; vertical-align: middle; border-bottom: 1px solid #f1f1f1; font-size: 12px; }
-        .table tbody tr:nth-child(even) { background-color: #ffffff; }
-        .table tbody tr:hover { background-color: rgba(41,67,90,0.04); }
-        .table tfoot { position: sticky; bottom: 0; z-index: 20; }
-        .table tfoot tr, .table tfoot td { background-color: #dfe3e8 !important; font-weight: 700; font-size: 12px; }
-        .table-bordered { border: 1px solid #dee2e6; width: 100%; }
-        .table-bordered th, .table-bordered td { border: 1px solid #dee2e6; padding: 12px; vertical-align: top; }
-        .table-responsive { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .orgao-link { color: #006a82; text-decoration: none; font-weight: 400; cursor: pointer; }
-        .orgao-link:hover { color: var(--accent-red); text-decoration: underline; }
-        .nome-link { color: #006a82 !important; text-decoration: none !important; font-weight: 400; }
-        .nome-link:hover { color: #b93c42 !important; text-decoration: underline !important; }
 
-        /* ============================================================
-           9. BOTÕES
-        ============================================================ */
+        .filter-group, .consulta-filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .consulta-filter-group { flex: 1 1 calc(20% - 15px); min-width: 180px; }
+
         .btn-pesquisa {
             background: linear-gradient(to right, #20445d, #20445d);
             border: none;
-            padding: 0 16px;
+            padding: 8px 20px;
             font-weight: 600;
             border-radius: 6px;
-            transition: all 0.3s ease;
             font-size: 13px;
             color: white;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             cursor: pointer;
-            height: 36px;
-            white-space: nowrap;
         }
-        .btn-pesquisa:hover { background: linear-gradient(to right, var(--accent-red), #a32c32); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(185,60,66,0.2); color: white; }
+
+        .btn-pesquisa:hover {
+            background: linear-gradient(to right, var(--accent-red), #a32c32);
+            color: white;
+        }
+
         .btn-secondary-custom {
             background: white;
             border: 2px solid var(--primary-darker);
             color: var(--primary-darker);
-            padding: 0 16px;
+            padding: 8px 20px;
             font-weight: 600;
             font-size: 13px;
             border-radius: 6px;
-            transition: all 0.3s ease;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            height: 36px;
-            white-space: nowrap;
-            text-decoration: none !important;
+            gap: 6px;
         }
-        .btn-secondary-custom:hover { background-color: #132837 !important; color: white !important; border-color: #132837 !important; }
+
+        .btn-secondary-custom:hover {
+            background-color: #132837;
+            color: white;
+            border-color: #132837;
+        }
+
         .btn-export {
-            appearance: none;
-            -webkit-appearance: none;
-            background: transparent !important;
+            background: transparent;
             border: 1px solid #d6dee6;
             color: #1a3a5c;
-            padding: 0 14px;
+            padding: 6px 14px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            height: 32px;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-        .btn-export i { font-size: 14px !important; }
-        button.btn-export:hover, a.btn-export:hover { background-color: #1a3a5c !important; border-color: #1a3a5c !important; color: #ffffff !important; }
+
+        .btn-export:hover {
+            background-color: #1a3a5c;
+            border-color: #1a3a5c;
+            color: #ffffff;
+        }
+
         .btn-action {
             padding: 4px;
             border-radius: 7px;
@@ -305,196 +168,185 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
             cursor: pointer;
         }
-        .btn-action:hover { background-color: #1a3a5c; color: #ffffff; }
+
+        .btn-action:hover {
+            background-color: #1a3a5c;
+            color: #ffffff;
+        }
+
         .btn-topo {
             background: #eeeff5;
             color: #1a3a5c;
             border: 1px solid #d6dee6;
             border-radius: 12px;
-            padding: 0 16px;
-            font-size: 13px;
+            padding: 6px 16px;
+            font-size: 12px;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            height: 32px;
         }
-        .btn-topo:hover { background-color: #1a3a5c; color: #ffffff; border-color: #1a3a5c; }
 
-        /* ============================================================
-           10. NAVEGAÇÃO (abas)
-        ============================================================ */
-        .nav-tabs-container { background: transparent; padding: 10px 0; margin-top: 15px; margin-bottom: 15px; width: 100%; }
-        .nav-tabs { border: none !important; gap: 10px; width: 100%; flex-wrap: wrap; }
-        .nav-tabs .nav-link {
-            border: none !important;
-            background: #ffffff !important;
-            border-radius: 10px !important;
-            padding: 8px 18px !important;
-            font-weight: 500;
-            font-size: 14px;
-            color: #1a3a5c !important;
-            display: inline-flex !important;
-            align-items: center;
-            gap: 6px;
-            transition: all .25s ease;
+        .btn-topo:hover {
+            background-color: #1a3a5c;
+            color: #ffffff;
         }
-        .nav-tabs .nav-link:hover { background: #e6e9ed !important; }
-        .nav-tabs .nav-link.active { background: #234c63 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .nav-tabs .material-icons { font-size: 14px !important; }
 
-        /* ============================================================
-           11. MODAL
-        ============================================================ */
-        .modal-full-custom { max-width: 82% !important; width: 82% !important; }
-        .modal-creative .modal-header {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: white !important;
-            padding: 15px 20px;
-            border-bottom: none;
-        }
-        .modal-creative .modal-header .modal-title { color: white !important; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .modal-creative .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 1; }
-        .modal-creative .modal-header .btn-close:hover { opacity: 0.8; }
-        .modal-server-banner {
-            background: linear-gradient(135deg, #20445d 0%, #162f42 100%);
-            color: white;
-            padding: 13px 18px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .modal-server-banner .server-name { font-size: 15px; font-weight: 700; line-height: 1.2; }
-        .modal-server-banner .server-meta { font-size: 11px; opacity: 0.85; margin-top: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .info-section { background: #f8fafd; border-radius: 10px; padding: 13px 16px; margin-bottom: 13px; border: 1px solid #e2e8f0; }
-        .info-section h6 { font-weight: 700; color: #1a3a5c; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-        .info-row { display: flex; padding: 5px 0; border-bottom: 1px solid #f0f4f8; }
-        .info-row:last-child { border-bottom: none; }
-        .info-label-modal { width: 42%; font-weight: 600; color: #64748b; font-size: 11px; }
-        .info-value-modal { width: 58%; color: #1e293b; font-size: 11px; font-weight: 500; word-break: break-word; }
-
-        /* ============================================================
-           12. PAGINAÇÃO
-        ============================================================ */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px 20px;
+        .metric-card {
             background: white;
-            border-top: 1px solid #dee2e6;
+            border-radius: 8px;
+            border: 1px solid #e5e9ef;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .metric-header {
+            background: #20445d;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 15px;
+        }
+
+        .metric-body { padding: 12px 15px; }
+        .metric-value { font-size: 20px; font-weight: 700; color: #171c21; }
+        .metric-sublabel { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .chart-header {
+            background: #20445d;
+            color: white;
+            padding: 12px 16px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chart-wrapper {
+            height: 320px;
+            padding: 15px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .table {
             width: 100%;
-            gap: 12px;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: #54697b;
+            color: white;
+            padding: 10px 8px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            border: 1px solid #6c8aa3;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover { background-color: rgba(41,67,90,0.04); }
+
+        .table tfoot td {
+            background-color: #dfe3e8;
+            font-weight: 700;
+        }
+
+        .badge-sit {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-planejado { background: #dcf5e7; color: #0f6b3a; border: 1px solid #b2e6c8; }
+        .badge-executado { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; }
+        .badge-cancelado { background: #fde8ea; color: #8b1a22; border: 1px solid #f5b8bc; }
+        .badge-outro { background: #f0f2f5; color: #4a5568; border: 1px solid #dce3ec; }
+
+        .nav-tabs {
+            border: none;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        .pagination-info { font-size: 12px; color: #6c757d; }
-        .pagination .page-link { color: var(--primary-dark); border-color: #dee2e6; font-size: 13px; padding: 4px 10px; }
-        .pagination .page-link:hover { color: var(--accent-red); background-color: #f8f9fa; }
-        .pagination .page-item.active .page-link { background-color: var(--primary-dark); border-color: var(--primary-dark); color: white; }
-        .items-per-page {
-            height: 34px;
-            min-width: 80px;
-            border-radius: 8px;
-            border: 1px solid #d6dee6;
-            padding: 4px 28px 4px 10px;
+
+        .nav-tabs .nav-link {
+            border: none;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 500;
             font-size: 13px;
-            font-weight: 600;
             color: #1a3a5c;
-            background-color: #ffffff;
-            appearance: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;utf8,<svg fill='%231a3a5c' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 6px center;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* ============================================================
-           13. BUSCA NA TABELA
-        ============================================================ */
+        .nav-tabs .nav-link.active {
+            background: #234c63;
+            color: #fff;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .table-search-container {
             display: flex;
             align-items: center;
-            white-space: nowrap;
             background: #ffffff;
             border: 1px solid #d6dee6;
             border-radius: 8px;
-            padding: 5px 10px;
-            height: 34px;
+            padding: 4px 10px;
         }
-        .table-search-container:hover { border-color: #1a3a5c; }
-        .table-search-input { border: none !important; outline: none; background: transparent; font-size: 12px; width: 180px; color: #1a3a5c; }
-        .table-search-input::placeholder { color: #94a3b8; }
 
-        /* ============================================================
-           14. BADGES DE SITUAÇÃO
-        ============================================================ */
-        .badge-sit { padding: 3px 8px; border-radius: 20px; font-size: 10.5px; font-weight: 700; display: inline-block; letter-spacing: 0.2px; }
-        .badge-planejado   { background: #dcf5e7; color: #0f6b3a; border: 1px solid #b2e6c8; }
-        .badge-executado   { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; }
-        .badge-cancelado   { background: #fde8ea; color: #8b1a22; border: 1px solid #f5b8bc; }
-        .badge-outro       { background: #f0f2f5; color: #4a5568; border: 1px solid #dce3ec; }
-
-        /* ============================================================
-           15. TOOLBAR
-        ============================================================ */
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .toolbar-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-        /* ============================================================
-           16. LOADING
-        ============================================================ */
-        .loading-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(238,241,246,0.95);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 14px;
+        .table-search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 12px;
+            width: 200px;
         }
-        .loading-progress { font-size: 13px; color: #20445d; font-weight: 700; }
 
-        /* ============================================================
-           17. TOAST
-        ============================================================ */
-        .toast-sucesso {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #e6f4ea;
-            color: #1e4620;
-            border-radius: 12px;
-            padding: 14px 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            z-index: 9999;
-            min-width: 280px;
-        }
-        .toast-content { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; gap: 10px; }
-        .toast-content i { color: #28a745; font-size: 14px; }
-        .toast-close { cursor: pointer; font-size: 14px; margin-left: 10px; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ============================================================
-           18. COLUMN SELECTOR
-        ============================================================ */
         .column-selector-popup {
             display: none;
             position: absolute;
@@ -505,69 +357,157 @@
             padding: 12px;
             box-shadow: 0 6px 22px rgba(0,0,0,0.14);
             min-width: 220px;
-            top: 36px;
-            right: 0;
-            left: auto;
-            max-height: 280px;
+            max-height: 300px;
             overflow-y: auto;
         }
+
         .column-selector-popup.show { display: block; }
-        .column-selector-popup label { display: block; padding: 5px 8px; cursor: pointer; font-size: 12px; border-radius: 6px; }
+
+        .column-selector-popup label {
+            display: block;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
         .column-selector-popup label:hover { background: #f0f6fb; }
 
-        /* ============================================================
-           19. VALOR MONEY
-        ============================================================ */
-        .money-val { font-weight: 600; color: #1a3a5c; font-variant-numeric: tabular-nums; }
-        .money-total { font-weight: 700; color: #0f6b3a; }
-
-        /* ============================================================
-           20. RESPONSIVIDADE
-        ============================================================ */
-        @media (max-width: 992px) {
-            .container-fluid, .dashboard-container { padding: 0 15px; }
-            .modal-full-custom { max-width: 95% !important; width: 95% !important; }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+            gap: 12px;
+            flex-wrap: wrap;
         }
+
+        .pagination .page-link {
+            color: var(--primary-dark);
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+
+        .items-per-page {
+            height: 34px;
+            min-width: 80px;
+            border-radius: 8px;
+            border: 1px solid #d6dee6;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .modal-full-custom { max-width: 85% !important; width: 85% !important; }
+        
+        .modal-creative .modal-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+            color: white;
+        }
+
+        .modal-creative .modal-header .modal-title { color: white; font-weight: 600; font-size: 14px; }
+        .modal-creative .modal-header .btn-close { filter: brightness(0) invert(1); }
+
+        .info-section {
+            background: #f8fafd;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-section h6 {
+            font-weight: 700;
+            color: #1a3a5c;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .info-label-modal {
+            width: 35%;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .info-value-modal {
+            width: 65%;
+            color: #1e293b;
+            font-size: 11px;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(238,241,246,0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .toast-sucesso {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e6f4ea;
+            color: #1e4620;
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: none;
+            z-index: 9999;
+        }
+
+        .money-val { font-weight: 600; color: #1a3a5c; }
+        .money-total { font-weight: 700; color: #0f6b3a; }
+        .orgao-link:hover { color: var(--accent-red) !important; text-decoration: underline !important; }
+
         @media (max-width: 768px) {
-            .filters-row { flex-direction: column; align-items: stretch; }
-            .filter-group { min-width: 100%; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .table-search-input { width: 100% !important; }
+            .container-fluid, .dashboard-container { padding: 0 15px; }
+            .filter-group, .consulta-filter-group { min-width: 100%; }
+            .modal-full-custom { max-width: 95% !important; width: 95% !important; }
         }
     </style>
 </head>
-<body class="iframe-mode">
+<body>
 
-<!-- ============================================================
-     ESTRUTURA PRINCIPAL
-============================================================ -->
 <div class="main-container">
     <div class="container-fluid dashboard-container">
 
         <!-- Navegação por abas -->
-        <div class="nav-tabs-container">
+        <div class="nav-tabs-container" style="margin-top: 15px; margin-bottom: 15px;">
             <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" id="visao-tab"
-                        data-bs-toggle="tab" data-bs-target="#visao">
+                    <button class="nav-link active" id="visao-tab" data-bs-toggle="tab" data-bs-target="#visao">
                         <i class="material-icons">bar_chart</i>Visão Geral
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="orgao-tab"
-                        data-bs-toggle="tab" data-bs-target="#orgao">
+                    <button class="nav-link" id="orgao-tab" data-bs-toggle="tab" data-bs-target="#orgao">
                         <i class="material-icons">business</i>Consulta por Órgão
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="item-tab"
-                        data-bs-toggle="tab" data-bs-target="#item">
+                    <button class="nav-link" id="item-tab" data-bs-toggle="tab" data-bs-target="#item">
                         <i class="material-icons">inventory_2</i>Consulta por Item
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="downloads-tab"
-                        data-bs-toggle="tab" data-bs-target="#downloads">
+                    <button class="nav-link" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads">
                         <i class="material-icons">download</i>Downloads
                     </button>
                 </li>
@@ -575,10 +515,10 @@
         </div>
 
         <!-- Data de atualização -->
-        <div class="data-atualizacao-container">
-            <div class="data-atualizacao-box">
-                <i class="material-icons">event</i>
-                Data de atualização: <span id="data-atualizacao-header" style="margin-left:4px;">carregando...</span>
+        <div class="data-atualizacao-container" style="margin: 10px 0;">
+            <div style="background: transparent; padding: 5px 0; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-dark); font-weight: 600;">
+                <i class="material-icons" style="font-size: 14px;">event</i>
+                Data de atualização: <span id="data-atualizacao-header">carregando...</span>
             </div>
         </div>
 
@@ -601,25 +541,26 @@
     </div>
 </div>
 
-<!-- ============================================================
-     MODAL DETALHE DO ITEM
-============================================================ -->
+<!-- Modal Detalhe -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-full-custom modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content modal-creative">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="material-icons">inventory_2</i> Detalhe do Item PAC
+                    <i class="material-icons">inventory_2</i> Detalhe Completo do Item
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="modalContent"></div>
             <div class="modal-footer" style="gap:8px;">
                 <button type="button" class="btn-export" onclick="exportarModalPDF()">
-                    <i class="material-icons">print</i> PDF
+                    <i class="material-icons">picture_as_pdf</i> PDF
                 </button>
                 <button type="button" class="btn-export" onclick="exportarModalCSV()">
                     <i class="material-icons">description</i> CSV
+                </button>
+                <button type="button" class="btn-export" onclick="copiarLinkModal()">
+                    <i class="material-icons">link</i> Copiar Link
                 </button>
                 <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">
                     <i class="material-icons">close</i> Fechar
@@ -629,80 +570,50 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TOAST DE LINK COPIADO
-============================================================ -->
-<div id="toastSucesso" class="toast-sucesso">
-    <div class="toast-content">
+<div id="toastSucesso" class="toast-sucesso" style="display:none;">
+    <div style="display: flex; align-items: center; gap: 10px;">
         <i class="material-icons">check_circle</i>
-        <span>Sucesso!<br>Link copiado para área de transferência</span>
+        <span>Link copiado para área de transferência!</span>
     </div>
-    <span class="toast-close" onclick="fecharToast()">✖</span>
 </div>
 
-<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay" style="display:none;">
-    <div class="spinner-border" role="status" style="color:#20445d;width:2.5rem;height:2.5rem;"></div>
-    <div class="loading-progress" id="loadingProgress">Carregando dados...</div>
+    <div class="spinner-border" style="color:#20445d;"></div>
+    <div class="loading-progress" style="margin-top:10px;">Carregando dados...</div>
 </div>
 
-<!-- ============================================================
-     SCRIPTS
-============================================================ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// ============================================================
-// 1. CONFIGURAÇÃO
-// ============================================================
+// Configuração
 const CSV_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026.csv';
 const GITHUB_API = 'https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/contents/dataset/data';
 
-const chartPalette = ['#2f4b63','#39a585','#5f6f7f','#f28c28','#7aa6c2','#8e44ad','#c0392b','#16a085','#d35400','#2980b9'];
-
-// ============================================================
-// 2. ESTADO GLOBAL
-// ============================================================
+// Estado Global
 let dadosCompletos = [];
-let dadosFiltrados = [];
+let currentModalItem = null;
 
-// Visão Geral
-let filtroVG = { orgao: '', busca: '' };
-let pgVG = 1, ippVG = 25;
-let ordVG = { col: 'valorTotal', dir: 'desc' };
-let buscaRapidaVG = '';
-let chartValorVG = null, chartSitVG = null;
-
-// Por Órgão
-let filtroOrgao = { orgao: '', material: '', situacao: '', grupo: '' };
-let pgOrgao = 1, ippOrgao = 25;
-let ordOrgao = { col: 'nome_do_material_ou_servico', dir: 'asc' };
-let buscaOrgao = '';
-let resultadoOrgao = [];
-let colunasOrgao = {
-    codigo_orgao: false, nome_orgao: true, codigo_material: false, nome_material: true,
-    descricao: true, situacao: true, grupo: true, classe: false,
-    elemento_despesa: false, unidade: true, quantidade: true,
-    valor_unitario: true, valor_total: true, municipio: false
+// Mapeamento de siglas dos órgãos
+const siglasOrgaos = {
+    'Secretaria de Estado de Planejamento e Gestão': 'SEPLAG',
+    'Secretaria de Estado de Fazenda': 'SEF',
+    'Secretaria de Estado de Saúde': 'SES',
+    'Secretaria de Estado de Educação': 'SEE',
+    'Secretaria de Estado de Desenvolvimento Econômico': 'SEDE',
+    'Secretaria de Estado de Infraestrutura e Mobilidade': 'SEINFRA',
+    'Secretaria de Estado de Meio Ambiente': 'SEMAD',
+    'Secretaria de Estado de Agricultura': 'SEAPA',
+    'Secretaria de Estado de Cultura': 'SECULT',
+    'Secretaria de Estado de Turismo': 'SETUR',
+    'Secretaria de Estado de Justiça e Segurança Pública': 'SEJUSP',
+    'Secretaria de Estado de Desenvolvimento Social': 'SEDESE'
 };
-const colunasOrgaoFix = new Set([]);
 
-// Por Item
-let filtroItem = { item: '', orgao: '', situacao: '' };
-let pgItem = 1, ippItem = 25;
-let ordItem = { col: 'nome_do_orgao_do_planejamento_de_solicitacoes', dir: 'asc' };
-let buscaItem = '';
-let resultadoItem = [];
-
-// Modal
-let _modalItem = null;
-
-// ============================================================
-// 3. AUXILIARES
-// ============================================================
-function mostrarLoading(show, msg) {
-    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-    if (msg) document.getElementById('loadingProgress').textContent = msg;
+function getSiglaOrgao(nome) {
+    for (let [key, value] of Object.entries(siglasOrgaos)) {
+        if (nome && nome.includes(key)) return value;
+    }
+    return nome ? nome.substring(0, 20) : '-';
 }
 
 function formatMoney(v) {
@@ -720,1090 +631,59 @@ function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function v(val) { return val || '-'; }
-
 function badgeSit(sit) {
     if (!sit) return '<span class="badge-sit badge-outro">-</span>';
     const s = sit.toUpperCase();
     if (s.includes('PLANEJADO') || s.includes('PENDENTE')) return `<span class="badge-sit badge-planejado">${esc(sit)}</span>`;
-    if (s.includes('EXECUTADO') || s.includes('CONCLUÍDO') || s.includes('CONCLUIDO')) return `<span class="badge-sit badge-executado">${esc(sit)}</span>`;
-    if (s.includes('CANCELADO') || s.includes('SUSPENSO')) return `<span class="badge-sit badge-cancelado">${esc(sit)}</span>`;
+    if (s.includes('EXECUTADO') || s.includes('CONCLUÍDO')) return `<span class="badge-sit badge-executado">${esc(sit)}</span>`;
+    if (s.includes('CANCELADO')) return `<span class="badge-sit badge-cancelado">${esc(sit)}</span>`;
     return `<span class="badge-sit badge-outro">${esc(sit)}</span>`;
 }
 
-function iframeUpdateHeight() {
-    try {
-        const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 10;
-        if (window.parent && window.parent !== window) {
-            window.parent.postMessage({ iframeHeight: h, height: h, type: 'resize' }, '*');
-        }
-    } catch(e) {}
+function mostrarLoading(show, msg) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    if (msg) document.querySelector('.loading-progress').textContent = msg;
 }
 
 function mostrarToast() {
     const t = document.getElementById('toastSucesso');
     t.style.display = 'flex';
-    t.style.animation = 'none';
-    t.offsetHeight;
-    t.style.animation = 'fadeInUp 0.3s ease';
     setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-function fecharToast() { document.getElementById('toastSucesso').style.display = 'none'; }
-
 function copiarLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => mostrarToast()).catch(() => alert('Erro ao copiar link'));
+    navigator.clipboard.writeText(window.location.href).then(() => mostrarToast());
+}
+
+function copiarLinkModal() {
+    navigator.clipboard.writeText(window.location.href).then(() => mostrarToast());
 }
 
 function voltarAoTopo() {
-    if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, behavior: 'smooth' });
-    else window.scrollTo({ top: 0, behavior: 'smooth' });
+    try { if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 }
 
-function gerarPaginacao(pagAtual, totalPags, fnMudar) {
-    if (totalPags <= 0) return '';
-    const items = [];
-    items.push(`<li class="page-item ${pagAtual<=1?'disabled':''}"><a class="page-link" href="#" onclick="${fnMudar}(${pagAtual-1});return false;">«</a></li>`);
-    const inicio = Math.max(1, Math.min(pagAtual-2, Math.max(1, totalPags-4)));
-    for (let p = inicio; p <= Math.min(inicio+4, totalPags); p++) {
-        items.push(`<li class="page-item ${p===pagAtual?'active':''}"><a class="page-link" href="#" onclick="${fnMudar}(${p});return false;">${p}</a></li>`);
+function irParaOrgao(nomeOrgao) {
+    // Ativa aba "Consulta por Órgão"
+    const tab = document.getElementById('orgao-tab');
+    if (tab) {
+        bootstrap.Tab.getOrCreateInstance(tab).show();
+        // Aguarda render e aplica filtro
+        orgaoState.orgao = nomeOrgao;
+        orgaoState.currentPage = 1;
+        orgaoState.searchTerm = '';
+        setTimeout(() => {
+            renderConsultaOrgao();
+            // Seleciona o valor no select após render
+            const sel = document.getElementById('co-orgao');
+            if (sel) sel.value = nomeOrgao;
+        }, 150);
     }
-    items.push(`<li class="page-item ${pagAtual>=totalPags?'disabled':''}"><a class="page-link" href="#" onclick="${fnMudar}(${pagAtual+1});return false;">»</a></li>`);
-    return items.join('');
 }
 
-// ============================================================
-// 4. DATA DE ATUALIZAÇÃO
-// ============================================================
-async function setupDataAtualizacao() {
-    const el = document.getElementById('data-atualizacao-header');
-    try {
-        const resp = await fetch(GITHUB_API);
-        if (!resp.ok) throw new Error('erro');
-        const arquivos = await resp.json();
-        const csvFiles = arquivos.filter(f => f.name && f.name.match(/pac_\d{4}\.csv$/i)).sort((a,b) => b.name.localeCompare(a.name));
-        if (csvFiles.length > 0) {
-            const commitResp = await fetch(
-                `https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data/${csvFiles[0].name}&per_page=1`
-            );
-            if (commitResp.ok) {
-                const commits = await commitResp.json();
-                if (commits && commits.length > 0) {
-                    el.textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
-                    return;
-                }
-            }
-        }
-        el.textContent = 'Não disponível';
-    } catch(e) { el.textContent = 'Não disponível'; }
-}
-
-// ============================================================
-// 5. CARREGAMENTO
-// ============================================================
-async function carregarDados() {
-    return new Promise((resolve, reject) => {
-        Papa.parse(CSV_URL, {
-            download: true, header: true, delimiter: ';', skipEmptyLines: true,
-            complete: r => r.data && r.data.length ? resolve(r.data) : reject('CSV vazio'),
-            error: reject
-        });
-    });
-}
-
-// ============================================================
-// 6. VISÃO GERAL
-// ============================================================
-function getOrgaosAgregados(dados) {
-    const map = new Map();
-    for (const row of dados) {
-        const nome = row.nome_do_orgao_do_planejamento_de_solicitacoes || 'Não informado';
-        const cod  = row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-';
-        const val  = parseFloat(String(row.valor_total_previsto_r).replace(',','.')) || 0;
-        if (!map.has(nome)) map.set(nome, { cod, nome, qtd: 0, valor: 0 });
-        const o = map.get(nome);
-        o.qtd++; o.valor += val;
-    }
-    return Array.from(map.values());
-}
-
-function getSituacoes(dados) {
-    const map = {};
-    for (const row of dados) { const s = row.situacao || 'Não informado'; map[s] = (map[s]||0) + 1; }
-    return map;
-}
-
-function renderVisaoGeral() {
-    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
-
-    // Aplica filtros VG
-    let filtrado = dadosCompletos.filter(r => {
-        if (filtroVG.orgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== filtroVG.orgao) return false;
-        if (filtroVG.busca) {
-            const b = filtroVG.busca.toLowerCase();
-            if (!(r.nome_do_material_ou_servico||'').toLowerCase().includes(b) &&
-                !(r.desc_do_item_de_material_ou_servico||'').toLowerCase().includes(b)) return false;
-        }
-        return true;
-    });
-
-    const orgaos = getOrgaosAgregados(filtrado);
-    const situacoes = getSituacoes(filtrado);
-    const totalItens  = filtrado.length;
-    const somaValor   = filtrado.reduce((a,r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.'))||0), 0);
-    const mediaPorItem = totalItens ? somaValor / totalItens : 0;
-
-    // Ordena orgaos
-    let listaOrgaos = [...orgaos];
-    if (buscaRapidaVG) {
-        const b = buscaRapidaVG.toLowerCase();
-        listaOrgaos = listaOrgaos.filter(o => o.nome.toLowerCase().includes(b) || o.cod.toLowerCase().includes(b));
-    }
-    listaOrgaos.sort((a,b) => {
-        let va = ordVG.col==='nome' ? a.nome : ordVG.col==='qtd' ? a.qtd : a.valor;
-        let vb = ordVG.col==='nome' ? b.nome : ordVG.col==='qtd' ? b.qtd : b.valor;
-        if (typeof va==='string') va=va.toLowerCase();
-        if (typeof vb==='string') vb=vb.toLowerCase();
-        return ordVG.dir==='asc' ? (va>vb?1:-1) : (va<vb?1:-1);
-    });
-
-    const totalPags = Math.ceil(listaOrgaos.length / ippVG) || 1;
-    pgVG = Math.min(pgVG, totalPags);
-    const pagina = listaOrgaos.slice((pgVG-1)*ippVG, pgVG*ippVG);
-    const topOrgaos = [...orgaos].sort((a,b) => b.valor - a.valor).slice(0, 8);
-    const topSit = Object.entries(situacoes).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const somaOrgaosTabela = listaOrgaos.reduce((a,o)=>a+o.valor, 0);
-    const totalItensTabela = listaOrgaos.reduce((a,o)=>a+o.qtd, 0);
-
-    function sortIcon(col) {
-        if (ordVG.col !== col) return '<i class="material-icons">unfold_more</i>';
-        return ordVG.dir==='asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
-    }
-
-    const html = `
-    <!-- FILTROS -->
-    <div class="filter-container">
-        <div class="filters-row">
-            <div class="filter-group">
-                <label class="filter-label">Órgão</label>
-                <select class="form-select modern-select" id="vg-orgao">
-                    <option value="">Todos os Órgãos</option>
-                    ${orgaosSet.map(o=>`<option value="${esc(o)}" ${filtroVG.orgao===o?'selected':''}>${esc(o)}</option>`).join('')}
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label">Material / Serviço</label>
-                <input class="form-control" id="vg-busca" placeholder="Buscar por material ou serviço..." value="${esc(filtroVG.busca)}">
-            </div>
-        </div>
-        <div class="botoes-abaixo">
-            <button class="btn-pesquisa" onclick="aplicarFiltroVG()">
-                <i class="material-icons">search</i> Pesquisar
-            </button>
-            <button class="btn-secondary-custom" onclick="limparFiltroVG()">
-                <i class="material-icons">clear</i> Limpar
-            </button>
-        </div>
-    </div>
-
-    <!-- CARDS MÉTRICAS -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="metric-card">
-                <div class="metric-header">Total de Itens <i class="material-icons" data-bs-toggle="tooltip" title="Itens planejados no PAC">info_outline</i></div>
-                <div class="metric-body">
-                    <div class="metric-value">${totalItens.toLocaleString('pt-BR')}</div>
-                    <div class="metric-sublabel">${orgaos.length} órgãos / entidades</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="metric-card">
-                <div class="metric-header">Valor Total Previsto <i class="material-icons" data-bs-toggle="tooltip" title="Soma dos valores previstos">info_outline</i></div>
-                <div class="metric-body">
-                    <div class="metric-value" style="font-size:15px">${formatMoney(somaValor)}</div>
-                    <div class="metric-sublabel">Valor total planejado</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="metric-card">
-                <div class="metric-header">Valor Médio por Item <i class="material-icons" data-bs-toggle="tooltip" title="Valor médio por item">info_outline</i></div>
-                <div class="metric-body">
-                    <div class="metric-value" style="font-size:15px">${formatMoney(mediaPorItem)}</div>
-                    <div class="metric-sublabel">Média por item</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="metric-card">
-                <div class="metric-header">Órgãos / Entidades <i class="material-icons" data-bs-toggle="tooltip" title="Quantidade de órgãos com itens">info_outline</i></div>
-                <div class="metric-body">
-                    <div class="metric-value">${orgaos.length}</div>
-                    <div class="metric-sublabel">PAC 2026</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GRÁFICOS -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-5">
-            <div class="chart-container chart-pizza-container">
-                <div class="chart-header"><h4 class="chart-title">Distribuição por Situação</h4></div>
-                <div class="chart-wrapper chart-pizza">
-                    <div class="chart-pizza-layout">
-                        <div class="chart-pizza-box"><canvas id="chartSit"></canvas></div>
-                        <div class="legend-grid" id="legendSit"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-7">
-            <div class="chart-container">
-                <div class="chart-header"><h4 class="chart-title">Valor Total por Órgão (Top 8)</h4></div>
-                <div class="chart-wrapper">
-                    <div style="width:100%;height:260px;position:relative;">
-                        <canvas id="chartValor"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarVGCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarVGPDF()"><i class="material-icons">print</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
-        </div>
-        <div class="toolbar-right">
-            <span class="table-badge">${listaOrgaos.length} órgãos</span>
-            <div class="table-search-container">
-                <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
-                <input class="table-search-input" id="buscaRapidaVGInput" placeholder="Buscar órgão..." value="${esc(buscaRapidaVG)}"
-                    oninput="buscaRapidaVG=this.value;pgVG=1;renderVisaoGeral()">
-            </div>
-        </div>
-    </div>
-
-    <!-- TABELA ÓRGÃOS -->
-    <div class="table-container">
-        <div class="table-fixed-header-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th class="sortable-header" onclick="ordenarVG('nome')">Órgão / Entidade ${sortIcon('nome')}</th>
-                        <th class="sortable-header text-center" onclick="ordenarVG('qtd')">Qtd. Itens ${sortIcon('qtd')}</th>
-                        <th class="sortable-header text-end" onclick="ordenarVG('valorTotal')">Valor Total Previsto ${sortIcon('valorTotal')}</th>
-                        <th class="text-center">Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${pagina.map(o => `
-                    <tr>
-                        <td>${esc(o.cod)}</td>
-                        <td><a class="orgao-link" onclick="irParaOrgaoConsulta('${esc(o.nome).replace(/'/g,"\\'")}')">${esc(o.nome)}</a></td>
-                        <td class="text-center fw-bold">${o.qtd.toLocaleString('pt-BR')}</td>
-                        <td class="text-end money-val">${formatMoney(o.valor)}</td>
-                        <td class="text-center">
-                            <button class="btn-action" title="Ver itens" onclick="irParaOrgaoConsulta('${esc(o.nome).replace(/'/g,"\\'")}')">
-                                <i class="material-icons" style="font-size:15px">visibility</i>
-                            </button>
-                        </td>
-                    </tr>`).join('')}
-                    ${pagina.length===0?`<tr><td colspan="5" class="text-center text-muted py-4">Nenhum órgão encontrado.</td></tr>`:''}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td></td>
-                        <td><strong>TOTAL GERAL</strong></td>
-                        <td class="text-center">${totalItensTabela.toLocaleString('pt-BR')}</td>
-                        <td class="text-end money-total">${formatMoney(somaOrgaosTabela)}</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    <!-- PAGINAÇÃO -->
-    <div class="pagination-container">
-        <div class="pagination-info">Página ${pgVG} de ${totalPags} — ${listaOrgaos.length} órgãos</div>
-        <nav><ul class="pagination mb-0">${gerarPaginacao(pgVG, totalPags, 'mudarPgVG')}</ul></nav>
-        <select class="items-per-page" onchange="ippVG=+this.value;pgVG=1;renderVisaoGeral()">
-            ${[10,25,50,100].map(n=>`<option value="${n}" ${ippVG===n?'selected':''}>${n} / pág</option>`).join('')}
-        </select>
-    </div>
-
-    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
-        </button>
-    </div>`;
-
-    document.getElementById('visao-content').innerHTML = html;
-
-    // Tooltips
-    setTimeout(() => document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el)), 100);
-
-    // Gráficos
-    setTimeout(() => {
-        // Pizza situação
-        const ctxS = document.getElementById('chartSit');
-        if (ctxS) {
-            if (chartSitVG) chartSitVG.destroy();
-            chartSitVG = new Chart(ctxS, {
-                type: 'doughnut',
-                data: { labels: topSit.map(e=>e[0]), datasets: [{ data: topSit.map(e=>e[1]), backgroundColor: chartPalette, borderWidth: 2 }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '60%', radius: '90%', plugins: { legend: { display: false } } }
-            });
-            document.getElementById('legendSit').innerHTML = topSit.map((e,i) =>
-                `<div class="legend-item"><span class="legend-color" style="background:${chartPalette[i]}"></span><span>${esc(e[0])}: ${e[1].toLocaleString('pt-BR')}</span></div>`
-            ).join('');
-        }
-        // Barra valor
-        const ctxV = document.getElementById('chartValor');
-        if (ctxV) {
-            if (chartValorVG) chartValorVG.destroy();
-            chartValorVG = new Chart(ctxV, {
-                type: 'bar',
-                data: {
-                    labels: topOrgaos.map(o => o.nome.length > 20 ? o.nome.substring(0,18)+'…' : o.nome),
-                    datasets: [{ data: topOrgaos.map(o=>o.valor), backgroundColor: chartPalette, barThickness: 28, borderRadius: 4, label: 'Valor Total (R$)' }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { callbacks: { title: items => topOrgaos[items[0].dataIndex].nome, label: items => formatMoney(items.raw) } }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { maxRotation: 30, font: { size: 9 } } },
-                        y: { grid: { display: false }, beginAtZero: true, ticks: { callback: v => 'R$ '+Number(v/1e6).toFixed(1)+'M' } }
-                    }
-                }
-            });
-        }
-    }, 100);
-
-    setTimeout(iframeUpdateHeight, 400);
-}
-
-function mudarPgVG(p) { if (p<1) return; pgVG=p; renderVisaoGeral(); }
-function ordenarVG(col) { ordVG = { col, dir: ordVG.col===col && ordVG.dir==='asc' ? 'desc' : 'asc' }; pgVG=1; renderVisaoGeral(); }
-function aplicarFiltroVG() {
-    filtroVG.orgao = document.getElementById('vg-orgao').value;
-    filtroVG.busca = document.getElementById('vg-busca').value;
-    pgVG=1; renderVisaoGeral();
-}
-function limparFiltroVG() { filtroVG={orgao:'',busca:''}; buscaRapidaVG=''; pgVG=1; renderVisaoGeral(); }
-
-function exportarVGCSV() {
-    const orgaos = getOrgaosAgregados(dadosFiltrados.length ? dadosFiltrados : dadosCompletos);
-    const linhas = [['Código','Órgão','Qtd. Itens','Valor Total']].concat(orgaos.map(o=>[o.cod, o.nome, o.qtd, o.valor.toFixed(2).replace('.',',')]));
-    const csv = linhas.map(l=>l.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
-    baixarArquivo('\uFEFF'+csv, 'visao_geral_pac.csv', 'text/csv');
-}
-
-function exportarVGPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape' });
-    doc.setFontSize(11);
-    doc.text('PAC 2026 — Visão Geral por Órgão', 14, 10);
-    const orgaos = getOrgaosAgregados(dadosCompletos);
-    doc.autoTable({
-        startY: 16,
-        head: [['Código','Órgão','Qtd. Itens','Valor Total']],
-        body: orgaos.sort((a,b)=>b.valor-a.valor).map(o=>[o.cod, o.nome, o.qtd.toLocaleString('pt-BR'), formatMoney(o.valor)]),
-        foot: [['','TOTAL GERAL', orgaos.reduce((a,o)=>a+o.qtd,0).toLocaleString('pt-BR'), formatMoney(orgaos.reduce((a,o)=>a+o.valor,0))]],
-        headStyles: { fillColor: [32,68,93] },
-        footStyles: { fillColor: [223,227,232], textColor: [0,0,0], fontStyle: 'bold' },
-        styles: { fontSize: 8 }
-    });
-    doc.save('visao_geral_pac.pdf');
-}
-
-// ============================================================
-// 7. CONSULTA POR ÓRGÃO
-// ============================================================
-const colLabelsOrgao = {
-    codigo_orgao:'Cód. Órgão', nome_orgao:'Órgão', codigo_material:'Cód. Material',
-    nome_material:'Material/Serviço', descricao:'Descrição', situacao:'Situação',
-    grupo:'Grupo', classe:'Classe', elemento_despesa:'Elem. Despesa',
-    unidade:'Unidade', quantidade:'Quantidade', valor_unitario:'Valor Unitário',
-    valor_total:'Valor Total', municipio:'Município'
-};
-
-function getValorColOrgao(row, col) {
-    if (col==='codigo_orgao') return row.codigo_do_orgao_do_planejamento_de_solicitacoes||'';
-    if (col==='nome_orgao')  return row.nome_do_orgao_do_planejamento_de_solicitacoes||'';
-    if (col==='codigo_material') return row.codigo_do_material_ou_servico||'';
-    if (col==='nome_material')   return row.nome_do_material_ou_servico||'';
-    if (col==='descricao')   return (row.desc_do_item_de_material_ou_servico||'').substring(0,80);
-    if (col==='situacao')    return row.situacao||'';
-    if (col==='grupo')       return row.nome_do_grupo_material_ou_servico||'';
-    if (col==='classe')      return row.nome_da_classe_material_ou_servico||'';
-    if (col==='elemento_despesa') return row.elemento_item_despesa||row.elemento_despesa||'';
-    if (col==='unidade')     return row.descricao_da_unidade_de_aquisicao||'';
-    if (col==='quantidade')  return row.quantidade||'';
-    if (col==='valor_unitario') return row.valor_unitario_previsto_r||'';
-    if (col==='valor_total') return row.valor_total_previsto_r||'';
-    if (col==='municipio')   return row.nome_do_municipio||'';
-    return '';
-}
-
-function renderConsultaOrgao() {
-    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
-    const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
-    const situSet   = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
-
-    // Filtro
-    let filtrado = dadosCompletos.filter(r => {
-        if (filtroOrgao.orgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== filtroOrgao.orgao) return false;
-        if (filtroOrgao.material && !(r.nome_do_material_ou_servico||'').toLowerCase().includes(filtroOrgao.material.toLowerCase())) return false;
-        if (filtroOrgao.situacao && r.situacao !== filtroOrgao.situacao) return false;
-        if (filtroOrgao.grupo && r.nome_do_grupo_material_ou_servico !== filtroOrgao.grupo) return false;
-        if (buscaOrgao) {
-            const b = buscaOrgao.toLowerCase();
-            const campos = [r.nome_do_material_ou_servico, r.desc_do_item_de_material_ou_servico, r.situacao, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_grupo_material_ou_servico, r.nome_do_municipio];
-            if (!campos.some(c=>(c||'').toLowerCase().includes(b))) return false;
-        }
-        return true;
-    });
-
-    // Ordenação
-    filtrado.sort((a,b) => {
-        let va = getValorColOrgao(a, ordOrgao.col) || '';
-        let vb = getValorColOrgao(b, ordOrgao.col) || '';
-        if (ordOrgao.col==='quantidade' || ordOrgao.col==='valor_total' || ordOrgao.col==='valor_unitario') {
-            va = parseFloat(String(va).replace(',','.'))||0;
-            vb = parseFloat(String(vb).replace(',','.'))||0;
-        } else { va = va.toLowerCase(); vb = vb.toLowerCase(); }
-        return ordOrgao.dir==='asc' ? (va>vb?1:-1) : (va<vb?1:-1);
-    });
-
-    resultadoOrgao = filtrado;
-    const total = filtrado.length;
-    const totalPags = Math.ceil(total/ippOrgao)||1;
-    pgOrgao = Math.min(pgOrgao, totalPags);
-    const pagina = filtrado.slice((pgOrgao-1)*ippOrgao, pgOrgao*ippOrgao);
-
-    const somaValorTotal = filtrado.reduce((a,r)=>a+(parseFloat(String(r.valor_total_previsto_r).replace(',','.'))||0),0);
-    const somaQtd = filtrado.reduce((a,r)=>a+(parseFloat(r.quantidade)||0),0);
-
-    const colsOrdem = ['codigo_orgao','nome_orgao','codigo_material','nome_material','descricao','situacao','grupo','classe','elemento_despesa','unidade','quantidade','valor_unitario','valor_total','municipio'];
-    const colsVis = colsOrdem.filter(c => colunasOrgao[c]);
-
-    function sortIconOrgao(col) {
-        if (ordOrgao.col !== col) return '<i class="material-icons">unfold_more</i>';
-        return ordOrgao.dir==='asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
-    }
-
-    const isMoney = col => col==='valor_total'||col==='valor_unitario';
-    const isNum   = col => col==='quantidade';
-
-    const html = `
-    <!-- FILTROS -->
-    <div class="filter-container">
-        <div class="consulta-filters-row">
-            <div class="consulta-filter-group">
-                <label class="filter-label">Órgão</label>
-                <select class="form-select modern-select" id="co-orgao">
-                    <option value="">Todos os Órgãos</option>
-                    ${orgaosSet.map(o=>`<option value="${esc(o)}" ${filtroOrgao.orgao===o?'selected':''}>${esc(o)}</option>`).join('')}
-                </select>
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Material / Serviço</label>
-                <input class="form-control" id="co-material" placeholder="Buscar por material..." value="${esc(filtroOrgao.material)}">
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Situação</label>
-                <select class="form-select modern-select" id="co-situacao">
-                    <option value="">Todas</option>
-                    ${situSet.map(s=>`<option value="${esc(s)}" ${filtroOrgao.situacao===s?'selected':''}>${esc(s)}</option>`).join('')}
-                </select>
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Grupo</label>
-                <select class="form-select modern-select" id="co-grupo">
-                    <option value="">Todos</option>
-                    ${gruposSet.map(g=>`<option value="${esc(g)}" ${filtroOrgao.grupo===g?'selected':''}>${esc(g)}</option>`).join('')}
-                </select>
-            </div>
-        </div>
-        <div class="consulta-buttons-row">
-            <button class="btn-pesquisa" onclick="aplicarFiltroOrgao()">
-                <i class="material-icons">search</i> Pesquisar
-            </button>
-            <button class="btn-secondary-custom" onclick="limparFiltroOrgao()">
-                <i class="material-icons">clear</i> Limpar
-            </button>
-        </div>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarOrgaoCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarOrgaoPDF()"><i class="material-icons">print</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
-        </div>
-        <div class="toolbar-right">
-            <span class="table-badge">${total.toLocaleString('pt-BR')} itens</span>
-            <div class="table-search-container">
-                <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
-                <input class="table-search-input" placeholder="Busca rápida..." value="${esc(buscaOrgao)}"
-                    oninput="buscaOrgao=this.value;pgOrgao=1;renderConsultaOrgao()">
-            </div>
-            <div style="position:relative">
-                <button class="btn-export" onclick="toggleColSelectorOrgao()">
-                    <i class="material-icons">view_column</i> Colunas
-                </button>
-                <div class="column-selector-popup" id="colSelectorOrgao">
-                    <div style="font-size:11px;font-weight:700;color:#20445d;padding:4px 8px 8px;border-bottom:1px solid #eee;margin-bottom:4px">Exibir colunas:</div>
-                    ${colsOrdem.map(c=>`<label><input type="checkbox" ${colunasOrgao[c]?'checked':''} onchange="toggleColOrgao('${c}',this.checked)"> ${colLabelsOrgao[c]}</label>`).join('')}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TABELA -->
-    <div class="table-container">
-        <div class="table-fixed-header-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        ${colsVis.map(c=>`
-                        <th class="sortable-header ${isMoney(c)||isNum(c)?'text-end':''}" onclick="ordenarOrgao('${c}')">
-                            ${colLabelsOrgao[c]} ${sortIconOrgao(c)}
-                        </th>`).join('')}
-                        <th class="text-center">Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${pagina.map((row,idx)=>`
-                    <tr>
-                        ${colsVis.map(c=>{
-                            const raw = getValorColOrgao(row, c);
-                            if (c==='situacao') return `<td class="text-center">${badgeSit(raw)}</td>`;
-                            if (c==='nome_material') return `<td><a class="nome-link" onclick="abrirModal(${(pgOrgao-1)*ippOrgao+idx},'orgao')" title="Ver detalhes">${esc(raw)||'-'}</a></td>`;
-                            if (isMoney(c)) return `<td class="text-end money-val">${raw?formatMoney(raw):'-'}</td>`;
-                            if (isNum(c)) return `<td class="text-end">${raw?formatQtd(raw):'-'}</td>`;
-                            return `<td>${esc(raw)||'-'}</td>`;
-                        }).join('')}
-                        <td class="text-center">
-                            <button class="btn-action" title="Ver detalhes" onclick="abrirModal(${(pgOrgao-1)*ippOrgao+idx},'orgao')">
-                                <i class="material-icons" style="font-size:15px">visibility</i>
-                            </button>
-                        </td>
-                    </tr>`).join('')}
-                    ${pagina.length===0?`<tr><td colspan="${colsVis.length+1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>`:''}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        ${colsVis.map(c=>{
-                            if (c===colsVis[0]) return `<td><strong>TOTAL</strong></td>`;
-                            if (c==='quantidade') return `<td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>`;
-                            if (c==='valor_total') return `<td class="text-end money-total">${formatMoney(somaValorTotal)}</td>`;
-                            return `<td></td>`;
-                        }).join('')}
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    <!-- PAGINAÇÃO -->
-    <div class="pagination-container">
-        <div class="pagination-info">Página ${pgOrgao} de ${totalPags} — ${total.toLocaleString('pt-BR')} itens</div>
-        <nav><ul class="pagination mb-0">${gerarPaginacao(pgOrgao, totalPags, 'mudarPgOrgao')}</ul></nav>
-        <select class="items-per-page" onchange="ippOrgao=+this.value;pgOrgao=1;renderConsultaOrgao()">
-            ${[25,50,100,200].map(n=>`<option value="${n}" ${ippOrgao===n?'selected':''}>${n} / pág</option>`).join('')}
-        </select>
-    </div>
-
-    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
-        </button>
-    </div>`;
-
-    document.getElementById('orgao-content').innerHTML = html;
-    setTimeout(iframeUpdateHeight, 300);
-}
-
-function mudarPgOrgao(p) { if(p<1)return; pgOrgao=p; renderConsultaOrgao(); }
-function ordenarOrgao(col) { ordOrgao={col,dir:ordOrgao.col===col&&ordOrgao.dir==='asc'?'desc':'asc'}; pgOrgao=1; renderConsultaOrgao(); }
-
-function aplicarFiltroOrgao() {
-    filtroOrgao.orgao    = document.getElementById('co-orgao').value;
-    filtroOrgao.material = document.getElementById('co-material').value;
-    filtroOrgao.situacao = document.getElementById('co-situacao').value;
-    filtroOrgao.grupo    = document.getElementById('co-grupo').value;
-    pgOrgao=1; renderConsultaOrgao();
-}
-function limparFiltroOrgao() {
-    filtroOrgao={orgao:'',material:'',situacao:'',grupo:''};
-    buscaOrgao=''; pgOrgao=1; renderConsultaOrgao();
-}
-
-function toggleColSelectorOrgao() { document.getElementById('colSelectorOrgao').classList.toggle('show'); }
-function toggleColOrgao(col,val) { colunasOrgao[col]=val; renderConsultaOrgao(); }
-
-function irParaOrgaoConsulta(orgao) {
-    filtroOrgao = { orgao, material:'', situacao:'', grupo:'' };
-    buscaOrgao=''; pgOrgao=1;
-    document.querySelector('[data-bs-target="#orgao"]').click();
-    setTimeout(()=>renderConsultaOrgao(), 50);
-}
-
-function exportarOrgaoCSV() {
-    const linhas = [['Órgão','Código Material','Material/Serviço','Situação','Grupo','Unidade','Quantidade','Valor Unitário','Valor Total','Município']];
-    resultadoOrgao.forEach(r => linhas.push([
-        r.nome_do_orgao_do_planejamento_de_solicitacoes||'', r.codigo_do_material_ou_servico||'',
-        r.nome_do_material_ou_servico||'', r.situacao||'', r.nome_do_grupo_material_ou_servico||'',
-        r.descricao_da_unidade_de_aquisicao||'', r.quantidade||'',
-        r.valor_unitario_previsto_r||'', r.valor_total_previsto_r||'', r.nome_do_municipio||''
-    ]));
-    baixarArquivo('\uFEFF'+linhas.map(l=>l.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n'), 'pac_por_orgao.csv', 'text/csv');
-}
-function exportarOrgaoPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation:'landscape' });
-    doc.setFontSize(11);
-    doc.text('PAC 2026 — Consulta por Órgão', 14, 10);
-    doc.autoTable({
-        startY:16,
-        head:[['Órgão','Material/Serviço','Situação','Qtd','Valor Total']],
-        body: resultadoOrgao.slice(0,500).map(r=>[
-            (r.nome_do_orgao_do_planejamento_de_solicitacoes||'').substring(0,30),
-            (r.nome_do_material_ou_servico||'').substring(0,30),
-            r.situacao||'', r.quantidade||'0', formatMoney(r.valor_total_previsto_r)
-        ]),
-        headStyles:{fillColor:[32,68,93]}, styles:{fontSize:7}
-    });
-    doc.save('pac_por_orgao.pdf');
-}
-
-// ============================================================
-// 8. CONSULTA POR ITEM
-// ============================================================
-function renderConsultaItem() {
-    const itensSet = [...new Set(dadosCompletos.map(r=>r.nome_do_material_ou_servico).filter(Boolean))].sort();
-    const situSet  = [...new Set(dadosCompletos.map(r=>r.situacao).filter(Boolean))].sort();
-
-    // Filtro
-    let filtrado = dadosCompletos.filter(r => {
-        if (filtroItem.item && r.nome_do_material_ou_servico !== filtroItem.item) return false;
-        if (filtroItem.orgao && !(r.nome_do_orgao_do_planejamento_de_solicitacoes||'').toLowerCase().includes(filtroItem.orgao.toLowerCase())) return false;
-        if (filtroItem.situacao && r.situacao !== filtroItem.situacao) return false;
-        if (buscaItem) {
-            const b = buscaItem.toLowerCase();
-            const campos = [r.nome_do_material_ou_servico, r.desc_do_item_de_material_ou_servico, r.situacao, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_grupo_material_ou_servico, r.codigo_do_material_ou_servico];
-            if (!campos.some(c=>(c||'').toLowerCase().includes(b))) return false;
-        }
-        return true;
-    });
-
-    // Ordenação
-    filtrado.sort((a,b) => {
-        const aOrgao = ordItem.col==='orgao';
-        const aValor = ordItem.col==='valor';
-        const aQtd   = ordItem.col==='qtd';
-        let va = aOrgao ? (a.nome_do_orgao_do_planejamento_de_solicitacoes||'') : aValor ? (parseFloat(String(a.valor_total_previsto_r).replace(',','.'))||0) : aQtd ? (parseFloat(a.quantidade)||0) : (a.nome_do_material_ou_servico||'');
-        let vb = aOrgao ? (b.nome_do_orgao_do_planejamento_de_solicitacoes||'') : aValor ? (parseFloat(String(b.valor_total_previsto_r).replace(',','.'))||0) : aQtd ? (parseFloat(b.quantidade)||0) : (b.nome_do_material_ou_servico||'');
-        if (typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase();}
-        return ordItem.dir==='asc'?(va>vb?1:-1):(va<vb?1:-1);
-    });
-
-    resultadoItem = filtrado;
-    const total = filtrado.length;
-    const totalPags = Math.ceil(total/ippItem)||1;
-    pgItem = Math.min(pgItem, totalPags);
-    const pagina = filtrado.slice((pgItem-1)*ippItem, pgItem*ippItem);
-    const somaValorTotal = filtrado.reduce((a,r)=>a+(parseFloat(String(r.valor_total_previsto_r).replace(',','.'))||0),0);
-    const somaQtdItem = filtrado.reduce((a,r)=>a+(parseFloat(r.quantidade)||0),0);
-
-    function siItem(col) {
-        if (ordItem.col!==col) return '<i class="material-icons">unfold_more</i>';
-        return ordItem.dir==='asc'?'<i class="material-icons">arrow_upward</i>':'<i class="material-icons">arrow_downward</i>';
-    }
-
-    const html = `
-    <!-- FILTROS -->
-    <div class="filter-container">
-        <div class="consulta-filters-row">
-            <div class="consulta-filter-group" style="flex:2">
-                <label class="filter-label">Item (Material / Serviço)</label>
-                <select class="form-select modern-select" id="ci-item">
-                    <option value="">Selecione um item ou pesquise abaixo</option>
-                    ${itensSet.map(i=>`<option value="${esc(i)}" ${filtroItem.item===i?'selected':''}>${esc(i)}</option>`).join('')}
-                </select>
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Órgão</label>
-                <input class="form-control" id="ci-orgao" placeholder="Filtrar por órgão..." value="${esc(filtroItem.orgao)}">
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Situação</label>
-                <select class="form-select modern-select" id="ci-situacao">
-                    <option value="">Todas</option>
-                    ${situSet.map(s=>`<option value="${esc(s)}" ${filtroItem.situacao===s?'selected':''}>${esc(s)}</option>`).join('')}
-                </select>
-            </div>
-        </div>
-        <div class="consulta-buttons-row">
-            <button class="btn-pesquisa" onclick="aplicarFiltroItem()">
-                <i class="material-icons">search</i> Pesquisar
-            </button>
-            <button class="btn-secondary-custom" onclick="limparFiltroItem()">
-                <i class="material-icons">clear</i> Limpar
-            </button>
-        </div>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarItemCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarItemPDF()"><i class="material-icons">print</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
-        </div>
-        <div class="toolbar-right">
-            <span class="table-badge">${total.toLocaleString('pt-BR')} itens</span>
-            <div class="table-search-container">
-                <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
-                <input class="table-search-input" placeholder="Busca rápida..." value="${esc(buscaItem)}"
-                    oninput="buscaItem=this.value;pgItem=1;renderConsultaItem()">
-            </div>
-        </div>
-    </div>
-
-    <!-- TABELA -->
-    <div class="table-container">
-        <div class="table-fixed-header-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Cód. Material</th>
-                        <th class="sortable-header" onclick="ordenarItem('nome')">Material/Serviço ${siItem('nome')}</th>
-                        <th>Descrição</th>
-                        <th class="sortable-header" onclick="ordenarItem('orgao')">Órgão ${siItem('orgao')}</th>
-                        <th class="text-center">Situação</th>
-                        <th>Grupo</th>
-                        <th>Classe</th>
-                        <th>Unidade</th>
-                        <th class="sortable-header text-end" onclick="ordenarItem('qtd')">Qtd ${siItem('qtd')}</th>
-                        <th class="text-end">Vlr Unitário</th>
-                        <th class="sortable-header text-end" onclick="ordenarItem('valor')">Vlr Total ${siItem('valor')}</th>
-                        <th class="text-center">Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${pagina.map((row,idx)=>`
-                    <tr>
-                        <td>${esc(row.codigo_do_material_ou_servico||'-')}</td>
-                        <td><a class="nome-link" onclick="abrirModal(${(pgItem-1)*ippItem+idx},'item')" title="Ver detalhes">${esc(row.nome_do_material_ou_servico||'-')}</a></td>
-                        <td style="max-width:180px;white-space:normal">${esc((row.desc_do_item_de_material_ou_servico||'').substring(0,80))}${(row.desc_do_item_de_material_ou_servico||'').length>80?'…':''}</td>
-                        <td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes||'-')}</td>
-                        <td class="text-center">${badgeSit(row.situacao)}</td>
-                        <td>${esc(row.nome_do_grupo_material_ou_servico||'-')}</td>
-                        <td>${esc(row.nome_da_classe_material_ou_servico||'-')}</td>
-                        <td>${esc(row.descricao_da_unidade_de_aquisicao||'-')}</td>
-                        <td class="text-end">${formatQtd(row.quantidade)}</td>
-                        <td class="text-end money-val">${row.valor_unitario_previsto_r?formatMoney(row.valor_unitario_previsto_r):'-'}</td>
-                        <td class="text-end money-val">${row.valor_total_previsto_r?formatMoney(row.valor_total_previsto_r):'-'}</td>
-                        <td class="text-center">
-                            <button class="btn-action" title="Ver detalhes" onclick="abrirModal(${(pgItem-1)*ippItem+idx},'item')">
-                                <i class="material-icons" style="font-size:15px">visibility</i>
-                            </button>
-                        </td>
-                    </tr>`).join('')}
-                    ${pagina.length===0?`<tr><td colspan="12" class="text-center text-muted py-4">Utilize os filtros acima para pesquisar itens do PAC.</td></tr>`:''}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="8"><strong>TOTAL</strong></td>
-                        <td class="text-end">${somaQtdItem.toLocaleString('pt-BR')}</td>
-                        <td></td>
-                        <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    <!-- PAGINAÇÃO -->
-    <div class="pagination-container">
-        <div class="pagination-info">Página ${pgItem} de ${totalPags} — ${total.toLocaleString('pt-BR')} itens</div>
-        <nav><ul class="pagination mb-0">${gerarPaginacao(pgItem, totalPags, 'mudarPgItem')}</ul></nav>
-        <select class="items-per-page" onchange="ippItem=+this.value;pgItem=1;renderConsultaItem()">
-            ${[25,50,100,200].map(n=>`<option value="${n}" ${ippItem===n?'selected':''}>${n} / pág</option>`).join('')}
-        </select>
-    </div>
-
-    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
-        </button>
-    </div>`;
-
-    document.getElementById('item-content').innerHTML = html;
-    setTimeout(iframeUpdateHeight, 300);
-}
-
-function mudarPgItem(p) { if(p<1)return; pgItem=p; renderConsultaItem(); }
-function ordenarItem(col) { ordItem={col,dir:ordItem.col===col&&ordItem.dir==='asc'?'desc':'asc'}; pgItem=1; renderConsultaItem(); }
-function aplicarFiltroItem() {
-    filtroItem.item    = document.getElementById('ci-item').value;
-    filtroItem.orgao   = document.getElementById('ci-orgao').value;
-    filtroItem.situacao= document.getElementById('ci-situacao').value;
-    pgItem=1; renderConsultaItem();
-}
-function limparFiltroItem() { filtroItem={item:'',orgao:'',situacao:''}; buscaItem=''; pgItem=1; renderConsultaItem(); }
-function exportarItemCSV() {
-    const linhas=[['Cód. Material','Material/Serviço','Descrição','Órgão','Situação','Grupo','Classe','Unidade','Quantidade','Valor Unitário','Valor Total','Município']];
-    resultadoItem.forEach(r=>linhas.push([r.codigo_do_material_ou_servico||'',r.nome_do_material_ou_servico||'',r.desc_do_item_de_material_ou_servico||'',r.nome_do_orgao_do_planejamento_de_solicitacoes||'',r.situacao||'',r.nome_do_grupo_material_ou_servico||'',r.nome_da_classe_material_ou_servico||'',r.descricao_da_unidade_de_aquisicao||'',r.quantidade||'',r.valor_unitario_previsto_r||'',r.valor_total_previsto_r||'',r.nome_do_municipio||'']));
-    baixarArquivo('\uFEFF'+linhas.map(l=>l.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n'),'pac_por_item.csv','text/csv');
-}
-function exportarItemPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({orientation:'landscape'});
-    doc.setFontSize(11);
-    doc.text('PAC 2026 — Consulta por Item', 14, 10);
-    doc.autoTable({startY:16,head:[['Cód. Material','Material/Serviço','Órgão','Situação','Qtd','Vlr Total']],body:resultadoItem.slice(0,500).map(r=>[(r.codigo_do_material_ou_servico||'').substring(0,15),(r.nome_do_material_ou_servico||'').substring(0,30),(r.nome_do_orgao_do_planejamento_de_solicitacoes||'').substring(0,25),r.situacao||'',r.quantidade||'0',formatMoney(r.valor_total_previsto_r)]),headStyles:{fillColor:[32,68,93]},styles:{fontSize:7}});
-    doc.save('pac_por_item.pdf');
-}
-
-// ============================================================
-// 9. MODAL DETALHE
-// ============================================================
-function abrirModal(idx, origem) {
-    const lista = origem==='item' ? resultadoItem : resultadoOrgao;
-    const row = lista[idx];
-    if (!row) return;
-    _modalItem = row;
-
-    const campos = [
-        { label: 'Código Órgão',    val: row.codigo_do_orgao_do_planejamento_de_solicitacoes },
-        { label: 'Órgão',           val: row.nome_do_orgao_do_planejamento_de_solicitacoes },
-        { label: 'Código Material', val: row.codigo_do_material_ou_servico },
-        { label: 'Material/Serviço',val: row.nome_do_material_ou_servico },
-        { label: 'Descrição',       val: row.desc_do_item_de_material_ou_servico },
-        { label: 'Situação',        val: row.situacao },
-        { label: 'Grupo',           val: row.nome_do_grupo_material_ou_servico },
-        { label: 'Classe',          val: row.nome_da_classe_material_ou_servico },
-        { label: 'Elem. Despesa',   val: row.elemento_item_despesa||row.elemento_despesa },
-        { label: 'Unidade Aquisição', val: row.descricao_da_unidade_de_aquisicao },
-        { label: 'Quantidade',      val: row.quantidade ? formatQtd(row.quantidade) : '-' },
-        { label: 'Valor Unitário',  val: row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-' },
-        { label: 'Valor Total',     val: row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-' },
-        { label: 'Município',       val: row.nome_do_municipio },
-        { label: 'Início Execução', val: row.inicio_de_execucao_entrega },
-    ];
-
-    const html = `
-      <div class="modal-server-banner">
-        <i class="material-icons" style="font-size:32px;opacity:0.7">inventory_2</i>
-        <div>
-          <div class="server-name">${esc(row.nome_do_material_ou_servico||'Item PAC')}</div>
-          <div class="server-meta">
-            <span><strong>Cód.:</strong> ${esc(row.codigo_do_material_ou_servico||'-')}</span>
-            <span>|</span>
-            <span>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes||'-')}</span>
-            <span>|</span>
-            ${badgeSit(row.situacao)}
-          </div>
-        </div>
-      </div>
-      <div class="row g-2">
-        <div class="col-md-6">
-          <div class="info-section">
-            <h6>Identificação</h6>
-            ${campos.slice(0,5).map(c=>`
-            <div class="info-row">
-                <div class="info-label-modal">${c.label}</div>
-                <div class="info-value-modal">${c.label==='Situação'?badgeSit(c.val):(esc(c.val)||'-')}</div>
-            </div>`).join('')}
-          </div>
-          <div class="info-section">
-            <h6>Classificação</h6>
-            ${campos.slice(5,9).map(c=>`
-            <div class="info-row">
-                <div class="info-label-modal">${c.label}</div>
-                <div class="info-value-modal">${c.label==='Situação'?badgeSit(c.val):(esc(c.val)||'-')}</div>
-            </div>`).join('')}
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-section">
-            <h6>Aquisição e Valores</h6>
-            ${campos.slice(9).map(c=>`
-            <div class="info-row">
-                <div class="info-label-modal">${c.label}</div>
-                <div class="info-value-modal">${esc(c.val)||'-'}</div>
-            </div>`).join('')}
-          </div>
-        </div>
-      </div>`;
-
-    document.getElementById('modalContent').innerHTML = html;
-    new bootstrap.Modal(document.getElementById('detailModal')).show();
-}
-
-function exportarModalPDF() {
-    if (!_modalItem) return;
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(12);
-    doc.text(`Detalhe PAC: ${(_modalItem.nome_do_material_ou_servico||'').substring(0,50)}`, 14, 15);
-    const campos = [
-        ['Órgão', _modalItem.nome_do_orgao_do_planejamento_de_solicitacoes||'-'],
-        ['Cód. Material', _modalItem.codigo_do_material_ou_servico||'-'],
-        ['Material/Serviço', _modalItem.nome_do_material_ou_servico||'-'],
-        ['Descrição', (_modalItem.desc_do_item_de_material_ou_servico||'').substring(0,100)],
-        ['Situação', _modalItem.situacao||'-'],
-        ['Grupo', _modalItem.nome_do_grupo_material_ou_servico||'-'],
-        ['Classe', _modalItem.nome_da_classe_material_ou_servico||'-'],
-        ['Unidade', _modalItem.descricao_da_unidade_de_aquisicao||'-'],
-        ['Quantidade', _modalItem.quantidade||'0'],
-        ['Valor Unitário', formatMoney(_modalItem.valor_unitario_previsto_r)],
-        ['Valor Total', formatMoney(_modalItem.valor_total_previsto_r)],
-        ['Município', _modalItem.nome_do_municipio||'-'],
-    ];
-    doc.autoTable({ startY:22, head:[['Campo','Valor']], body:campos, headStyles:{fillColor:[32,68,93]}, styles:{fontSize:9} });
-    doc.save(`pac_item_${_modalItem.codigo_do_material_ou_servico||'detalhe'}.pdf`);
-}
-function exportarModalCSV() {
-    if (!_modalItem) return;
-    const csv = Papa.unparse([_modalItem], {delimiter:';'});
-    baixarArquivo('\uFEFF'+csv, `pac_item_${_modalItem.codigo_do_material_ou_servico||'detalhe'}.csv`, 'text/csv');
-}
-
-// ============================================================
-// 10. DOWNLOADS
-// ============================================================
-function renderDownloads() {
-    document.getElementById('downloads-content').innerHTML = `
-    <div class="filter-container">
-        <div style="text-align:center;padding:10px 0;">
-            <i class="material-icons" style="font-size:48px;color:#20445d;">cloud_download</i>
-            <h5 style="margin-top:8px;margin-bottom:4px;">Portal de Dados Abertos</h5>
-            <p style="color:#6c757d;font-size:13px;margin-bottom:12px;">Acesse os dados completos do Plano Anual de Contratações 2026 — Minas Gerais</p>
-            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                <a href="https://dados.mg.gov.br/" target="_blank" class="btn-pesquisa">
-                    <i class="material-icons">open_in_new</i> Portal Dados MG
-                </a>
-                <button class="btn-export" onclick="exportarTudoCSV()">
-                    <i class="material-icons">description</i> Baixar CSV Completo
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="filter-container">
-        <h5 style="margin-bottom:12px;font-size:15px;">
-            <i class="material-icons" style="vertical-align:middle;margin-right:6px;">info</i>
-            Metadados — Dicionário de Variáveis
-        </h5>
-        <div class="d-flex gap-2 mb-3">
-            <button class="btn-export" onclick="baixarDicionarioCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="baixarDicionarioPDF()"><i class="material-icons">print</i> PDF</button>
-        </div>
-        <div class="table-container">
-            <div class="table-fixed-header-container">
-                <table class="table table-bordered">
-                    <thead><tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
-                    <tbody>
-                        <tr><td><code>codigo_do_orgao_do_planejamento_de_solicitacoes</code></td><td>Código do órgão responsável pelo planejamento</td><td>Texto</td></tr>
-                        <tr><td><code>nome_do_orgao_do_planejamento_de_solicitacoes</code></td><td>Nome do órgão / entidade responsável</td><td>Texto</td></tr>
-                        <tr><td><code>codigo_do_material_ou_servico</code></td><td>Código identificador do material ou serviço</td><td>Texto</td></tr>
-                        <tr><td><code>nome_do_material_ou_servico</code></td><td>Nome do material ou serviço planejado</td><td>Texto</td></tr>
-                        <tr><td><code>desc_do_item_de_material_ou_servico</code></td><td>Descrição detalhada do item</td><td>Texto</td></tr>
-                        <tr><td><code>situacao</code></td><td>Situação do item (Planejado, Executado, Cancelado…)</td><td>Texto</td></tr>
-                        <tr><td><code>nome_do_grupo_material_ou_servico</code></td><td>Grupo ao qual o material/serviço pertence</td><td>Texto</td></tr>
-                        <tr><td><code>nome_da_classe_material_ou_servico</code></td><td>Classe do material/serviço</td><td>Texto</td></tr>
-                        <tr><td><code>elemento_item_despesa</code></td><td>Elemento de despesa orçamentária</td><td>Texto</td></tr>
-                        <tr><td><code>descricao_da_unidade_de_aquisicao</code></td><td>Unidade de medida para aquisição</td><td>Texto</td></tr>
-                        <tr><td><code>quantidade</code></td><td>Quantidade planejada para aquisição</td><td>Numérico</td></tr>
-                        <tr><td><code>valor_unitario_previsto_r</code></td><td>Valor unitário previsto (R$)</td><td>Numérico</td></tr>
-                        <tr><td><code>valor_total_previsto_r</code></td><td>Valor total previsto (R$)</td><td>Numérico</td></tr>
-                        <tr><td><code>nome_do_municipio</code></td><td>Município de execução/entrega</td><td>Texto</td></tr>
-                        <tr><td><code>inicio_de_execucao_entrega</code></td><td>Data prevista de início de execução/entrega</td><td>Data</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>`;
-    setTimeout(iframeUpdateHeight, 300);
-}
-
-function baixarDicionarioCSV() {
-    const linhas = [
-        ['Campo','Descrição','Tipo'],
-        ['codigo_do_orgao_do_planejamento_de_solicitacoes','Código do órgão responsável','Texto'],
-        ['nome_do_orgao_do_planejamento_de_solicitacoes','Nome do órgão/entidade','Texto'],
-        ['codigo_do_material_ou_servico','Código do material/serviço','Texto'],
-        ['nome_do_material_ou_servico','Nome do material/serviço','Texto'],
-        ['desc_do_item_de_material_ou_servico','Descrição detalhada do item','Texto'],
-        ['situacao','Situação do item','Texto'],
-        ['nome_do_grupo_material_ou_servico','Grupo do material/serviço','Texto'],
-        ['nome_da_classe_material_ou_servico','Classe do material/serviço','Texto'],
-        ['elemento_item_despesa','Elemento de despesa','Texto'],
-        ['descricao_da_unidade_de_aquisicao','Unidade de aquisição','Texto'],
-        ['quantidade','Quantidade planejada','Numérico'],
-        ['valor_unitario_previsto_r','Valor unitário previsto (R$)','Numérico'],
-        ['valor_total_previsto_r','Valor total previsto (R$)','Numérico'],
-        ['nome_do_municipio','Município de execução','Texto'],
-        ['inicio_de_execucao_entrega','Data de início/entrega','Data']
-    ];
-    baixarArquivo('\uFEFF'+linhas.map(l=>l.join(';')).join('\n'), 'dicionario_pac.csv', 'text/csv');
-}
-
-function baixarDicionarioPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text('Dicionário de Dados — PAC 2026', 14, 15);
-    doc.autoTable({
-        startY:25,
-        head:[['Campo','Descrição','Tipo']],
-        body:[
-            ['codigo_do_orgao…','Código do órgão responsável','Texto'],
-            ['nome_do_orgao…','Nome do órgão/entidade','Texto'],
-            ['codigo_do_material…','Código do material/serviço','Texto'],
-            ['nome_do_material…','Nome do material/serviço','Texto'],
-            ['desc_do_item…','Descrição detalhada do item','Texto'],
-            ['situacao','Situação do item','Texto'],
-            ['nome_do_grupo…','Grupo do material/serviço','Texto'],
-            ['nome_da_classe…','Classe do material/serviço','Texto'],
-            ['elemento_item_despesa','Elemento de despesa','Texto'],
-            ['descricao_da_unidade…','Unidade de aquisição','Texto'],
-            ['quantidade','Quantidade planejada','Numérico'],
-            ['valor_unitario_previsto_r','Valor unitário previsto (R$)','Numérico'],
-            ['valor_total_previsto_r','Valor total previsto (R$)','Numérico'],
-            ['nome_do_municipio','Município de execução','Texto'],
-            ['inicio_de_execucao_entrega','Data de início/entrega','Data']
-        ],
-        headStyles:{fillColor:[32,68,93]}, styles:{fontSize:8}
-    });
-    doc.save('dicionario_pac.pdf');
-}
-
-function exportarTudoCSV() {
-    const csv = Papa.unparse(dadosCompletos, {delimiter:';'});
-    baixarArquivo('\uFEFF'+csv, 'pac_2026_completo.csv', 'text/csv');
-}
-
-// ============================================================
-// 11. UTILITÁRIOS
-// ============================================================
 function baixarArquivo(conteudo, nome, tipo) {
     const blob = new Blob([conteudo], { type: tipo });
     const a = document.createElement('a');
@@ -1813,52 +693,1209 @@ function baixarArquivo(conteudo, nome, tipo) {
 }
 
 // ============================================================
-// 12. EVENTOS
+// VISÃO GERAL
 // ============================================================
-document.addEventListener('click', e => {
-    if (!e.target.closest('#colSelectorOrgao') && !e.target.closest('button[onclick*="toggleColSelectorOrgao"]'))
-        document.querySelectorAll('.column-selector-popup').forEach(p => p.classList.remove('show'));
-});
+let visaoState = {
+    ano: '2026',
+    codigoOrgao: '',
+    nomeOrgao: '',
+    dadosFiltrados: [],
+    sortCol: 'nome_orgao',
+    sortDir: 'asc',
+    currentPage: 1,
+    pageSize: 25,
+    searchTerm: ''
+};
+
+function getOrgaosAgregados(dados) {
+    const map = new Map();
+    for (const row of dados) {
+        const nome = row.nome_do_orgao_do_planejamento_de_solicitacoes || 'Não informado';
+        const cod = row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-';
+        const val = parseFloat(String(row.valor_total_previsto_r).replace(',','.')) || 0;
+        if (!map.has(nome)) map.set(nome, { cod, nome, qtd: 0, valor: 0, sigla: getSiglaOrgao(nome) });
+        const o = map.get(nome);
+        o.qtd++; o.valor += val;
+    }
+    return Array.from(map.values());
+}
+
+function renderVisaoGeral() {
+    const anos = ['2026'];
+    const orgaosList = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+    
+    // Aplicar filtros
+    let filtrado = dadosCompletos.filter(r => {
+        if (visaoState.codigoOrgao && r.codigo_do_orgao_do_planejamento_de_solicitacoes !== visaoState.codigoOrgao) return false;
+        if (visaoState.nomeOrgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== visaoState.nomeOrgao) return false;
+        return true;
+    });
+    
+    visaoState.dadosFiltrados = filtrado;
+    const orgaos = getOrgaosAgregados(filtrado);
+    
+    // Aplicar busca rápida
+    let filteredOrgaos = orgaos;
+    if (visaoState.searchTerm) {
+        const term = visaoState.searchTerm.toLowerCase();
+        filteredOrgaos = orgaos.filter(o => o.nome.toLowerCase().includes(term) || o.cod.toLowerCase().includes(term));
+    }
+    
+    // Ordenar
+    filteredOrgaos.sort((a, b) => {
+        let va = visaoState.sortCol === 'nome' ? a.nome : visaoState.sortCol === 'qtd' ? a.qtd : a.valor;
+        let vb = visaoState.sortCol === 'nome' ? b.nome : visaoState.sortCol === 'qtd' ? b.qtd : b.valor;
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        return visaoState.sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+    });
+    
+    const totalOrgaos = filteredOrgaos.length;
+    const totalPags = Math.ceil(totalOrgaos / visaoState.pageSize) || 1;
+    visaoState.currentPage = Math.min(visaoState.currentPage, totalPags);
+    const pagina = filteredOrgaos.slice((visaoState.currentPage - 1) * visaoState.pageSize, visaoState.currentPage * visaoState.pageSize);
+    
+    const totalItens = filtrado.length;
+    const somaValor = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+    const mediaPorItem = totalItens ? somaValor / totalItens : 0;
+    
+    // Top 12 órgãos para o gráfico
+    const top12Orgaos = [...orgaos].sort((a, b) => b.valor - a.valor).slice(0, 12);
+    
+    function sortIcon(col) {
+        if (visaoState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
+        return visaoState.sortDir === 'asc' ? '<i class="material-icons" style="font-size:14px">arrow_upward</i>' : '<i class="material-icons" style="font-size:14px">arrow_downward</i>';
+    }
+    
+    const html = `
+    <div class="filter-container">
+        <div class="filters-row">
+            <div class="filter-group">
+                <label class="filter-label"><i class="material-icons">calendar_today</i> Ano</label>
+                <select class="form-select modern-select" id="vg-ano">
+                    ${anos.map(a => `<option value="${a}" ${visaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label"><i class="material-icons">code</i> Código do Órgão</label>
+                <input type="text" class="form-control" id="vg-codigo-orgao" placeholder="Digite o código do órgão" value="${esc(visaoState.codigoOrgao)}">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label"><i class="material-icons">business</i> Nome do Órgão</label>
+                <select class="form-select modern-select" id="vg-nome-orgao">
+                    <option value="">Todos os Órgãos</option>
+                    ${orgaosList.map(o => `<option value="${esc(o)}" ${visaoState.nomeOrgao === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+        <div class="botoes-abaixo" style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn-pesquisa" onclick="aplicarFiltroVG()">
+                <i class="material-icons">search</i> Pesquisar
+            </button>
+            <button class="btn-secondary-custom" onclick="limparFiltroVG()">
+                <i class="material-icons">clear</i> Limpar
+            </button>
+        </div>
+    </div>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="metric-card">
+                <div class="metric-header">Total de Itens</div>
+                <div class="metric-body">
+                    <div class="metric-value">${totalItens.toLocaleString('pt-BR')}</div>
+                    <div class="metric-sublabel">${orgaos.length} órgãos</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card">
+                <div class="metric-header">Valor Total Previsto</div>
+                <div class="metric-body">
+                    <div class="metric-value" style="font-size:16px">${formatMoney(somaValor)}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card">
+                <div class="metric-header">Valor Médio por Item</div>
+                <div class="metric-body">
+                    <div class="metric-value" style="font-size:16px">${formatMoney(mediaPorItem)}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card">
+                <div class="metric-header">Órgãos Atendidos</div>
+                <div class="metric-body">
+                    <div class="metric-value">${orgaos.length}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-header"><h4 class="chart-title">Valor Total por Órgão (Top 12)</h4></div>
+                <div class="chart-wrapper">
+                    <canvas id="chartValorVG"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-header"><h4 class="chart-title">Valor Total por Ano</h4></div>
+                <div class="chart-wrapper">
+                    <canvas id="chartValorAno"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-export" onclick="exportarVGCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="exportarVGPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+        </div>
+        <div class="toolbar-right">
+            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${totalOrgaos} órgãos</span>
+            <div class="table-search-container">
+                <i class="material-icons" style="font-size:14px;">search</i>
+                <input class="table-search-input" id="buscaRapidaVG" placeholder="Buscar órgão..." value="${esc(visaoState.searchTerm)}" oninput="buscaRapidaVGChange(this.value)">
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th class="sortable-header" onclick="ordenarVG('nome')">Órgão / Entidade ${sortIcon('nome')}</th>
+                    <th class="sortable-header text-center" onclick="ordenarVG('qtd')">Qtd. Itens ${sortIcon('qtd')}</th>
+                    <th class="sortable-header text-end" onclick="ordenarVG('valorTotal')">Valor Total Previsto ${sortIcon('valorTotal')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${pagina.map(o => `
+                <tr>
+                    <td>${esc(o.cod)}</td>
+                    <td><a class="orgao-link" style="color:#006a82;text-decoration:none;cursor:pointer;font-weight:500;" onclick="irParaOrgao('${o.nome.replace(/'/g,"\\'")}')"><strong>${esc(o.nome)}</strong></a></td>
+                    <td class="text-center">${o.qtd.toLocaleString('pt-BR')}</td>
+                    <td class="text-end money-val">${formatMoney(o.valor)}</td>
+                </tr>`).join('')}
+                ${pagina.length === 0 ? `<tr><td colspan="4" class="text-center text-muted py-4">Nenhum órgão encontrado.</td></tr>` : ''}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"><strong>TOTAL GERAL</strong></td>
+                    <td class="text-center">${totalOrgaos.toLocaleString('pt-BR')}</td>
+                    <td class="text-end money-total">${formatMoney(filteredOrgaos.reduce((a, o) => a + o.valor, 0))}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="pagination-container">
+        <div class="pagination-info">Página ${visaoState.currentPage} de ${totalPags} — ${totalOrgaos} órgãos</div>
+        <nav><ul class="pagination mb-0">${gerarPaginacao(visaoState.currentPage, totalPags, 'mudarPgVG')}</ul></nav>
+        <select class="items-per-page" onchange="mudarIppVG(this.value)">
+            ${[10, 25, 50, 100].map(n => `<option value="${n}" ${visaoState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>
+    
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+        <button class="btn-topo" onclick="voltarAoTopo()">
+            <i class="material-icons">arrow_upward</i> Voltar ao topo
+        </button>
+    </div>`;
+    
+    document.getElementById('visao-content').innerHTML = html;
+    
+    // Renderizar gráficos
+    setTimeout(() => {
+        const ctx = document.getElementById('chartValorVG');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: top12Orgaos.map(o => o.sigla),
+                    datasets: [{
+                        data: top12Orgaos.map(o => o.valor),
+                        backgroundColor: ['#2f4b63', '#39a585', '#5f6f7f', '#f28c28', '#7aa6c2', '#8e44ad', '#c0392b', '#16a085', '#d35400', '#2980b9', '#27ae60', '#e67e22'],
+                        borderRadius: 4,
+                        label: 'Valor Total (R$)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: { callbacks: { label: items => formatMoney(items.raw) } },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M' } }
+                    }
+                }
+            });
+        }
+
+        // Gráfico por ano
+        const ctxAno = document.getElementById('chartValorAno');
+        if (ctxAno) {
+            // Agrupa valor por ano usando dadosCompletos (todos os anos disponíveis)
+            const porAno = {};
+            dadosCompletos.forEach(r => {
+                const ano = r.ano_referencia || '2026';
+                porAno[ano] = (porAno[ano] || 0) + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0);
+            });
+            const anosGraf = Object.keys(porAno).sort();
+            new Chart(ctxAno, {
+                type: 'bar',
+                data: {
+                    labels: anosGraf,
+                    datasets: [{
+                        label: 'Valor Total Previsto (R$)',
+                        data: anosGraf.map(a => porAno[a]),
+                        backgroundColor: ['#2f4b63', '#39a585', '#f28c28', '#7aa6c2', '#c0392b'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: { callbacks: { label: items => formatMoney(items.raw) } },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+    }, 100);
+}
+
+function buscaRapidaVGChange(valor) {
+    visaoState.searchTerm = valor;
+    visaoState.currentPage = 1;
+    const pos = document.getElementById('buscaRapidaVG')?.selectionStart;
+    renderVisaoGeral();
+    const el = document.getElementById('buscaRapidaVG');
+    if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch(e) {} }
+}
+
+function mudarPgVG(p) { if (p < 1) return; visaoState.currentPage = p; renderVisaoGeral(); }
+function mudarIppVG(val) { visaoState.pageSize = parseInt(val); visaoState.currentPage = 1; renderVisaoGeral(); }
+function ordenarVG(col) {
+    if (visaoState.sortCol === col) {
+        visaoState.sortDir = visaoState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        visaoState.sortCol = col;
+        visaoState.sortDir = 'asc';
+    }
+    visaoState.currentPage = 1;
+    renderVisaoGeral();
+}
+function aplicarFiltroVG() {
+    visaoState.codigoOrgao = document.getElementById('vg-codigo-orgao').value;
+    visaoState.nomeOrgao = document.getElementById('vg-nome-orgao').value;
+    visaoState.currentPage = 1;
+    renderVisaoGeral();
+}
+function limparFiltroVG() {
+    visaoState.codigoOrgao = '';
+    visaoState.nomeOrgao = '';
+    visaoState.searchTerm = '';
+    visaoState.currentPage = 1;
+    renderVisaoGeral();
+}
+function exportarVGCSV() {
+    const orgaos = getOrgaosAgregados(visaoState.dadosFiltrados);
+    const linhas = [['Código', 'Órgão', 'Qtd. Itens', 'Valor Total']];
+    orgaos.forEach(o => linhas.push([o.cod, o.nome, o.qtd, o.valor.toFixed(2).replace('.', ',')]));
+    baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'visao_geral_pac.csv', 'text/csv');
+}
+function exportarVGPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text('PAC 2026 - Visão Geral por Órgão', 14, 10);
+    const orgaos = getOrgaosAgregados(visaoState.dadosFiltrados);
+    doc.autoTable({
+        startY: 16,
+        head: [['Código', 'Órgão', 'Qtd. Itens', 'Valor Total']],
+        body: orgaos.map(o => [o.cod, o.nome, o.qtd, formatMoney(o.valor)]),
+        headStyles: { fillColor: [32, 68, 93] },
+        styles: { fontSize: 8 }
+    });
+    doc.save('visao_geral_pac.pdf');
+}
 
 // ============================================================
-// 13. INICIALIZAÇÃO
+// CONSULTA POR ÓRGÃO
 // ============================================================
+let orgaoState = {
+    ano: '2026',
+    orgao: '',
+    material: '',
+    situacao: '',
+    grupo: '',
+    classe: '',
+    searchTerm: '',
+    sortCol: 'nome_orgao',
+    sortDir: 'asc',
+    currentPage: 1,
+    pageSize: 25,
+    colunas: {
+        codigo_orgao: false, nome_orgao: true, planejamento_processo: true, procedimento: true,
+        codigo_material: false, nome_material: true, descricao: true, situacao: true,
+        grupo: true, classe: true, elemento_despesa: false, objeto: true,
+        municipio: false, inicio_execucao: false,
+        unidade: true, quantidade: true, valor_unitario: true, valor_total: true
+    },
+    resultados: []
+};
+
+const colLabelsOrgao = {
+    codigo_orgao:        'Código Órgão',
+    nome_orgao:          'Órgão',
+    planejamento_processo: 'Nº Planejamento',
+    procedimento:        'Procedimento',
+    codigo_material:     'Código Material/Serviço',
+    nome_material:       'Material/Serviço',
+    descricao:           'Descrição',
+    situacao:            'Situação',
+    grupo:               'Grupo',
+    classe:              'Classe',
+    elemento_despesa:    'Elem. Despesa',
+    objeto:              'Objeto',
+    municipio:           'Município',
+    inicio_execucao:     'Início Execução',
+    unidade:             'Unidade',
+    quantidade:          'Quantidade',
+    valor_unitario:      'Valor Unitário',
+    valor_total:         'Valor Total'
+};
+
+function renderConsultaOrgao() {
+    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+    const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
+    const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
+    const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
+    
+    let filtrado = dadosCompletos.filter(r => {
+        if (orgaoState.orgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== orgaoState.orgao) return false;
+        if (orgaoState.material && !(r.nome_do_material_ou_servico || '').toLowerCase().includes(orgaoState.material.toLowerCase())) return false;
+        if (orgaoState.situacao && r.situacao !== orgaoState.situacao) return false;
+        if (orgaoState.grupo && r.nome_do_grupo_material_ou_servico !== orgaoState.grupo) return false;
+        if (orgaoState.classe && r.nome_da_classe_material_ou_servico !== orgaoState.classe) return false;
+        if (orgaoState.searchTerm) {
+            const term = orgaoState.searchTerm.toLowerCase();
+            const campos = [r.nome_do_material_ou_servico, r.desc_do_item_de_material_ou_servico, r.situacao, r.nome_do_orgao_do_planejamento_de_solicitacoes];
+            if (!campos.some(c => (c || '').toLowerCase().includes(term))) return false;
+        }
+        return true;
+    });
+    
+    orgaoState.resultados = filtrado;
+    const total = filtrado.length;
+    const totalPags = Math.ceil(total / orgaoState.pageSize) || 1;
+    orgaoState.currentPage = Math.min(orgaoState.currentPage, totalPags);
+    const pagina = filtrado.slice((orgaoState.currentPage - 1) * orgaoState.pageSize, orgaoState.currentPage * orgaoState.pageSize);
+    
+    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+    const somaQtd = filtrado.reduce((a, r) => a + (parseFloat(r.quantidade) || 0), 0);
+    
+    const colsOrdem = ['codigo_orgao', 'nome_orgao', 'planejamento_processo', 'procedimento', 'codigo_material', 'nome_material', 'descricao', 'situacao', 'grupo', 'classe', 'elemento_despesa', 'objeto', 'municipio', 'inicio_execucao', 'unidade', 'quantidade', 'valor_unitario', 'valor_total'];
+    const colsVis = colsOrdem.filter(c => orgaoState.colunas[c]);
+    
+    function sortIcon(col) {
+        if (orgaoState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
+        return orgaoState.sortDir === 'asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
+    }
+    
+    const html = `
+    <div class="filter-container">
+        <div class="consulta-filters-row">
+            <div class="consulta-filter-group">
+                <label class="filter-label">Ano</label>
+                <select class="form-select modern-select" id="co-ano">
+                    <option value="2026">2026</option>
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Órgão</label>
+                <select class="form-select modern-select" id="co-orgao">
+                    <option value="">Todos</option>
+                    ${orgaosSet.map(o => `<option value="${esc(o)}" ${orgaoState.orgao === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Material/Serviço</label>
+                <input type="text" class="form-control" id="co-material" value="${esc(orgaoState.material)}">
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Situação</label>
+                <select class="form-select modern-select" id="co-situacao">
+                    <option value="">Todas</option>
+                    ${situSet.map(s => `<option value="${esc(s)}" ${orgaoState.situacao === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Grupo</label>
+                <select class="form-select modern-select" id="co-grupo">
+                    <option value="">Todos</option>
+                    ${gruposSet.map(g => `<option value="${esc(g)}" ${orgaoState.grupo === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Classe</label>
+                <select class="form-select modern-select" id="co-classe">
+                    <option value="">Todas</option>
+                    ${classesSet.map(c => `<option value="${esc(c)}" ${orgaoState.classe === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+        <div class="consulta-buttons-row" style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn-pesquisa" onclick="aplicarFiltroOrgao()">
+                <i class="material-icons">search</i> Pesquisar
+            </button>
+            <button class="btn-secondary-custom" onclick="limparFiltroOrgao()">
+                <i class="material-icons">clear</i> Limpar
+            </button>
+        </div>
+    </div>
+    
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-export" onclick="exportarOrgaoCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="exportarOrgaoPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+        </div>
+        <div class="toolbar-right">
+            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${total} itens</span>
+            <div class="table-search-container">
+                <i class="material-icons">search</i>
+                <input class="table-search-input" id="buscaOrgao" placeholder="Busca rápida..." value="${esc(orgaoState.searchTerm)}" oninput="buscaOrgaoChange(this.value)">
+            </div>
+            <div style="position:relative">
+                <button class="btn-export" onclick="toggleColSelectorOrgao()">
+                    <i class="material-icons">view_column</i> Colunas
+                </button>
+                <div class="column-selector-popup" id="colSelectorOrgao">
+                    <div style="font-size:11px;font-weight:700;padding:4px 8px;">Exibir colunas:</div>
+                    ${colsOrdem.map(c => `<label><input type="checkbox" ${orgaoState.colunas[c] ? 'checked' : ''} onchange="toggleColOrgao('${c}', this.checked)"> ${colLabelsOrgao[c]}</label>`).join('')}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    ${colsVis.map(c => `<th class="sortable-header" onclick="ordenarOrgao('${c}')">${colLabelsOrgao[c]} ${sortIcon(c)}</th>`).join('')}
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${pagina.map((row, idx) => `
+                <tr>
+                    ${colsVis.map(c => {
+                        let val = '';
+                        if (c === 'codigo_orgao') val = row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-';
+                        else if (c === 'nome_orgao') val = row.nome_do_orgao_do_planejamento_de_solicitacoes || '-';
+                        else if (c === 'planejamento_processo') val = row.numero_do_processo_do_planejamento_de_solicitacoes || '-';
+                        else if (c === 'procedimento') val = row.procedimento_de_contratacao || '-';
+                        else if (c === 'codigo_material') val = row.codigo_do_material_ou_servico || '-';
+                        else if (c === 'nome_material') val = row.nome_do_material_ou_servico || '-';
+                        else if (c === 'descricao') val = (row.desc_do_item_de_material_ou_servico || '').substring(0, 100);
+                        else if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
+                        else if (c === 'grupo') val = row.nome_do_grupo_material_ou_servico || '-';
+                        else if (c === 'classe') val = row.nome_da_classe_material_ou_servico || '-';
+                        else if (c === 'elemento_despesa') val = row.elemento_item_despesa || row.elemento_despesa || '-';
+                        else if (c === 'objeto') val = row.objeto_contratacao || '-';
+                        else if (c === 'municipio') val = row.nome_do_municipio || '-';
+                        else if (c === 'inicio_execucao') val = row.inicio_de_execucao_entrega || '-';
+                        else if (c === 'unidade') val = row.descricao_da_unidade_de_aquisicao || '-';
+                        else if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
+                        else if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
+                        else if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
+                        return `<td>${esc(val)}</td>`;
+                    }).join('')}
+                    <td class="text-center">
+                        <button class="btn-action" onclick="abrirModalDetalhe(${(orgaoState.currentPage - 1) * orgaoState.pageSize + idx}, 'orgao')">
+                            <i class="material-icons" style="font-size:15px">visibility</i>
+                        </button>
+                    </td>
+                </tr>`).join('')}
+                ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
+                    <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
+                    <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="pagination-container">
+        <div class="pagination-info">Página ${orgaoState.currentPage} de ${totalPags} — ${total} itens</div>
+        <nav><ul class="pagination mb-0">${gerarPaginacao(orgaoState.currentPage, totalPags, 'mudarPgOrgao')}</ul></nav>
+        <select class="items-per-page" onchange="mudarIppOrgao(this.value)">
+            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${orgaoState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>
+    
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+        <button class="btn-topo" onclick="voltarAoTopo()">
+            <i class="material-icons">arrow_upward</i> Voltar ao topo
+        </button>
+    </div>`;
+    
+    document.getElementById('orgao-content').innerHTML = html;
+}
+
+function buscaOrgaoChange(valor) {
+    orgaoState.searchTerm = valor;
+    orgaoState.currentPage = 1;
+    const pos = document.getElementById('buscaOrgao')?.selectionStart;
+    renderConsultaOrgao();
+    const el = document.getElementById('buscaOrgao');
+    if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch(e) {} }
+}
+function mudarPgOrgao(p) { if (p < 1) return; orgaoState.currentPage = p; renderConsultaOrgao(); }
+function mudarIppOrgao(val) { orgaoState.pageSize = parseInt(val); orgaoState.currentPage = 1; renderConsultaOrgao(); }
+function ordenarOrgao(col) {
+    if (orgaoState.sortCol === col) {
+        orgaoState.sortDir = orgaoState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        orgaoState.sortCol = col;
+        orgaoState.sortDir = 'asc';
+    }
+    orgaoState.currentPage = 1;
+    renderConsultaOrgao();
+}
+function aplicarFiltroOrgao() {
+    orgaoState.orgao = document.getElementById('co-orgao').value;
+    orgaoState.material = document.getElementById('co-material').value;
+    orgaoState.situacao = document.getElementById('co-situacao').value;
+    orgaoState.grupo = document.getElementById('co-grupo').value;
+    orgaoState.classe = document.getElementById('co-classe').value;
+    orgaoState.currentPage = 1;
+    renderConsultaOrgao();
+}
+function limparFiltroOrgao() {
+    orgaoState.orgao = '';
+    orgaoState.material = '';
+    orgaoState.situacao = '';
+    orgaoState.grupo = '';
+    orgaoState.classe = '';
+    orgaoState.searchTerm = '';
+    orgaoState.currentPage = 1;
+    renderConsultaOrgao();
+}
+function toggleColSelectorOrgao() { document.getElementById('colSelectorOrgao').classList.toggle('show'); }
+function toggleColOrgao(col, val) { orgaoState.colunas[col] = val; renderConsultaOrgao(); }
+function toggleCodigosOrgao(val) { if (val) orgaoState.colunas['codigo_orgao'] = true; else delete orgaoState.colunas['codigo_orgao']; renderConsultaOrgao(); }
+function toggleCodigosMaterial(val) { if (val) orgaoState.colunas['codigo_material'] = true; else delete orgaoState.colunas['codigo_material']; renderConsultaOrgao(); }
+function exportarOrgaoCSV() {
+    const linhas = [['Órgão', 'Material/Serviço', 'Situação', 'Quantidade', 'Valor Total']];
+    orgaoState.resultados.forEach(r => linhas.push([r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_material_ou_servico, r.situacao, r.quantidade, r.valor_total_previsto_r]));
+    baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'pac_por_orgao.csv', 'text/csv');
+}
+function exportarOrgaoPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text('PAC 2026 - Consulta por Órgão', 14, 10);
+    doc.autoTable({
+        startY: 16,
+        head: [['Órgão', 'Material/Serviço', 'Situação', 'Qtd', 'Valor Total']],
+        body: orgaoState.resultados.slice(0, 500).map(r => [r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_material_ou_servico, r.situacao, r.quantidade, formatMoney(r.valor_total_previsto_r)]),
+        headStyles: { fillColor: [32, 68, 93] },
+        styles: { fontSize: 8 }
+    });
+    doc.save('pac_por_orgao.pdf');
+}
+
+// ============================================================
+// CONSULTA POR ITEM
+// ============================================================
+let itemState = {
+    ano: '2026',
+    orgao: '',
+    codigoItem: '',
+    nomeItem: '',
+    elementoDespesa: '',
+    situacao: '',
+    grupo: '',
+    classe: '',
+    searchTerm: '',
+    sortCol: 'nome_item',
+    sortDir: 'asc',
+    currentPage: 1,
+    pageSize: 25,
+    colunas: {
+        codigo_item: true, nome_item: true, elemento_despesa: true,
+        descricao: true, orgao: true, codigo_orgao: false, situacao: true,
+        grupo: true, classe: true, objeto: false, procedimento: false,
+        planejamento_processo: false, municipio: false, inicio_execucao: false,
+        unidade: true, quantidade: true, valor_unitario: true, valor_total: true
+    },
+    resultados: []
+};
+
+const colLabelsItem = {
+    codigo_item:      'Código Item',
+    nome_item:        'Item (Material/Serviço)',
+    elemento_despesa: 'Elem. Despesa',
+    descricao:        'Descrição',
+    orgao:            'Órgão',
+    codigo_orgao:     'Código Órgão',
+    situacao:         'Situação',
+    grupo:            'Grupo',
+    classe:           'Classe',
+    objeto:           'Objeto',
+    procedimento:     'Procedimento',
+    planejamento_processo: 'Nº Planejamento',
+    municipio:        'Município',
+    inicio_execucao:  'Início Execução',
+    unidade:          'Unidade',
+    quantidade:       'Quantidade',
+    valor_unitario:   'Valor Unitário',
+    valor_total:      'Valor Total'
+};
+
+function renderConsultaItem() {
+    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+    const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
+    const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
+    const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
+    
+    let filtrado = dadosCompletos.filter(r => {
+        if (itemState.orgao && !(r.nome_do_orgao_do_planejamento_de_solicitacoes || '').toLowerCase().includes(itemState.orgao.toLowerCase())) return false;
+        if (itemState.codigoItem && r.codigo_do_material_ou_servico !== itemState.codigoItem) return false;
+        if (itemState.nomeItem && !(r.nome_do_material_ou_servico || '').toLowerCase().includes(itemState.nomeItem.toLowerCase())) return false;
+        if (itemState.elementoDespesa && !(r.elemento_item_despesa || '').toLowerCase().includes(itemState.elementoDespesa.toLowerCase())) return false;
+        if (itemState.situacao && r.situacao !== itemState.situacao) return false;
+        if (itemState.grupo && r.nome_do_grupo_material_ou_servico !== itemState.grupo) return false;
+        if (itemState.classe && r.nome_da_classe_material_ou_servico !== itemState.classe) return false;
+        if (itemState.searchTerm) {
+            const term = itemState.searchTerm.toLowerCase();
+            const campos = [r.nome_do_material_ou_servico, r.desc_do_item_de_material_ou_servico, r.situacao, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.codigo_do_material_ou_servico];
+            if (!campos.some(c => (c || '').toLowerCase().includes(term))) return false;
+        }
+        return true;
+    });
+    
+    itemState.resultados = filtrado;
+    const total = filtrado.length;
+    const totalPags = Math.ceil(total / itemState.pageSize) || 1;
+    itemState.currentPage = Math.min(itemState.currentPage, totalPags);
+    const pagina = filtrado.slice((itemState.currentPage - 1) * itemState.pageSize, itemState.currentPage * itemState.pageSize);
+    
+    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+    const somaQtd = filtrado.reduce((a, r) => a + (parseFloat(r.quantidade) || 0), 0);
+    
+    const colsOrdem = ['codigo_item', 'nome_item', 'elemento_despesa', 'descricao', 'orgao', 'codigo_orgao', 'situacao', 'grupo', 'classe', 'objeto', 'procedimento', 'planejamento_processo', 'municipio', 'inicio_execucao', 'unidade', 'quantidade', 'valor_unitario', 'valor_total'];
+    const colsVis = colsOrdem.filter(c => itemState.colunas[c]);
+    
+    function sortIcon(col) {
+        if (itemState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
+        return itemState.sortDir === 'asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
+    }
+    
+    const html = `
+    <div class="filter-container">
+        <div class="consulta-filters-row">
+            <div class="consulta-filter-group">
+                <label class="filter-label">Ano</label>
+                <select class="form-select modern-select" id="ci-ano">
+                    <option value="2026">2026</option>
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Órgão</label>
+                <input type="text" class="form-control" id="ci-orgao" value="${esc(itemState.orgao)}">
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Código do Item</label>
+                <input type="text" class="form-control" id="ci-codigo-item" value="${esc(itemState.codigoItem)}">
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Nome do Item</label>
+                <input type="text" class="form-control" id="ci-nome-item" value="${esc(itemState.nomeItem)}">
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Elem. Despesa</label>
+                <input type="text" class="form-control" id="ci-elemento" value="${esc(itemState.elementoDespesa)}">
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Situação</label>
+                <select class="form-select modern-select" id="ci-situacao">
+                    <option value="">Todas</option>
+                    ${situSet.map(s => `<option value="${esc(s)}" ${itemState.situacao === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Grupo</label>
+                <select class="form-select modern-select" id="ci-grupo">
+                    <option value="">Todos</option>
+                    ${gruposSet.map(g => `<option value="${esc(g)}" ${itemState.grupo === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Classe</label>
+                <select class="form-select modern-select" id="ci-classe">
+                    <option value="">Todas</option>
+                    ${classesSet.map(c => `<option value="${esc(c)}" ${itemState.classe === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+        <div class="consulta-buttons-row" style="margin-top:15px; display:flex; gap:10px;">
+            <button class="btn-pesquisa" onclick="aplicarFiltroItem()">
+                <i class="material-icons">search</i> Pesquisar
+            </button>
+            <button class="btn-secondary-custom" onclick="limparFiltroItem()">
+                <i class="material-icons">clear</i> Limpar
+            </button>
+        </div>
+    </div>
+    
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn-export" onclick="exportarItemCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="exportarItemPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+        </div>
+        <div class="toolbar-right">
+            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${total} itens</span>
+            <div class="table-search-container">
+                <i class="material-icons">search</i>
+                <input class="table-search-input" id="buscaItem" placeholder="Busca rápida..." value="${esc(itemState.searchTerm)}" oninput="buscaItemChange(this.value)">
+            </div>
+            <div style="position:relative">
+                <button class="btn-export" onclick="toggleColSelectorItem()">
+                    <i class="material-icons">view_column</i> Colunas
+                </button>
+                <div class="column-selector-popup" id="colSelectorItem">
+                    <div style="font-size:11px;font-weight:700;padding:4px 8px;">Exibir colunas:</div>
+                    ${colsOrdem.map(c => `<label><input type="checkbox" ${itemState.colunas[c] ? 'checked' : ''} onchange="toggleColItem('${c}', this.checked)"> ${colLabelsItem[c]}</label>`).join('')}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    ${colsVis.map(c => `<th class="sortable-header" onclick="ordenarItem('${c}')">${colLabelsItem[c]} ${sortIcon(c)}</th>`).join('')}
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${pagina.map((row, idx) => `
+                <tr>
+                    ${colsVis.map(c => {
+                        if (c === 'codigo_item') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
+                        if (c === 'nome_item') return `<td>${esc(row.nome_do_material_ou_servico || '-')}</td>`;
+                        if (c === 'elemento_despesa') return `<td>${esc(row.elemento_item_despesa || row.elemento_despesa || '-')}</td>`;
+                        if (c === 'descricao') return `<td style="max-width:200px;">${esc((row.desc_do_item_de_material_ou_servico || '').substring(0, 80))}${(row.desc_do_item_de_material_ou_servico || '').length > 80 ? '…' : ''}</td>`;
+                        if (c === 'orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                        if (c === 'codigo_orgao') return `<td>${esc(row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                        if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
+                        if (c === 'grupo') return `<td>${esc(row.nome_do_grupo_material_ou_servico || '-')}</td>`;
+                        if (c === 'classe') return `<td>${esc(row.nome_da_classe_material_ou_servico || '-')}</td>`;
+                        if (c === 'objeto') return `<td>${esc(row.objeto_contratacao || '-')}</td>`;
+                        if (c === 'procedimento') return `<td>${esc(row.procedimento_de_contratacao || '-')}</td>`;
+                        if (c === 'planejamento_processo') return `<td>${esc(row.numero_do_processo_do_planejamento_de_solicitacoes || '-')}</td>`;
+                        if (c === 'municipio') return `<td>${esc(row.nome_do_municipio || '-')}</td>`;
+                        if (c === 'inicio_execucao') return `<td>${esc(row.inicio_de_execucao_entrega || '-')}</td>`;
+                        if (c === 'unidade') return `<td>${esc(row.descricao_da_unidade_de_aquisicao || '-')}</td>`;
+                        if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
+                        if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
+                        if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
+                        return `<td>-</td>`;
+                    }).join('')}
+                    <td class="text-center">
+                        <button class="btn-action" onclick="abrirModalDetalheItem(${(itemState.currentPage - 1) * itemState.pageSize + idx}, 'item')">
+                            <i class="material-icons" style="font-size:15px">visibility</i>
+                        </button>
+                    </td>
+                </tr>`).join('')}
+                ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
+                    <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
+                    <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="pagination-container">
+        <div class="pagination-info">Página ${itemState.currentPage} de ${totalPags} — ${total} itens</div>
+        <nav><ul class="pagination mb-0">${gerarPaginacao(itemState.currentPage, totalPags, 'mudarPgItem')}</ul></nav>
+        <select class="items-per-page" onchange="mudarIppItem(this.value)">
+            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${itemState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>
+    
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+        <button class="btn-topo" onclick="voltarAoTopo()">
+            <i class="material-icons">arrow_upward</i> Voltar ao topo
+        </button>
+    </div>`;
+    
+    document.getElementById('item-content').innerHTML = html;
+}
+
+function buscaItemChange(valor) {
+    itemState.searchTerm = valor;
+    itemState.currentPage = 1;
+    const pos = document.getElementById('buscaItem')?.selectionStart;
+    renderConsultaItem();
+    const el = document.getElementById('buscaItem');
+    if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch(e) {} }
+}
+function mudarPgItem(p) { if (p < 1) return; itemState.currentPage = p; renderConsultaItem(); }
+function mudarIppItem(val) { itemState.pageSize = parseInt(val); itemState.currentPage = 1; renderConsultaItem(); }
+function ordenarItem(col) {
+    if (itemState.sortCol === col) {
+        itemState.sortDir = itemState.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        itemState.sortCol = col;
+        itemState.sortDir = 'asc';
+    }
+    itemState.currentPage = 1;
+    renderConsultaItem();
+}
+function aplicarFiltroItem() {
+    itemState.orgao = document.getElementById('ci-orgao').value;
+    itemState.codigoItem = document.getElementById('ci-codigo-item').value;
+    itemState.nomeItem = document.getElementById('ci-nome-item').value;
+    itemState.elementoDespesa = document.getElementById('ci-elemento').value;
+    itemState.situacao = document.getElementById('ci-situacao').value;
+    itemState.grupo = document.getElementById('ci-grupo').value;
+    itemState.classe = document.getElementById('ci-classe').value;
+    itemState.currentPage = 1;
+    renderConsultaItem();
+}
+function limparFiltroItem() {
+    itemState.orgao = '';
+    itemState.codigoItem = '';
+    itemState.nomeItem = '';
+    itemState.elementoDespesa = '';
+    itemState.situacao = '';
+    itemState.grupo = '';
+    itemState.classe = '';
+    itemState.searchTerm = '';
+    itemState.currentPage = 1;
+    renderConsultaItem();
+}
+function toggleColSelectorItem() { document.getElementById('colSelectorItem').classList.toggle('show'); }
+function toggleColItem(col, val) { itemState.colunas[col] = val; renderConsultaItem(); }
+function toggleCodigosItem(val) { if (val) itemState.colunas['codigo_orgao'] = true; else delete itemState.colunas['codigo_orgao']; renderConsultaItem(); }
+function toggleCodigosMaterialItem(val) { if (val) itemState.colunas['codigo_material'] = true; else delete itemState.colunas['codigo_material']; renderConsultaItem(); }
+function exportarItemCSV() {
+    const linhas = [['Código', 'Item', 'Órgão', 'Situação', 'Quantidade', 'Valor Total']];
+    itemState.resultados.forEach(r => linhas.push([r.codigo_do_material_ou_servico, r.nome_do_material_ou_servico, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.situacao, r.quantidade, r.valor_total_previsto_r]));
+    baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'pac_por_item.csv', 'text/csv');
+}
+function exportarItemPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text('PAC 2026 - Consulta por Item', 14, 10);
+    doc.autoTable({
+        startY: 16,
+        head: [['Código', 'Item', 'Órgão', 'Situação', 'Qtd', 'Valor Total']],
+        body: itemState.resultados.slice(0, 500).map(r => [r.codigo_do_material_ou_servico, r.nome_do_material_ou_servico, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.situacao, r.quantidade, formatMoney(r.valor_total_previsto_r)]),
+        headStyles: { fillColor: [32, 68, 93] },
+        styles: { fontSize: 8 }
+    });
+    doc.save('pac_por_item.pdf');
+}
+
+// ============================================================
+// MODAL DETALHE
+// ============================================================
+function abrirModalDetalhe(idx, origem) {
+    const lista = origem === 'orgao' ? orgaoState.resultados : itemState.resultados;
+    const row = lista[idx];
+    if (!row) return;
+    currentModalItem = row;
+    
+    const campos = [
+        { label: 'Código do Órgão', val: row.codigo_do_orgao_do_planejamento_de_solicitacoes },
+        { label: 'Órgão', val: row.nome_do_orgao_do_planejamento_de_solicitacoes },
+        { label: 'Código do Material', val: row.codigo_do_material_ou_servico },
+        { label: 'Material/Serviço', val: row.nome_do_material_ou_servico },
+        { label: 'Descrição', val: row.desc_do_item_de_material_ou_servico },
+        { label: 'Situação', val: row.situacao },
+        { label: 'Grupo', val: row.nome_do_grupo_material_ou_servico },
+        { label: 'Classe', val: row.nome_da_classe_material_ou_servico },
+        { label: 'Elemento de Despesa', val: row.elemento_item_despesa || row.elemento_despesa },
+        { label: 'Procedimento de Contratação', val: row.procedimento_de_contratacao },
+        { label: 'Nº Planejamento', val: row.numero_do_processo_do_planejamento_de_solicitacoes },
+        { label: 'Objeto', val: row.objeto_contratacao },
+        { label: 'Unidade', val: row.descricao_da_unidade_de_aquisicao },
+        { label: 'Quantidade', val: row.quantidade ? formatQtd(row.quantidade) : '-' },
+        { label: 'Valor Unitário', val: row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-' },
+        { label: 'Valor Total', val: row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-' },
+        { label: 'Município', val: row.nome_do_municipio },
+        { label: 'Início da Execução', val: row.inicio_de_execucao_entrega }
+    ];
+    
+    const html = `
+        <div class="row g-2">
+            <div class="col-md-12">
+                <div class="info-section">
+                    <h6>Informações Gerais</h6>
+                    ${campos.slice(0, 8).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${c.label === 'Situação' ? badgeSit(c.val) : esc(c.val) || '-'}</div></div>`).join('')}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-section">
+                    <h6>Processo e Contratação</h6>
+                    ${campos.slice(8, 12).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-section">
+                    <h6>Valores e Execução</h6>
+                    ${campos.slice(12).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
+                </div>
+            </div>
+        </div>`;
+    
+    document.getElementById('modalContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+}
+
+function abrirModalDetalheItem(idx, origem) { abrirModalDetalhe(idx, origem); }
+
+function exportarModalPDF() {
+    if (!currentModalItem) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text(`Detalhe PAC: ${(currentModalItem.nome_do_material_ou_servico || '').substring(0, 50)}`, 14, 15);
+    const dados = [
+        ['Órgão', currentModalItem.nome_do_orgao_do_planejamento_de_solicitacoes],
+        ['Material/Serviço', currentModalItem.nome_do_material_ou_servico],
+        ['Descrição', (currentModalItem.desc_do_item_de_material_ou_servico || '').substring(0, 100)],
+        ['Situação', currentModalItem.situacao],
+        ['Quantidade', currentModalItem.quantidade],
+        ['Valor Unitário', formatMoney(currentModalItem.valor_unitario_previsto_r)],
+        ['Valor Total', formatMoney(currentModalItem.valor_total_previsto_r)]
+    ];
+    doc.autoTable({ startY: 22, head: [['Campo', 'Valor']], body: dados, headStyles: { fillColor: [32, 68, 93] }, styles: { fontSize: 9 } });
+    doc.save(`pac_item_${currentModalItem.codigo_do_material_ou_servico || 'detalhe'}.pdf`);
+}
+
+function exportarModalCSV() {
+    if (!currentModalItem) return;
+    const csv = Papa.unparse([currentModalItem], { delimiter: ';' });
+    baixarArquivo('\uFEFF' + csv, `pac_item_${currentModalItem.codigo_do_material_ou_servico || 'detalhe'}.csv`, 'text/csv');
+}
+
+// ============================================================
+// DOWNLOADS
+// ============================================================
+function renderDownloads() {
+    const metadados = [
+        ['Campo', 'Descrição', 'Tipo'],
+        ['codigo_do_orgao_do_planejamento_de_solicitacoes', 'Código identificador do órgão responsável pelo planejamento', 'Texto'],
+        ['nome_do_orgao_do_planejamento_de_solicitacoes', 'Nome do órgão ou entidade responsável pelo planejamento', 'Texto'],
+        ['codigo_do_material_ou_servico', 'Código identificador do material ou serviço', 'Texto'],
+        ['nome_do_material_ou_servico', 'Nome descritivo do material ou serviço planejado', 'Texto'],
+        ['desc_do_item_de_material_ou_servico', 'Descrição detalhada do item de material ou serviço', 'Texto'],
+        ['situacao', 'Situação atual do item (Planejado, Executado, Cancelado, etc.)', 'Texto'],
+        ['nome_do_grupo_material_ou_servico', 'Grupo de classificação do material ou serviço', 'Texto'],
+        ['nome_da_classe_material_ou_servico', 'Classe de classificação do material ou serviço', 'Texto'],
+        ['elemento_item_despesa', 'Elemento da despesa orçamentária', 'Texto'],
+        ['descricao_da_unidade_de_aquisicao', 'Unidade de medida para aquisição (kg, un, m, etc.)', 'Texto'],
+        ['quantidade', 'Quantidade planejada para aquisição', 'Número (Decimal)'],
+        ['valor_unitario_previsto_r', 'Valor unitário previsto em Reais (R$)', 'Número (Decimal)'],
+        ['valor_total_previsto_r', 'Valor total previsto em Reais (R$)', 'Número (Decimal)'],
+        ['nome_do_municipio', 'Município onde será executada a contratação/entrega', 'Texto'],
+        ['inicio_de_execucao_entrega', 'Data prevista para início da execução ou entrega', 'Data (AAAA-MM-DD)'],
+        ['numero_do_processo_do_planejamento_de_solicitacoes', 'Número do processo administrativo', 'Texto'],
+        ['procedimento_de_contratacao', 'Procedimento licitatório ou contratação direta', 'Texto'],
+        ['objeto_contratacao', 'Descrição do objeto da contratação', 'Texto']
+    ];
+    
+    document.getElementById('downloads-content').innerHTML = `
+    <div class="filter-container" style="text-align:center;">
+        <i class="material-icons" style="font-size:48px;color:#20445d;">cloud_download</i>
+        <h5 style="margin-top:8px;">Portal de Dados Abertos</h5>
+        <p style="color:#6c757d;font-size:13px;">Acesse os dados completos do Plano Anual de Contratações 2026</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://dados.mg.gov.br/" target="_blank" class="btn-pesquisa">
+                <i class="material-icons">open_in_new</i> Portal Dados MG
+            </a>
+            <button class="btn-export" onclick="exportarTudoCSV()">
+                <i class="material-icons">description</i> Baixar CSV Completo
+            </button>
+        </div>
+    </div>
+    
+    <div class="filter-container">
+        <h5 style="margin-bottom:12px;">Metadados - Dicionário de Variáveis</h5>
+        <div style="display:flex;gap:10px;margin-bottom:15px;">
+            <button class="btn-export" onclick="baixarDicionarioCSV()"><i class="material-icons">description</i> CSV</button>
+            <button class="btn-export" onclick="baixarDicionarioPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead><tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
+                <tbody>${metadados.slice(1).map(m => `<tr><td><code>${esc(m[0])}</code></td><td>${esc(m[1])}</td><td>${esc(m[2])}</td></tr>`).join('')}</tbody>
+            </table>
+        </div>
+    </div>`;
+}
+
+function baixarDicionarioCSV() {
+    const linhas = [
+        ['Campo', 'Descrição', 'Tipo'],
+        ['codigo_do_orgao_do_planejamento_de_solicitacoes', 'Código do órgão', 'Texto'],
+        ['nome_do_orgao_do_planejamento_de_solicitacoes', 'Nome do órgão', 'Texto'],
+        ['codigo_do_material_ou_servico', 'Código do material/serviço', 'Texto'],
+        ['nome_do_material_ou_servico', 'Nome do material/serviço', 'Texto'],
+        ['desc_do_item_de_material_ou_servico', 'Descrição do item', 'Texto'],
+        ['situacao', 'Situação', 'Texto'],
+        ['quantidade', 'Quantidade', 'Número'],
+        ['valor_unitario_previsto_r', 'Valor unitário', 'Número'],
+        ['valor_total_previsto_r', 'Valor total', 'Número']
+    ];
+    baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'dicionario_pac.csv', 'text/csv');
+}
+
+function baixarDicionarioPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text('Dicionário de Dados - PAC 2026', 14, 15);
+    doc.autoTable({
+        startY: 25,
+        head: [['Campo', 'Descrição', 'Tipo']],
+        body: [
+            ['codigo_do_orgao...', 'Código do órgão', 'Texto'],
+            ['nome_do_orgao...', 'Nome do órgão', 'Texto'],
+            ['codigo_do_material...', 'Código do material', 'Texto'],
+            ['nome_do_material...', 'Nome do material', 'Texto'],
+            ['desc_do_item...', 'Descrição', 'Texto'],
+            ['situacao', 'Situação', 'Texto'],
+            ['quantidade', 'Quantidade', 'Número'],
+            ['valor_unitario...', 'Valor unitário', 'Número'],
+            ['valor_total...', 'Valor total', 'Número']
+        ],
+        headStyles: { fillColor: [32, 68, 93] },
+        styles: { fontSize: 8 }
+    });
+    doc.save('dicionario_pac.pdf');
+}
+
+function exportarTudoCSV() {
+    const csv = Papa.unparse(dadosCompletos, { delimiter: ';' });
+    baixarArquivo('\uFEFF' + csv, 'pac_2026_completo.csv', 'text/csv');
+}
+
+// ============================================================
+// FUNÇÕES AUXILIARES
+// ============================================================
+function gerarPaginacao(pagAtual, totalPags, fnName) {
+    if (totalPags <= 0) return '';
+    const items = [];
+    items.push(`<li class="page-item ${pagAtual <= 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual - 1});return false;">«</a></li>`);
+    const inicio = Math.max(1, Math.min(pagAtual - 2, Math.max(1, totalPags - 4)));
+    for (let p = inicio; p <= Math.min(inicio + 4, totalPags); p++) {
+        items.push(`<li class="page-item ${p === pagAtual ? 'active' : ''}"><a class="page-link" href="#" onclick="${fnName}(${p});return false;">${p}</a></li>`);
+    }
+    items.push(`<li class="page-item ${pagAtual >= totalPags ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual + 1});return false;">»</a></li>`);
+    return items.join('');
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+async function setupDataAtualizacao() {
+    try {
+        // Tenta buscar a data do último commit do arquivo mais recente (pac_2026.csv)
+        const commitResp = await fetch(`https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data/pac_2026.csv&per_page=1`);
+        if (commitResp.ok) {
+            const commits = await commitResp.json();
+            if (commits && commits.length > 0) {
+                document.getElementById('data-atualizacao-header').textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
+                return;
+            }
+        }
+        // Fallback: lista os arquivos da pasta e pega o mais recente
+        const resp = await fetch(GITHUB_API);
+        if (resp.ok) {
+            const arquivos = await resp.json();
+            const csvFiles = arquivos.filter(f => f.name && f.name.match(/pac_\d{4}\.csv$/i)).sort((a, b) => b.name.localeCompare(a.name));
+            if (csvFiles.length > 0) {
+                const cr = await fetch(`https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data/${csvFiles[0].name}&per_page=1`);
+                if (cr.ok) {
+                    const c2 = await cr.json();
+                    if (c2 && c2.length > 0) {
+                        document.getElementById('data-atualizacao-header').textContent = new Date(c2[0].commit.committer.date).toLocaleDateString('pt-BR');
+                        return;
+                    }
+                }
+            }
+        }
+        document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
+    } catch (e) {
+        document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     setupDataAtualizacao();
-    mostrarLoading(true, 'Carregando dados do PAC 2026…');
+    mostrarLoading(true, 'Carregando dados do PAC 2026...');
     try {
-        dadosCompletos = await carregarDados();
-        dadosFiltrados = [...dadosCompletos];
-        resultadoOrgao = [...dadosCompletos];
-        resultadoItem  = [...dadosCompletos];
-    } catch(e) {
+        const result = await new Promise((resolve, reject) => {
+            Papa.parse(CSV_URL, { download: true, header: true, delimiter: ';', skipEmptyLines: true, complete: resolve, error: reject });
+        });
+        dadosCompletos = result.data;
+        // Marca o ano de referência em cada linha
+        dadosCompletos.forEach(r => { if (!r.ano_referencia) r.ano_referencia = '2026'; });
         mostrarLoading(false);
-        document.getElementById('visao-content').innerHTML = `<div class="filter-container text-center py-5"><i class="material-icons" style="font-size:48px;color:#b93c42">error_outline</i><p class="mt-3 text-muted">Não foi possível carregar os dados. Verifique sua conexão.</p></div>`;
+    } catch (e) {
+        mostrarLoading(false);
+        document.getElementById('visao-content').innerHTML = `<div class="filter-container text-center py-5"><i class="material-icons" style="font-size:48px;color:#b93c42">error_outline</i><p class="mt-3">Não foi possível carregar os dados. Verifique sua conexão.</p></div>`;
         return;
     }
-    mostrarLoading(false);
-
+    
     renderVisaoGeral();
     renderDownloads();
-
-    // Renderiza consultas ao clicar nas abas
-    document.getElementById('orgao-tab').addEventListener('shown.bs.tab', () => {
-        if (!document.getElementById('orgao-content').innerHTML.trim()) renderConsultaOrgao();
-        else renderConsultaOrgao();
+    
+    document.getElementById('orgao-tab').addEventListener('shown.bs.tab', () => renderConsultaOrgao());
+    document.getElementById('item-tab').addEventListener('shown.bs.tab', () => renderConsultaItem());
+    
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#colSelectorOrgao') && !e.target.closest('[onclick*="toggleColSelectorOrgao"]')) {
+            document.getElementById('colSelectorOrgao')?.classList.remove('show');
+        }
+        if (!e.target.closest('#colSelectorItem') && !e.target.closest('[onclick*="toggleColSelectorItem"]')) {
+            document.getElementById('colSelectorItem')?.classList.remove('show');
+        }
     });
-    document.getElementById('item-tab').addEventListener('shown.bs.tab', () => {
-        if (!document.getElementById('item-content').innerHTML.trim()) renderConsultaItem();
-        else renderConsultaItem();
-    });
-
-    // Tooltips
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 });
 
-// ============================================================
-// 14. IFRAME RESIZE OBSERVER
-// ============================================================
-(function () {
+// Iframe resize observer
+(function() {
     function sendHeight() {
         const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 10;
         try { window.parent.postMessage({ iframeHeight: h, iframeResize: true, type: 'resize' }, '*'); } catch(e) {}
