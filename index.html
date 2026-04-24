@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>PAC 2026 - Plano Anual de Contratações | Governo de Minas Gerais</title>
+    <title>PAC 2023–2026 - Plano Anual de Contratações | Governo de Minas Gerais</title>
 
     <!-- Bibliotecas Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -586,8 +586,25 @@
 
 <script>
 // Configuração
-const CSV_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026.csv';
 const GITHUB_API = 'https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/contents/dataset/data';
+const CSV_URLS = [
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial2.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial1.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial4.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial3.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial2.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial1.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial6.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial5.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial4.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial3.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial2.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial1.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial4.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial3.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial2.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial1.csv'
+];
 
 // Estado Global
 let dadosCompletos = [];
@@ -696,7 +713,8 @@ function baixarArquivo(conteudo, nome, tipo) {
 // VISÃO GERAL
 // ============================================================
 let visaoState = {
-    ano: '2026',
+    ano: '',
+    base: '',
     codigoOrgao: '',
     nomeOrgao: '',
     dadosFiltrados: [],
@@ -721,11 +739,14 @@ function getOrgaosAgregados(dados) {
 }
 
 function renderVisaoGeral() {
-    const anos = ['2026'];
+    const anos = ['', '2023', '2024', '2025', '2026'];
+    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
     const orgaosList = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
     
     // Aplicar filtros
     let filtrado = dadosCompletos.filter(r => {
+        if (visaoState.ano && r.ano_referencia !== visaoState.ano) return false;
+        if (visaoState.base && r.base !== visaoState.base) return false;
         if (visaoState.codigoOrgao && r.codigo_do_orgao_do_planejamento_de_solicitacoes !== visaoState.codigoOrgao) return false;
         if (visaoState.nomeOrgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== visaoState.nomeOrgao) return false;
         return true;
@@ -772,7 +793,15 @@ function renderVisaoGeral() {
             <div class="filter-group">
                 <label class="filter-label"><i class="material-icons">calendar_today</i> Ano</label>
                 <select class="form-select modern-select" id="vg-ano">
-                    ${anos.map(a => `<option value="${a}" ${visaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                    <option value="" ${visaoState.ano === '' ? 'selected' : ''}>Todos os anos</option>
+                    ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${visaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label"><i class="material-icons">layers</i> Base</label>
+                <select class="form-select modern-select" id="vg-base">
+                    <option value="" ${visaoState.base === '' ? 'selected' : ''}>Todas as bases</option>
+                    ${basesSet.map(b => `<option value="${esc(b)}" ${visaoState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
                 </select>
             </div>
             <div class="filter-group">
@@ -1001,12 +1030,16 @@ function ordenarVG(col) {
     renderVisaoGeral();
 }
 function aplicarFiltroVG() {
+    visaoState.ano = document.getElementById('vg-ano').value;
+    visaoState.base = document.getElementById('vg-base').value;
     visaoState.codigoOrgao = document.getElementById('vg-codigo-orgao').value;
     visaoState.nomeOrgao = document.getElementById('vg-nome-orgao').value;
     visaoState.currentPage = 1;
     renderVisaoGeral();
 }
 function limparFiltroVG() {
+    visaoState.ano = '';
+    visaoState.base = '';
     visaoState.codigoOrgao = '';
     visaoState.nomeOrgao = '';
     visaoState.searchTerm = '';
@@ -1038,7 +1071,8 @@ function exportarVGPDF() {
 // CONSULTA POR ÓRGÃO
 // ============================================================
 let orgaoState = {
-    ano: '2026',
+    ano: '',
+    base: '',
     orgao: '',
     material: '',
     situacao: '',
@@ -1085,8 +1119,11 @@ function renderConsultaOrgao() {
     const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
     const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
     const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
+    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
     
     let filtrado = dadosCompletos.filter(r => {
+        if (orgaoState.ano && r.ano_referencia !== orgaoState.ano) return false;
+        if (orgaoState.base && r.base !== orgaoState.base) return false;
         if (orgaoState.orgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== orgaoState.orgao) return false;
         if (orgaoState.material && !(r.nome_do_material_ou_servico || '').toLowerCase().includes(orgaoState.material.toLowerCase())) return false;
         if (orgaoState.situacao && r.situacao !== orgaoState.situacao) return false;
@@ -1123,7 +1160,15 @@ function renderConsultaOrgao() {
             <div class="consulta-filter-group">
                 <label class="filter-label">Ano</label>
                 <select class="form-select modern-select" id="co-ano">
-                    <option value="2026">2026</option>
+                    <option value="" ${orgaoState.ano === '' ? 'selected' : ''}>Todos</option>
+                    ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${orgaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Base</label>
+                <select class="form-select modern-select" id="co-base">
+                    <option value="" ${orgaoState.base === '' ? 'selected' : ''}>Todas</option>
+                    ${basesSet.map(b => `<option value="${esc(b)}" ${orgaoState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
                 </select>
             </div>
             <div class="consulta-filter-group">
@@ -1283,6 +1328,8 @@ function ordenarOrgao(col) {
     renderConsultaOrgao();
 }
 function aplicarFiltroOrgao() {
+    orgaoState.ano = document.getElementById('co-ano').value;
+    orgaoState.base = document.getElementById('co-base').value;
     orgaoState.orgao = document.getElementById('co-orgao').value;
     orgaoState.material = document.getElementById('co-material').value;
     orgaoState.situacao = document.getElementById('co-situacao').value;
@@ -1292,6 +1339,8 @@ function aplicarFiltroOrgao() {
     renderConsultaOrgao();
 }
 function limparFiltroOrgao() {
+    orgaoState.ano = '';
+    orgaoState.base = '';
     orgaoState.orgao = '';
     orgaoState.material = '';
     orgaoState.situacao = '';
@@ -1328,7 +1377,8 @@ function exportarOrgaoPDF() {
 // CONSULTA POR ITEM
 // ============================================================
 let itemState = {
-    ano: '2026',
+    ano: '',
+    base: '',
     orgao: '',
     codigoItem: '',
     nomeItem: '',
@@ -1377,8 +1427,11 @@ function renderConsultaItem() {
     const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
     const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
     const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
+    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
     
     let filtrado = dadosCompletos.filter(r => {
+        if (itemState.ano && r.ano_referencia !== itemState.ano) return false;
+        if (itemState.base && r.base !== itemState.base) return false;
         if (itemState.orgao && !(r.nome_do_orgao_do_planejamento_de_solicitacoes || '').toLowerCase().includes(itemState.orgao.toLowerCase())) return false;
         if (itemState.codigoItem && r.codigo_do_material_ou_servico !== itemState.codigoItem) return false;
         if (itemState.nomeItem && !(r.nome_do_material_ou_servico || '').toLowerCase().includes(itemState.nomeItem.toLowerCase())) return false;
@@ -1417,7 +1470,15 @@ function renderConsultaItem() {
             <div class="consulta-filter-group">
                 <label class="filter-label">Ano</label>
                 <select class="form-select modern-select" id="ci-ano">
-                    <option value="2026">2026</option>
+                    <option value="" ${itemState.ano === '' ? 'selected' : ''}>Todos</option>
+                    ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${itemState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                </select>
+            </div>
+            <div class="consulta-filter-group">
+                <label class="filter-label">Base</label>
+                <select class="form-select modern-select" id="ci-base">
+                    <option value="" ${itemState.base === '' ? 'selected' : ''}>Todas</option>
+                    ${basesSet.map(b => `<option value="${esc(b)}" ${itemState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
                 </select>
             </div>
             <div class="consulta-filter-group">
@@ -1581,6 +1642,8 @@ function ordenarItem(col) {
     renderConsultaItem();
 }
 function aplicarFiltroItem() {
+    itemState.ano = document.getElementById('ci-ano').value;
+    itemState.base = document.getElementById('ci-base').value;
     itemState.orgao = document.getElementById('ci-orgao').value;
     itemState.codigoItem = document.getElementById('ci-codigo-item').value;
     itemState.nomeItem = document.getElementById('ci-nome-item').value;
@@ -1592,6 +1655,8 @@ function aplicarFiltroItem() {
     renderConsultaItem();
 }
 function limparFiltroItem() {
+    itemState.ano = '';
+    itemState.base = '';
     itemState.orgao = '';
     itemState.codigoItem = '';
     itemState.nomeItem = '';
@@ -1636,6 +1701,8 @@ function abrirModalDetalhe(idx, origem) {
     currentModalItem = row;
     
     const campos = [
+        { label: 'Ano de Referência', val: row.ano_referencia },
+        { label: 'Base', val: row.base },
         { label: 'Código do Órgão', val: row.codigo_do_orgao_do_planejamento_de_solicitacoes },
         { label: 'Órgão', val: row.nome_do_orgao_do_planejamento_de_solicitacoes },
         { label: 'Código do Material', val: row.codigo_do_material_ou_servico },
@@ -1863,14 +1930,39 @@ async function setupDataAtualizacao() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     setupDataAtualizacao();
-    mostrarLoading(true, 'Carregando dados do PAC 2026...');
+    mostrarLoading(true, 'Carregando dados do PAC 2023–2026...');
     try {
-        const result = await new Promise((resolve, reject) => {
-            Papa.parse(CSV_URL, { download: true, header: true, delimiter: ';', skipEmptyLines: true, complete: resolve, error: reject });
-        });
-        dadosCompletos = result.data;
-        // Marca o ano de referência em cada linha
-        dadosCompletos.forEach(r => { if (!r.ano_referencia) r.ano_referencia = '2026'; });
+        function inferirAno(url) {
+            const m = url.match(/pac_(\d{4})_/);
+            return m ? m[1] : '2026';
+        }
+        function inferirBase(url) {
+            // O campo "base" já vem no CSV; este fallback serve apenas se não vier
+            const m = url.match(/pac_\d{4}_(\w+)\d+\.csv/);
+            return m ? m[1] : 'inicial';
+        }
+        const promises = CSV_URLS.map(url =>
+            new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true, header: true, delimiter: ';', skipEmptyLines: true,
+                    complete: res => {
+                        const ano = inferirAno(url);
+                        const baseDefault = inferirBase(url);
+                        res.data.forEach(r => {
+                            if (!r.ano_referencia) r.ano_referencia = ano;
+                            // Normaliza o campo base: usa o do CSV se presente, senão infere
+                            if (!r.base) r.base = baseDefault;
+                        });
+                        resolve(res.data);
+                    },
+                    error: reject
+                });
+            })
+        );
+        const total = CSV_URLS.length;
+        let done = 0;
+        const allResults = await Promise.all(promises.map(p => p.then(d => { done++; document.querySelector('.loading-progress').textContent = `Carregando dados... (${done}/${total} arquivos)`; return d; })));
+        dadosCompletos = allResults.flat();
         mostrarLoading(false);
     } catch (e) {
         mostrarLoading(false);
