@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>PAC 2023–2026 - Plano Anual de Contratações | Governo de Minas Gerais</title>
 
-    <!-- Bibliotecas Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
@@ -17,6 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
+        /* ==================== VARIÁVEIS DE CORES ==================== */
         :root {
             --primary-dark: #1a3a5c;
             --primary-darker: #0f2a44;
@@ -28,46 +30,85 @@
             --info-blue: #17a2b8;
         }
 
+        /* ==================== RESET E CONFIGURAÇÕES GLOBAIS ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; height: auto; }
+        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; height: auto; min-height: auto; }
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--background-light);
             padding-bottom: 15px;
             overflow-x: hidden;
+            min-height: auto;
+            height: auto;
+            position: relative;
         }
 
-        .main-container { height: auto; min-height: auto; overflow: visible; }
-        .container-fluid { width: 100%; max-width: 88% !important; padding: 0 40px; margin: 0; }
-        .dashboard-container { width: 100%; max-width: 100%; padding: 0 40px; margin: 0 auto; }
+        .main-container { height: auto; min-height: auto; overflow: visible; position: relative; }
 
+        .container {
+            max-width: 88% !important;
+            padding: 0 40px;
+        }
+
+        .tab-content, .tab-pane { width: 100%; height: auto; min-height: auto; overflow: visible; }
+        .table-container { height: auto; min-height: auto; overflow: visible; position: relative; }
+
+        /* ==================== DATA ATUALIZAÇÃO ==================== */
+        .data-atualizacao-container {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .data-atualizacao-box {
+            background: transparent !important;
+            border-radius: 8px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--primary-dark);
+            font-weight: 600;
+            box-shadow: none;
+        }
+
+        .data-atualizacao-box i {
+            font-size: 14px;
+            color: var(--accent-red);
+        }
+
+        /* ==================== FILTROS ==================== */
         .filter-container {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            padding: 24px;
+            margin-bottom: 22px;
             width: 100%;
         }
 
         .filter-label {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: #1a3a5c;
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         }
 
-        .filter-label i { font-size: 14px; color: var(--accent-red); }
+        .filter-label i { font-size: 18px; color: var(--accent-red); }
 
         .form-control, .form-select {
             border: 2px solid #e9ecef;
             border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 13px;
+            padding: 10px 12px;
+            font-size: 16px;
             transition: all 0.3s ease;
+            height: 42px;
             width: 100%;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .form-control:focus, .form-select:focus {
@@ -78,209 +119,161 @@
         .modern-select {
             border: 1.5px solid #dfe5ec !important;
             border-radius: 8px !important;
-            padding: 8px 12px !important;
-            font-size: 13px !important;
+            padding: 10px 12px !important;
+            font-size: 16px !important;
+            height: 42px !important;
+            line-height: 1.5 !important;
             background-color: #fff;
+            transition: all 0.2s ease;
             width: 100%;
         }
 
-        .filters-row, .consulta-filters-row {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-            flex-wrap: wrap;
+        .modern-select:focus {
+            border-color: #1a3a5c !important;
+            box-shadow: 0 0 0 2px rgba(26,58,92,0.1);
         }
 
-        .filter-group, .consulta-filter-group {
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .consulta-filter-group { flex: 1 1 calc(20% - 15px); min-width: 180px; }
-
-        .btn-pesquisa {
-            background: linear-gradient(to right, #20445d, #20445d);
-            border: none;
-            padding: 8px 20px;
-            font-weight: 600;
-            border-radius: 6px;
-            font-size: 13px;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .btn-pesquisa:hover {
-            background: linear-gradient(to right, var(--accent-red), #a32c32);
-            color: white;
-        }
-
-        .btn-secondary-custom {
-            background: white;
-            border: 2px solid var(--primary-darker);
-            color: var(--primary-darker);
-            padding: 8px 20px;
-            font-weight: 600;
-            font-size: 13px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-secondary-custom:hover {
-            background-color: #132837;
-            color: white;
-            border-color: #132837;
-        }
-
-        .btn-export {
-            background: transparent;
-            border: 1px solid #d6dee6;
-            color: #1a3a5c;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
-
-        .btn-export:hover {
-            background-color: #1a3a5c;
-            border-color: #1a3a5c;
-            color: #ffffff;
-        }
-
-        .btn-action {
-            padding: 4px;
-            border-radius: 7px;
-            border: 1.5px solid #1a3a5c;
-            background-color: #ffffff;
-            color: #1a3a5c;
-            width: 32px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .btn-action:hover {
-            background-color: #1a3a5c;
-            color: #ffffff;
-        }
-
-        .btn-topo {
-            background: #eeeff5;
-            color: #1a3a5c;
-            border: 1px solid #d6dee6;
-            border-radius: 12px;
-            padding: 6px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
-
-        .btn-topo:hover {
-            background-color: #1a3a5c;
-            color: #ffffff;
-        }
-
+        /* ==================== CARDS DE MÉTRICAS ==================== */
         .metric-card {
-            background: white;
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: 10px;
             border: 1px solid #e5e9ef;
             box-shadow: 0 3px 12px rgba(0,0,0,0.06);
             overflow: hidden;
-            height: 100%;
+            min-height: 90px;
         }
 
         .metric-header {
             background: #20445d;
-            color: white;
-            font-size: 12px;
+            color: #ffffff;
+            font-size: 18px;
             font-weight: 600;
-            padding: 10px 15px;
+            padding: 8px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .metric-body { padding: 12px 15px; }
-        .metric-value { font-size: 20px; font-weight: 700; color: #171c21; }
-        .metric-sublabel { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+        .metric-header i { font-size: 18px; color: #ffffff; }
 
+        .metric-body { padding: 12px 14px; }
+
+        .metric-value {
+            font-size: 22px;
+            font-weight: 500;
+            color: #171c21;
+            line-height: 1.2;
+        }
+
+        .metric-subtitle { font-size: 14px; color: #4b5563; margin-top: 6px; }
+
+        /* ==================== CONTAINER DE GRÁFICOS ==================== */
         .chart-container {
             background: white;
             border-radius: 10px;
+            padding: 20px;
+            overflow: auto;
             box-shadow: 0 3px 12px rgba(0,0,0,0.06);
             margin-bottom: 20px;
-            overflow: hidden;
+            height: 100%;
+            min-height: 240px;
         }
+
+        .chart-container canvas { max-width: 100%; }
 
         .chart-header {
             background: #20445d;
             color: white;
-            padding: 12px 16px;
+            padding: 10px 15px;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 15px -20px;
         }
 
-        .chart-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin: 0;
-        }
+        .chart-title { font-size: 18px; font-weight: 600; color: white; margin: 0; }
 
         .chart-wrapper {
-            height: 320px;
-            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 280px;
         }
 
-        .table-container {
-            overflow-x: auto;
+        /* ==================== TABELAS ==================== */
+        .table-fixed-header-container {
             position: relative;
+            overflow: auto;
+            width: 100%;
+            max-height: 600px;
+        }
+
+        .table-fixed-header-container thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #5c7387 !important;
         }
 
         .table {
             width: 100%;
-            font-size: 12px;
+            font-size: 15px;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
-        .table th {
-            background-color: #54697b;
-            color: white;
-            padding: 10px 8px;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            border: 1px solid #6c8aa3;
-            cursor: pointer;
-            white-space: nowrap;
-        }
+        .table th, .table td { border: 1px solid #d6dee6; }
 
-        .table td {
-            padding: 8px;
-            border: 1px solid #dee2e6;
+        .table thead th {
+            background: #5c7387 !important;
+            color: #ffffff !important;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            padding: 16px 14px;
+            height: 56px;
             vertical-align: middle;
+            text-transform: uppercase;
+            border-right: 1px solid #2f4354;
+            border-left: none;
+            border-top: none;
+            border-bottom: none;
+            white-space: nowrap;
+            cursor: pointer;
         }
 
-        .table tbody tr:hover { background-color: rgba(41,67,90,0.04); }
+        .table thead th:last-child { border-right: none; }
+        .table thead th:first-child { border-top-left-radius: 8px; }
+        .table thead th:last-child { border-top-right-radius: 8px; }
 
+        .table thead th:hover { background-color: #4a6070 !important; }
+
+        .table tbody td {
+            padding: 12px 10px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e5e9ef;
+        }
+
+        .table tbody tr { background-color: #ffffff; }
+        .table tbody tr:hover { background-color: #f7f8fa; }
+
+        .table tfoot { position: sticky; bottom: 0; z-index: 20; }
+        .table tfoot tr { background-color: #dfe3e8 !important; }
         .table tfoot td {
-            background-color: #dfe3e8;
-            font-weight: 700;
+            background-color: #dfe3e8 !important;
+            padding: 20px 12px !important;
+            height: 64px;
+            vertical-align: middle;
+            font-weight: 500 !important;
+            color: #132837 !important;
+            font-size: 15px;
         }
 
+        .sort-icon { font-size: 14px; margin-left: 6px; color: rgba(255,255,255,0.9); vertical-align: middle; position: relative; top: -1px; }
+
+        /* ==================== BADGES DE SITUAÇÃO ==================== */
         .badge-sit {
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             display: inline-block;
         }
@@ -290,63 +283,279 @@
         .badge-cancelado { background: #fde8ea; color: #8b1a22; border: 1px solid #f5b8bc; }
         .badge-outro { background: #f0f2f5; color: #4a5568; border: 1px solid #dce3ec; }
 
+        /* ==================== NAVEGAÇÃO ==================== */
+        .nav-tabs-container {
+            background: transparent;
+            padding: 10px 0;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
         .nav-tabs {
-            border: none;
+            border: none !important;
             gap: 10px;
-            flex-wrap: wrap;
+            width: 100%;
         }
 
         .nav-tabs .nav-link {
-            border: none;
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 8px 18px;
+            border: none !important;
+            background: #ffffff !important;
+            border-radius: 10px !important;
+            padding: 8px 18px !important;
             font-weight: 500;
-            font-size: 13px;
-            color: #1a3a5c;
+            font-size: 18px;
+            color: #1a3a5c !important;
+            display: inline-flex !important;
+            align-items: center;
+            gap: 6px;
+            transition: all .25s ease;
+        }
+
+        .nav-tabs .nav-link:hover { background: #e6e9ed !important; }
+
+        .nav-tabs .nav-link.active {
+            background: #234c63 !important;
+            color: #fff !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .nav-tabs .material-icons { font-size: 18px !important; }
+
+        /* ==================== BOTÕES ==================== */
+        .btn-search-custom {
+            background: #1f4864;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 10px 20px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+            transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-search-custom:hover {
+            background: #b83239 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(184,50,57,0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-search-custom:active { transform: translateY(0); }
+
+        .btn-secondary-custom {
+            background: white;
+            border: 2px solid var(--primary-darker);
+            color: var(--primary-darker);
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 18px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+            height: 42px;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        .nav-tabs .nav-link.active {
-            background: #234c63;
-            color: #fff;
+        .btn-secondary-custom:hover {
+            background-color: #132837 !important;
+            color: white !important;
+            border-color: #132837 !important;
         }
 
-        .toolbar {
+        .btn-export {
+            appearance: none;
+            -webkit-appearance: none;
+            background: transparent !important;
+            border: 1px solid #d6dee6;
+            color: #1a3a5c;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            height: 28px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-export i { font-size: 14px !important; }
+
+        .btn-export:hover {
+            background-color: #1a3a5c !important;
+            border-color: #1a3a5c !important;
+            color: #ffffff !important;
+        }
+
+        .btn-action {
+            padding: 6px;
+            border-radius: 8px;
+            border: 1.5px solid #1a3a5c;
+            background-color: #ffffff;
+            color: #1a3a5c;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-action:hover { background-color: #1a3a5c; color: #ffffff; }
+
+        /* ==================== ACTIONS / TOOLBAR ==================== */
+        .actions-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-wrap: nowrap;
+            width: 100%;
+            gap: 15px;
         }
 
-        .toolbar-left, .toolbar-right {
+        .export-buttons { display: flex; align-items: center; gap: 8px; }
+
+        .right-aligned-container {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: auto;
         }
 
+        /* ==================== BUSCA NA TABELA ==================== */
         .table-search-container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             background: #ffffff;
             border: 1px solid #d6dee6;
-            border-radius: 8px;
-            padding: 4px 10px;
+            border-radius: 10px;
+            padding: 0 14px;
+            height: 40px;
+            min-width: 220px;
+            max-width: 220px;
+            box-sizing: border-box;
         }
 
         .table-search-input {
-            border: none;
+            border: none !important;
             outline: none;
             background: transparent;
-            font-size: 12px;
-            width: 200px;
+            font-size: 14px;
+            width: 100%;
+            color: #94a3b8;
+            margin: 0 10px;
+            font-family: 'Montserrat', sans-serif;
         }
 
+        .table-search-input::placeholder { color: #94a3b8; }
+        .table-search-container:hover { border-color: #1a3a5c; background: #ffffff; }
+        .table-search-container i { font-size: 16px; color: #1a3a5c; display: flex; align-items: center; }
+
+        .search-icon { font-size: 13px !important; color: #9ca3af !important; display: flex; align-items: center; justify-content: center; cursor: default; }
+
+        /* ==================== TABLE BADGE ==================== */
+        .table-badge {
+            background: #1a3a5c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ==================== PAGINAÇÃO ==================== */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 20px;
+            width: 100%;
+        }
+
+        .pagination-info {
+            font-size: 16px;
+            font-weight: 500;
+            color: #5c7387;
+            line-height: 1;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            border: 1px solid #d6dee6;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 0 0 0.5px #d6dee6;
+        }
+
+        .pagination .page-link {
+            width: 46px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-right: 1px solid #d6dee6;
+            background: #ffffff;
+            color: #9aa5b1;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .pagination .page-item:last-child .page-link { border-right: none; }
+        .pagination .page-link:hover { background: #e7eaee; color: #173d59; }
+        .pagination .page-item.active .page-link { background: #173d59; color: white; }
+
+        .items-per-page {
+            height: 48px;
+            min-width: 88px;
+            border-radius: 14px;
+            border: 1px solid #d7dde3;
+            background-color: #ffffff;
+            color: #4e6478;
+            font-size: 14px;
+            font-weight: 200;
+            padding: 0 36px 0 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 0 0 0.3px #bfc1c4;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%235c7387' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* ==================== SELETOR DE COLUNAS ==================== */
         .column-selector-popup {
             display: none;
             position: absolute;
@@ -359,54 +568,36 @@
             min-width: 220px;
             max-height: 300px;
             overflow-y: auto;
+            right: 0;
+            top: 100%;
+            margin-top: 4px;
         }
 
         .column-selector-popup.show { display: block; }
 
         .column-selector-popup label {
             display: block;
-            padding: 4px 8px;
+            padding: 6px 8px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 14px;
+            border-radius: 4px;
         }
 
         .column-selector-popup label:hover { background: #f0f6fb; }
 
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #dee2e6;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        /* ==================== MODAL ==================== */
+        .modal-full-custom { max-width: 80% !important; width: 80% !important; }
 
-        .pagination .page-link {
-            color: var(--primary-dark);
-            font-size: 12px;
-            padding: 4px 10px;
-        }
-
-        .items-per-page {
-            height: 34px;
-            min-width: 80px;
-            border-radius: 8px;
-            border: 1px solid #d6dee6;
-            padding: 4px 8px;
-            font-size: 12px;
-        }
-
-        .modal-full-custom { max-width: 85% !important; width: 85% !important; }
-        
         .modal-creative .modal-header {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: white;
+            color: white !important;
+            padding: 20px 30px;
+            border-bottom: none;
         }
 
-        .modal-creative .modal-header .modal-title { color: white; font-weight: 600; font-size: 14px; }
-        .modal-creative .modal-header .btn-close { filter: brightness(0) invert(1); }
+        .modal-creative .modal-header .modal-title { color: white !important; font-weight: 600; font-size: 1.25rem; }
+        .modal-creative .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 1; }
+        .modal-creative .modal-header .btn-close:hover { opacity: 0.8; }
 
         .info-section {
             background: #f8fafd;
@@ -420,7 +611,7 @@
             font-weight: 700;
             color: #1a3a5c;
             margin-bottom: 8px;
-            font-size: 11px;
+            font-size: 12px;
             text-transform: uppercase;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 6px;
@@ -428,25 +619,14 @@
 
         .info-row {
             display: flex;
-            padding: 5px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #f0f4f8;
         }
 
-        .info-label-modal {
-            width: 35%;
-            font-weight: 600;
-            color: #64748b;
-            font-size: 11px;
-        }
+        .info-label-modal { width: 35%; font-weight: 600; color: #64748b; font-size: 13px; }
+        .info-value-modal { width: 65%; color: #1e293b; font-size: 13px; font-weight: 500; word-break: break-word; }
 
-        .info-value-modal {
-            width: 65%;
-            color: #1e293b;
-            font-size: 11px;
-            font-weight: 500;
-            word-break: break-word;
-        }
-
+        /* ==================== LOADING ==================== */
         .loading-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -457,8 +637,12 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            gap: 12px;
         }
 
+        .loading-progress { font-size: 14px; color: #20445d; font-weight: 600; }
+
+        /* ==================== TOAST ==================== */
         .toast-sucesso {
             position: fixed;
             bottom: 30px;
@@ -467,29 +651,78 @@
             background: #e6f4ea;
             color: #1e4620;
             border-radius: 12px;
-            padding: 12px 20px;
+            padding: 14px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             z-index: 9999;
+            min-width: 250px;
         }
 
+        .toast-content { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; gap: 10px; }
+        .toast-content i { color: #28a745; font-size: 22px; }
+        .toast-close { cursor: pointer; font-size: 18px; margin-left: 10px; }
+
+        /* ==================== BTN TOPO ==================== */
+        #btnTopo {
+            position: static;
+            background: transparent;
+            color: #1a3a5c;
+            border: 1px solid #1a3a5c;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #btnTopo:hover { background-color: #1a3a5c; color: #ffffff; border-color: #1a3a5c; }
+
+        /* ==================== UTILITÁRIOS ==================== */
         .money-val { font-weight: 600; color: #1a3a5c; }
         .money-total { font-weight: 700; color: #0f6b3a; }
+        .orgao-link { color: #006a82; text-decoration: none; font-weight: 500; cursor: pointer; }
         .orgao-link:hover { color: var(--accent-red) !important; text-decoration: underline !important; }
 
+        .botoes-abaixo { margin-top: 15px; display: flex; gap: 10px; }
+
+        /* Fonte global */
+        body, button, input, select, textarea, span, div { font-family: 'Montserrat', sans-serif !important; }
+        .material-icons { font-family: 'Material Icons' !important; }
+        .fa, .fas, .far, .fab { font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands' !important; }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 992px) { .container { padding: 0 15px; } }
+
         @media (max-width: 768px) {
-            .container-fluid, .dashboard-container { padding: 0 15px; }
-            .filter-group, .consulta-filter-group { min-width: 100%; }
-            .modal-full-custom { max-width: 95% !important; width: 95% !important; }
+            .actions-container { flex-direction: column; align-items: flex-start; }
+            .right-aligned-container { margin-left: 0; }
+        }
+
+        code {
+            font-family: monospace !important;
+            background: #f0f4f8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
         }
     </style>
 </head>
-<body>
+<body class="iframe-mode">
 
 <div class="main-container">
-    <div class="container-fluid dashboard-container">
+    <div class="container">
 
         <!-- Navegação por abas -->
-        <div class="nav-tabs-container" style="margin-top: 15px; margin-bottom: 15px;">
+        <div class="nav-tabs-container">
             <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="visao-tab" data-bs-toggle="tab" data-bs-target="#visao">
@@ -515,9 +748,9 @@
         </div>
 
         <!-- Data de atualização -->
-        <div class="data-atualizacao-container" style="margin: 10px 0;">
-            <div style="background: transparent; padding: 5px 0; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--primary-dark); font-weight: 600;">
-                <i class="material-icons" style="font-size: 14px;">event</i>
+        <div class="data-atualizacao-container">
+            <div class="data-atualizacao-box">
+                <i class="material-icons">event</i>
                 Data de atualização: <span id="data-atualizacao-header">carregando...</span>
             </div>
         </div>
@@ -554,63 +787,159 @@
             <div class="modal-body" id="modalContent"></div>
             <div class="modal-footer" style="gap:8px;">
                 <button type="button" class="btn-export" onclick="exportarModalPDF()">
-                    <i class="material-icons">picture_as_pdf</i> PDF
+                    <i class="fas fa-file-pdf"></i> PDF
                 </button>
                 <button type="button" class="btn-export" onclick="exportarModalCSV()">
-                    <i class="material-icons">description</i> CSV
+                    <i class="fas fa-file-csv"></i> CSV
                 </button>
                 <button type="button" class="btn-export" onclick="copiarLinkModal()">
-                    <i class="material-icons">link</i> Copiar Link
+                    <i class="fas fa-link"></i> Copiar Link
                 </button>
                 <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">
-                    <i class="material-icons">close</i> Fechar
+                    <i class="fas fa-times"></i> Fechar
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="toastSucesso" class="toast-sucesso" style="display:none;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="material-icons">check_circle</i>
-        <span>Link copiado para área de transferência!</span>
+<!-- Toast -->
+<div class="toast-sucesso" id="toastSucesso">
+    <div class="toast-content">
+        <i class="fas fa-check-circle"></i>
+        <div><strong>Sucesso!</strong><br>Link copiado para área de transferência</div>
+        <span class="toast-close" onclick="fecharToast()"><i class="fas fa-times"></i></span>
     </div>
 </div>
 
+<!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay" style="display:none;">
-    <div class="spinner-border" style="color:#20445d;"></div>
+    <div class="spinner-border" style="color:#20445d; width:3rem; height:3rem;"></div>
     <div class="loading-progress" style="margin-top:10px;">Carregando dados...</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// Configuração
+// ============================================================
+// CONFIGURAÇÃO — carrega APENAS 2026 na inicialização
+// ============================================================
 const GITHUB_API = 'https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/contents/dataset/data';
-const CSV_URLS = [
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial2.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial1.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial4.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial3.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial2.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial1.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial6.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial5.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial4.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial3.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial2.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial1.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial4.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial3.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial2.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial1.csv'
-];
 
-// Estado Global
-let dadosCompletos = [];
+// Todos os CSVs agrupados por ano
+const CSV_BY_YEAR = {
+    '2026': [
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial2.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial1.csv'
+    ],
+    '2025': [
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial4.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial3.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial2.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial1.csv'
+    ],
+    '2024': [
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial6.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial5.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial4.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial3.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial2.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2024_inicial1.csv'
+    ],
+    '2023': [
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial4.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial3.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial2.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_inicial1.csv'
+    ]
+};
+
+// Estado dos dados carregados por ano (cache)
+const dadosPorAno = {};  // { '2026': [...], '2025': [...], ... }
+let dadosCompletos = []; // dados do(s) ano(s) carregado(s) — visíveis nas tabelas/filtros
+let dadosParaGraficoAnos = {}; // { ano: valorTotal } — alimentado conforme anos são carregados
 let currentModalItem = null;
+let anosCarregados = new Set();
 
-// Mapeamento de siglas dos órgãos
+function mostrarLoading(show, msg) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    if (msg) document.querySelector('.loading-progress').textContent = msg;
+}
+
+function mostrarToast() {
+    const t = document.getElementById('toastSucesso');
+    t.style.display = 'flex';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+function fecharToast() { document.getElementById('toastSucesso').style.display = 'none'; }
+function copiarLink() { navigator.clipboard.writeText(window.location.href).then(() => mostrarToast()); }
+function copiarLinkModal() { navigator.clipboard.writeText(window.location.href).then(() => mostrarToast()); }
+
+function voltarAoTopo() {
+    try { if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// CARREGAMENTO LAZY POR ANO
+// ============================================================
+async function carregarAno(ano) {
+    if (anosCarregados.has(ano)) return dadosPorAno[ano];
+
+    const urls = CSV_BY_YEAR[ano] || [];
+    if (!urls.length) return [];
+
+    const promises = urls.map(url =>
+        new Promise((resolve, reject) => {
+            Papa.parse(url, {
+                download: true, header: true, delimiter: ';', skipEmptyLines: true,
+                complete: res => {
+                    res.data.forEach(r => {
+                        if (!r.ano_referencia) r.ano_referencia = ano;
+                        if (!r.base) {
+                            const m = url.match(/pac_\d{4}_(\w+)\d+\.csv/);
+                            r.base = m ? m[1] : 'inicial';
+                        }
+                    });
+                    resolve(res.data);
+                },
+                error: reject
+            });
+        })
+    );
+
+    const results = await Promise.all(promises);
+    const dados = results.flat();
+    dadosPorAno[ano] = dados;
+    anosCarregados.add(ano);
+
+    // Acumula para o gráfico por ano
+    const soma = dados.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0), 0);
+    dadosParaGraficoAnos[ano] = (dadosParaGraficoAnos[ano] || 0) + soma;
+
+    return dados;
+}
+
+async function garantirAnosCarregados(anosNecessarios) {
+    const pendentes = anosNecessarios.filter(a => !anosCarregados.has(a));
+    if (!pendentes.length) return;
+
+    mostrarLoading(true, `Carregando dados de ${pendentes.join(', ')}...`);
+    await Promise.all(pendentes.map(a => carregarAno(a)));
+    mostrarLoading(false);
+
+    // Recalcula dadosCompletos com todos os anos carregados
+    recalcularDadosCompletos();
+}
+
+function recalcularDadosCompletos() {
+    dadosCompletos = Object.values(dadosPorAno).flat();
+}
+
+// ============================================================
+// MAPEAMENTO DE SIGLAS
+// ============================================================
 const siglasOrgaos = {
     'Secretaria de Estado de Planejamento e Gestão': 'SEPLAG',
     'Secretaria de Estado de Fazenda': 'SEF',
@@ -634,7 +963,7 @@ function getSiglaOrgao(nome) {
 }
 
 function formatMoney(v) {
-    const n = parseFloat(String(v).replace(',','.')) || 0;
+    const n = parseFloat(String(v || '0').replace(',','.')) || 0;
     return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
@@ -652,49 +981,32 @@ function badgeSit(sit) {
     if (!sit) return '<span class="badge-sit badge-outro">-</span>';
     const s = sit.toUpperCase();
     if (s.includes('PLANEJADO') || s.includes('PENDENTE')) return `<span class="badge-sit badge-planejado">${esc(sit)}</span>`;
-    if (s.includes('EXECUTADO') || s.includes('CONCLUÍDO')) return `<span class="badge-sit badge-executado">${esc(sit)}</span>`;
+    if (s.includes('EXECUTADO') || s.includes('CONCLUÍDO') || s.includes('CONCLUIDO')) return `<span class="badge-sit badge-executado">${esc(sit)}</span>`;
     if (s.includes('CANCELADO')) return `<span class="badge-sit badge-cancelado">${esc(sit)}</span>`;
     return `<span class="badge-sit badge-outro">${esc(sit)}</span>`;
 }
 
-function mostrarLoading(show, msg) {
-    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-    if (msg) document.querySelector('.loading-progress').textContent = msg;
-}
-
-function mostrarToast() {
-    const t = document.getElementById('toastSucesso');
-    t.style.display = 'flex';
-    setTimeout(() => { t.style.display = 'none'; }, 3000);
-}
-
-function copiarLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => mostrarToast());
-}
-
-function copiarLinkModal() {
-    navigator.clipboard.writeText(window.location.href).then(() => mostrarToast());
-}
-
-function voltarAoTopo() {
-    try { if (window.parent && window.parent !== window) window.parent.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+function gerarPaginacao(pagAtual, totalPags, fnName) {
+    if (totalPags <= 0) return '';
+    let html = '';
+    html += `<li class="page-item ${pagAtual <= 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual - 1});return false;">«</a></li>`;
+    const inicio = Math.max(1, Math.min(pagAtual - 2, Math.max(1, totalPags - 4)));
+    for (let p = inicio; p <= Math.min(inicio + 4, totalPags); p++) {
+        html += `<li class="page-item ${p === pagAtual ? 'active' : ''}"><a class="page-link" href="#" onclick="${fnName}(${p});return false;">${p}</a></li>`;
+    }
+    html += `<li class="page-item ${pagAtual >= totalPags ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual + 1});return false;">»</a></li>`;
+    return html;
 }
 
 function irParaOrgao(nomeOrgao) {
-    // Ativa aba "Consulta por Órgão"
     const tab = document.getElementById('orgao-tab');
     if (tab) {
         bootstrap.Tab.getOrCreateInstance(tab).show();
-        // Aguarda render e aplica filtro
         orgaoState.orgao = nomeOrgao;
         orgaoState.currentPage = 1;
         orgaoState.searchTerm = '';
         setTimeout(() => {
             renderConsultaOrgao();
-            // Seleciona o valor no select após render
             const sel = document.getElementById('co-orgao');
             if (sel) sel.value = nomeOrgao;
         }, 150);
@@ -713,16 +1025,9 @@ function baixarArquivo(conteudo, nome, tipo) {
 // VISÃO GERAL
 // ============================================================
 let visaoState = {
-    ano: '',
-    base: '',
-    codigoOrgao: '',
-    nomeOrgao: '',
-    dadosFiltrados: [],
-    sortCol: 'nome_orgao',
-    sortDir: 'asc',
-    currentPage: 1,
-    pageSize: 25,
-    searchTerm: ''
+    ano: '2026', base: '', codigoOrgao: '', nomeOrgao: '',
+    dadosFiltrados: [], sortCol: 'nome', sortDir: 'asc',
+    currentPage: 1, pageSize: 25, searchTerm: ''
 };
 
 function getOrgaosAgregados(dados) {
@@ -730,7 +1035,7 @@ function getOrgaosAgregados(dados) {
     for (const row of dados) {
         const nome = row.nome_do_orgao_do_planejamento_de_solicitacoes || 'Não informado';
         const cod = row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-';
-        const val = parseFloat(String(row.valor_total_previsto_r).replace(',','.')) || 0;
+        const val = parseFloat(String(row.valor_total_previsto_r || '0').replace(',','.')) || 0;
         if (!map.has(nome)) map.set(nome, { cod, nome, qtd: 0, valor: 0, sigla: getSiglaOrgao(nome) });
         const o = map.get(nome);
         o.qtd++; o.valor += val;
@@ -739,211 +1044,226 @@ function getOrgaosAgregados(dados) {
 }
 
 function renderVisaoGeral() {
-    const anos = ['', '2023', '2024', '2025', '2026'];
-    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
-    const orgaosList = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
-    
-    // Aplicar filtros
-    let filtrado = dadosCompletos.filter(r => {
+    const dadosAtivos = dadosCompletos;
+    const basesSet = [...new Set(dadosAtivos.map(r => r.base).filter(Boolean))].sort();
+    const orgaosList = [...new Set(dadosAtivos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+
+    let filtrado = dadosAtivos.filter(r => {
         if (visaoState.ano && r.ano_referencia !== visaoState.ano) return false;
         if (visaoState.base && r.base !== visaoState.base) return false;
         if (visaoState.codigoOrgao && r.codigo_do_orgao_do_planejamento_de_solicitacoes !== visaoState.codigoOrgao) return false;
         if (visaoState.nomeOrgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== visaoState.nomeOrgao) return false;
         return true;
     });
-    
+
     visaoState.dadosFiltrados = filtrado;
-    const orgaos = getOrgaosAgregados(filtrado);
-    
-    // Aplicar busca rápida
-    let filteredOrgaos = orgaos;
+    let orgaos = getOrgaosAgregados(filtrado);
+
     if (visaoState.searchTerm) {
         const term = visaoState.searchTerm.toLowerCase();
-        filteredOrgaos = orgaos.filter(o => o.nome.toLowerCase().includes(term) || o.cod.toLowerCase().includes(term));
+        orgaos = orgaos.filter(o => o.nome.toLowerCase().includes(term) || o.cod.toLowerCase().includes(term));
     }
-    
-    // Ordenar
-    filteredOrgaos.sort((a, b) => {
+
+    orgaos.sort((a, b) => {
         let va = visaoState.sortCol === 'nome' ? a.nome : visaoState.sortCol === 'qtd' ? a.qtd : a.valor;
         let vb = visaoState.sortCol === 'nome' ? b.nome : visaoState.sortCol === 'qtd' ? b.qtd : b.valor;
         if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
         return visaoState.sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
     });
-    
-    const totalOrgaos = filteredOrgaos.length;
+
+    const totalOrgaos = orgaos.length;
     const totalPags = Math.ceil(totalOrgaos / visaoState.pageSize) || 1;
     visaoState.currentPage = Math.min(visaoState.currentPage, totalPags);
-    const pagina = filteredOrgaos.slice((visaoState.currentPage - 1) * visaoState.pageSize, visaoState.currentPage * visaoState.pageSize);
-    
+    const pagina = orgaos.slice((visaoState.currentPage - 1) * visaoState.pageSize, visaoState.currentPage * visaoState.pageSize);
+
     const totalItens = filtrado.length;
-    const somaValor = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+    const somaValor = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0), 0);
     const mediaPorItem = totalItens ? somaValor / totalItens : 0;
-    
-    // Top 12 órgãos para o gráfico
-    const top12Orgaos = [...orgaos].sort((a, b) => b.valor - a.valor).slice(0, 12);
-    
+    const top12Orgaos = [...getOrgaosAgregados(filtrado)].sort((a, b) => b.valor - a.valor).slice(0, 12);
+
     function sortIcon(col) {
-        if (visaoState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
-        return visaoState.sortDir === 'asc' ? '<i class="material-icons" style="font-size:14px">arrow_upward</i>' : '<i class="material-icons" style="font-size:14px">arrow_downward</i>';
+        if (visaoState.sortCol !== col) return '<i class="bi bi-chevron-expand sort-icon"></i>';
+        return visaoState.sortDir === 'asc' ? '<i class="bi bi-chevron-up sort-icon"></i>' : '<i class="bi bi-chevron-down sort-icon"></i>';
     }
-    
+
     const html = `
     <div class="filter-container">
-        <div class="filters-row">
-            <div class="filter-group">
-                <label class="filter-label"><i class="material-icons">calendar_today</i> Ano</label>
-                <select class="form-select modern-select" id="vg-ano">
-                    <option value="" ${visaoState.ano === '' ? 'selected' : ''}>Todos os anos</option>
-                    ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${visaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
-                </select>
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <div class="mb-3">
+                    <label class="filter-label"><i class="fas fa-calendar-alt"></i> Ano</label>
+                    <select class="form-select modern-select" id="vg-ano">
+                        <option value="" ${visaoState.ano === '' ? 'selected' : ''}>Todos os anos</option>
+                        ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${visaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label class="filter-label"><i class="material-icons">layers</i> Base</label>
-                <select class="form-select modern-select" id="vg-base">
-                    <option value="" ${visaoState.base === '' ? 'selected' : ''}>Todas as bases</option>
-                    ${basesSet.map(b => `<option value="${esc(b)}" ${visaoState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
-                </select>
+            <div class="col-md-3 col-6">
+                <div class="mb-3">
+                    <label class="filter-label"><i class="fas fa-layer-group"></i> Base</label>
+                    <select class="form-select modern-select" id="vg-base">
+                        <option value="" ${visaoState.base === '' ? 'selected' : ''}>Todas as bases</option>
+                        ${basesSet.map(b => `<option value="${esc(b)}" ${visaoState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label class="filter-label"><i class="material-icons">code</i> Código do Órgão</label>
-                <input type="text" class="form-control" id="vg-codigo-orgao" placeholder="Digite o código do órgão" value="${esc(visaoState.codigoOrgao)}">
+            <div class="col-md-3 col-6">
+                <div class="mb-3">
+                    <label class="filter-label"><i class="fas fa-code"></i> Código do Órgão</label>
+                    <input type="text" class="form-control" id="vg-codigo-orgao" placeholder="Digite o código" value="${esc(visaoState.codigoOrgao)}">
+                </div>
             </div>
-            <div class="filter-group">
-                <label class="filter-label"><i class="material-icons">business</i> Nome do Órgão</label>
-                <select class="form-select modern-select" id="vg-nome-orgao">
-                    <option value="">Todos os Órgãos</option>
-                    ${orgaosList.map(o => `<option value="${esc(o)}" ${visaoState.nomeOrgao === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
-                </select>
+            <div class="col-md-3 col-6">
+                <div class="mb-3">
+                    <label class="filter-label"><i class="fas fa-building"></i> Nome do Órgão</label>
+                    <select class="form-select modern-select" id="vg-nome-orgao">
+                        <option value="">Todos os Órgãos</option>
+                        ${orgaosList.map(o => `<option value="${esc(o)}" ${visaoState.nomeOrgao === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+                    </select>
+                </div>
             </div>
         </div>
-        <div class="botoes-abaixo" style="margin-top:15px; display:flex; gap:10px;">
-            <button class="btn-pesquisa" onclick="aplicarFiltroVG()">
-                <i class="material-icons">search</i> Pesquisar
+        <div class="d-flex gap-3 flex-wrap">
+            <button class="btn-search-custom" onclick="aplicarFiltroVG()">
+                <i class="fas fa-search"></i> Pesquisar
             </button>
             <button class="btn-secondary-custom" onclick="limparFiltroVG()">
-                <i class="material-icons">clear</i> Limpar
+                <i class="fas fa-times"></i> Limpar Filtros
             </button>
         </div>
     </div>
-    
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
+
+    <div class="row mb-4" id="summaryCardsVG">
+        <div class="col-md-3 col-6">
             <div class="metric-card">
-                <div class="metric-header">Total de Itens</div>
+                <div class="metric-header">
+                    Total de Itens
+                    <i class="material-icons" data-bs-toggle="tooltip" title="Quantidade total de itens no período selecionado">info_outline</i>
+                </div>
                 <div class="metric-body">
                     <div class="metric-value">${totalItens.toLocaleString('pt-BR')}</div>
-                    <div class="metric-sublabel">${orgaos.length} órgãos</div>
+                    <div class="metric-subtitle">${orgaos.length} órgão(s)</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-md-3 col-6">
             <div class="metric-card">
-                <div class="metric-header">Valor Total Previsto</div>
+                <div class="metric-header">
+                    Valor Total Previsto
+                    <i class="material-icons" data-bs-toggle="tooltip" title="Soma dos valores totais previstos">info_outline</i>
+                </div>
                 <div class="metric-body">
-                    <div class="metric-value" style="font-size:16px">${formatMoney(somaValor)}</div>
+                    <div class="metric-value" style="font-size:18px">${formatMoney(somaValor)}</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-md-3 col-6">
             <div class="metric-card">
-                <div class="metric-header">Valor Médio por Item</div>
+                <div class="metric-header">
+                    Valor Médio por Item
+                    <i class="material-icons" data-bs-toggle="tooltip" title="Valor médio por item de contratação">info_outline</i>
+                </div>
                 <div class="metric-body">
-                    <div class="metric-value" style="font-size:16px">${formatMoney(mediaPorItem)}</div>
+                    <div class="metric-value" style="font-size:18px">${formatMoney(mediaPorItem)}</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-md-3 col-6">
             <div class="metric-card">
-                <div class="metric-header">Órgãos Atendidos</div>
+                <div class="metric-header">
+                    Órgãos Atendidos
+                    <i class="material-icons" data-bs-toggle="tooltip" title="Quantidade de órgãos com itens no período selecionado">info_outline</i>
+                </div>
                 <div class="metric-body">
-                    <div class="metric-value">${orgaos.length}</div>
+                    <div class="metric-value">${orgaos.length.toLocaleString('pt-BR')}</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="row g-3 mb-4">
-        <div class="col-md-8">
+
+    <div class="row mb-4">
+        <div class="col-md-8 col-12">
             <div class="chart-container">
                 <div class="chart-header"><h4 class="chart-title">Valor Total por Órgão (Top 12)</h4></div>
-                <div class="chart-wrapper">
-                    <canvas id="chartValorVG"></canvas>
-                </div>
+                <div class="chart-wrapper"><canvas id="chartValorVG"></canvas></div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-12">
             <div class="chart-container">
                 <div class="chart-header"><h4 class="chart-title">Valor Total por Ano</h4></div>
-                <div class="chart-wrapper">
-                    <canvas id="chartValorAno"></canvas>
-                </div>
+                <div class="chart-wrapper"><canvas id="chartValorAno"></canvas></div>
             </div>
         </div>
     </div>
-    
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarVGCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarVGPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+
+    <div class="actions-container mb-3">
+        <div class="export-buttons">
+            <button class="btn-export" onclick="exportarVGCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+            <button class="btn-export" onclick="exportarVGPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="fas fa-link"></i> Copiar Link</button>
         </div>
-        <div class="toolbar-right">
-            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${totalOrgaos} órgãos</span>
+        <div class="right-aligned-container">
+            <span class="table-badge">${totalOrgaos} órgãos</span>
             <div class="table-search-container">
-                <i class="material-icons" style="font-size:14px;">search</i>
-                <input class="table-search-input" id="buscaRapidaVG" placeholder="Buscar órgão..." value="${esc(visaoState.searchTerm)}" oninput="buscaRapidaVGChange(this.value)">
+                <i class="bi bi-search search-icon"></i>
+                <input class="table-search-input" id="buscaRapidaVG" placeholder="Buscar..." value="${esc(visaoState.searchTerm)}" oninput="buscaRapidaVGChange(this.value)">
             </div>
         </div>
     </div>
-    
+
     <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th class="sortable-header" onclick="ordenarVG('nome')">Órgão / Entidade ${sortIcon('nome')}</th>
-                    <th class="sortable-header text-center" onclick="ordenarVG('qtd')">Qtd. Itens ${sortIcon('qtd')}</th>
-                    <th class="sortable-header text-end" onclick="ordenarVG('valorTotal')">Valor Total Previsto ${sortIcon('valorTotal')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${pagina.map(o => `
-                <tr>
-                    <td>${esc(o.cod)}</td>
-                    <td><a class="orgao-link" style="color:#006a82;text-decoration:none;cursor:pointer;font-weight:500;" onclick="irParaOrgao('${o.nome.replace(/'/g,"\\'")}')"><strong>${esc(o.nome)}</strong></a></td>
-                    <td class="text-center">${o.qtd.toLocaleString('pt-BR')}</td>
-                    <td class="text-end money-val">${formatMoney(o.valor)}</td>
-                </tr>`).join('')}
-                ${pagina.length === 0 ? `<tr><td colspan="4" class="text-center text-muted py-4">Nenhum órgão encontrado.</td></tr>` : ''}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2"><strong>TOTAL GERAL</strong></td>
-                    <td class="text-center">${totalOrgaos.toLocaleString('pt-BR')}</td>
-                    <td class="text-end money-total">${formatMoney(filteredOrgaos.reduce((a, o) => a + o.valor, 0))}</td>
-                </tr>
-            </tfoot>
-        </table>
+        <div class="table-fixed-header-container">
+            <table class="table table-hover" id="visaoGeralTable">
+                <thead>
+                    <tr>
+                        <th onclick="ordenarVG('cod')">Código ${sortIcon('cod')}</th>
+                        <th onclick="ordenarVG('nome')">Órgão / Entidade ${sortIcon('nome')}</th>
+                        <th class="text-center" onclick="ordenarVG('qtd')">Qtd. Itens ${sortIcon('qtd')}</th>
+                        <th class="text-end" onclick="ordenarVG('valorTotal')">Valor Total Previsto ${sortIcon('valorTotal')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${pagina.map(o => `
+                    <tr>
+                        <td>${esc(o.cod)}</td>
+                        <td><a class="orgao-link" onclick="irParaOrgao('${o.nome.replace(/'/g,"\\'")}')"><strong>${esc(o.nome)}</strong></a></td>
+                        <td class="text-center">${o.qtd.toLocaleString('pt-BR')}</td>
+                        <td class="text-end money-val">${formatMoney(o.valor)}</td>
+                    </tr>`).join('')}
+                    ${pagina.length === 0 ? `<tr><td colspan="4" class="text-center text-muted py-4">Nenhum órgão encontrado.</td></tr>` : ''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><strong>TOTAL GERAL</strong></td>
+                        <td class="text-center">${totalOrgaos.toLocaleString('pt-BR')}</td>
+                        <td class="text-end money-total">${formatMoney(orgaos.reduce((a, o) => a + o.valor, 0))}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-    
+
     <div class="pagination-container">
-        <div class="pagination-info">Página ${visaoState.currentPage} de ${totalPags} — ${totalOrgaos} órgãos</div>
+        <div class="pagination-info" id="paginationInfoVG">
+            ${(visaoState.currentPage - 1) * visaoState.pageSize + 1}–${Math.min(visaoState.currentPage * visaoState.pageSize, totalOrgaos)} de ${totalOrgaos} registros
+        </div>
         <nav><ul class="pagination mb-0">${gerarPaginacao(visaoState.currentPage, totalPags, 'mudarPgVG')}</ul></nav>
         <select class="items-per-page" onchange="mudarIppVG(this.value)">
-            ${[10, 25, 50, 100].map(n => `<option value="${n}" ${visaoState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+            ${[10, 25, 50, 100].map(n => `<option value="${n}" ${visaoState.pageSize === n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
     </div>
-    
+
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
+        <button id="btnTopo" onclick="voltarAoTopo()">
+            <i class="fas fa-arrow-up"></i> Voltar ao topo
         </button>
     </div>`;
-    
+
     document.getElementById('visao-content').innerHTML = html;
-    
-    // Renderizar gráficos
+    inicializarTooltips();
+
     setTimeout(() => {
+        // Gráfico por órgão (Top 12 — dados filtrados)
         const ctx = document.getElementById('chartValorVG');
         if (ctx) {
             new Chart(ctx, {
@@ -952,51 +1272,44 @@ function renderVisaoGeral() {
                     labels: top12Orgaos.map(o => o.sigla),
                     datasets: [{
                         data: top12Orgaos.map(o => o.valor),
-                        backgroundColor: ['#2f4b63', '#39a585', '#5f6f7f', '#f28c28', '#7aa6c2', '#8e44ad', '#c0392b', '#16a085', '#d35400', '#2980b9', '#27ae60', '#e67e22'],
+                        backgroundColor: ['#29435A','#B93C42','#20B2AA','#ffc107','#17a2b8','#3F704D','#28a745','#8B7355','#db233f','#0f2a44','#39a585','#d35400'],
                         borderRadius: 4,
                         label: 'Valor Total (R$)'
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        tooltip: { callbacks: { label: items => formatMoney(items.raw) } },
-                        legend: { position: 'top' }
+                        tooltip: { callbacks: { label: i => formatMoney(i.raw) } },
+                        legend: { display: false }
                     },
                     scales: {
-                        y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M' } }
+                        y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M', font: { size: 11 } } },
+                        x: { ticks: { font: { size: 11 } } }
                     }
                 }
             });
         }
 
-        // Gráfico por ano
+        // Gráfico por ano — usa dadosParaGraficoAnos (acumulado de todos os anos já carregados)
         const ctxAno = document.getElementById('chartValorAno');
         if (ctxAno) {
-            // Agrupa valor por ano usando dadosCompletos (todos os anos disponíveis)
-            const porAno = {};
-            dadosCompletos.forEach(r => {
-                const ano = r.ano_referencia || '2026';
-                porAno[ano] = (porAno[ano] || 0) + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0);
-            });
-            const anosGraf = Object.keys(porAno).sort();
+            const anosGraf = Object.keys(dadosParaGraficoAnos).sort();
             new Chart(ctxAno, {
                 type: 'bar',
                 data: {
                     labels: anosGraf,
                     datasets: [{
                         label: 'Valor Total Previsto (R$)',
-                        data: anosGraf.map(a => porAno[a]),
-                        backgroundColor: ['#2f4b63', '#39a585', '#f28c28', '#7aa6c2', '#c0392b'],
+                        data: anosGraf.map(a => dadosParaGraficoAnos[a]),
+                        backgroundColor: ['#29435A','#B93C42','#20B2AA','#ffc107'],
                         borderRadius: 6
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        tooltip: { callbacks: { label: items => formatMoney(items.raw) } },
+                        tooltip: { callbacks: { label: i => formatMoney(i.raw) } },
                         legend: { display: false }
                     },
                     scales: {
@@ -1020,49 +1333,47 @@ function buscaRapidaVGChange(valor) {
 function mudarPgVG(p) { if (p < 1) return; visaoState.currentPage = p; renderVisaoGeral(); }
 function mudarIppVG(val) { visaoState.pageSize = parseInt(val); visaoState.currentPage = 1; renderVisaoGeral(); }
 function ordenarVG(col) {
-    if (visaoState.sortCol === col) {
-        visaoState.sortDir = visaoState.sortDir === 'asc' ? 'desc' : 'asc';
-    } else {
-        visaoState.sortCol = col;
-        visaoState.sortDir = 'asc';
-    }
+    if (visaoState.sortCol === col) { visaoState.sortDir = visaoState.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { visaoState.sortCol = col; visaoState.sortDir = 'asc'; }
     visaoState.currentPage = 1;
     renderVisaoGeral();
 }
-function aplicarFiltroVG() {
-    visaoState.ano = document.getElementById('vg-ano').value;
+
+async function aplicarFiltroVG() {
+    const anoSel = document.getElementById('vg-ano').value;
+    const anosNecessarios = anoSel ? [anoSel] : Object.keys(CSV_BY_YEAR);
+    await garantirAnosCarregados(anosNecessarios);
+    visaoState.ano = anoSel;
     visaoState.base = document.getElementById('vg-base').value;
     visaoState.codigoOrgao = document.getElementById('vg-codigo-orgao').value;
     visaoState.nomeOrgao = document.getElementById('vg-nome-orgao').value;
     visaoState.currentPage = 1;
     renderVisaoGeral();
 }
+
 function limparFiltroVG() {
-    visaoState.ano = '';
-    visaoState.base = '';
-    visaoState.codigoOrgao = '';
-    visaoState.nomeOrgao = '';
-    visaoState.searchTerm = '';
-    visaoState.currentPage = 1;
+    visaoState.ano = '2026'; visaoState.base = ''; visaoState.codigoOrgao = '';
+    visaoState.nomeOrgao = ''; visaoState.searchTerm = ''; visaoState.currentPage = 1;
     renderVisaoGeral();
 }
+
 function exportarVGCSV() {
     const orgaos = getOrgaosAgregados(visaoState.dadosFiltrados);
     const linhas = [['Código', 'Órgão', 'Qtd. Itens', 'Valor Total']];
     orgaos.forEach(o => linhas.push([o.cod, o.nome, o.qtd, o.valor.toFixed(2).replace('.', ',')]));
     baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'visao_geral_pac.csv', 'text/csv');
 }
+
 function exportarVGPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
-    doc.text('PAC 2026 - Visão Geral por Órgão', 14, 10);
+    doc.text('PAC - Visão Geral por Órgão', 14, 10);
     const orgaos = getOrgaosAgregados(visaoState.dadosFiltrados);
     doc.autoTable({
         startY: 16,
         head: [['Código', 'Órgão', 'Qtd. Itens', 'Valor Total']],
         body: orgaos.map(o => [o.cod, o.nome, o.qtd, formatMoney(o.valor)]),
-        headStyles: { fillColor: [32, 68, 93] },
-        styles: { fontSize: 8 }
+        headStyles: { fillColor: [32, 68, 93] }, styles: { fontSize: 8 }
     });
     doc.save('visao_geral_pac.pdf');
 }
@@ -1071,18 +1382,9 @@ function exportarVGPDF() {
 // CONSULTA POR ÓRGÃO
 // ============================================================
 let orgaoState = {
-    ano: '',
-    base: '',
-    orgao: '',
-    material: '',
-    situacao: '',
-    grupo: '',
-    classe: '',
-    searchTerm: '',
-    sortCol: 'nome_orgao',
-    sortDir: 'asc',
-    currentPage: 1,
-    pageSize: 25,
+    ano: '2026', base: '', orgao: '', material: '', situacao: '', grupo: '', classe: '',
+    searchTerm: '', sortCol: 'nome_orgao', sortDir: 'asc',
+    currentPage: 1, pageSize: 25,
     colunas: {
         codigo_orgao: false, nome_orgao: true, planejamento_processo: true, procedimento: true,
         codigo_material: false, nome_material: true, descricao: true, situacao: true,
@@ -1094,34 +1396,23 @@ let orgaoState = {
 };
 
 const colLabelsOrgao = {
-    codigo_orgao:        'Código Órgão',
-    nome_orgao:          'Órgão',
-    planejamento_processo: 'Nº Planejamento',
-    procedimento:        'Procedimento',
-    codigo_material:     'Código Material/Serviço',
-    nome_material:       'Material/Serviço',
-    descricao:           'Descrição',
-    situacao:            'Situação',
-    grupo:               'Grupo',
-    classe:              'Classe',
-    elemento_despesa:    'Elem. Despesa',
-    objeto:              'Objeto',
-    municipio:           'Município',
-    inicio_execucao:     'Início Execução',
-    unidade:             'Unidade',
-    quantidade:          'Quantidade',
-    valor_unitario:      'Valor Unitário',
-    valor_total:         'Valor Total'
+    codigo_orgao: 'Código Órgão', nome_orgao: 'Órgão', planejamento_processo: 'Nº Planejamento',
+    procedimento: 'Procedimento', codigo_material: 'Código Material/Serviço', nome_material: 'Material/Serviço',
+    descricao: 'Descrição', situacao: 'Situação', grupo: 'Grupo', classe: 'Classe',
+    elemento_despesa: 'Elem. Despesa', objeto: 'Objeto', municipio: 'Município',
+    inicio_execucao: 'Início Execução', unidade: 'Unidade', quantidade: 'Quantidade',
+    valor_unitario: 'Valor Unitário', valor_total: 'Valor Total'
 };
 
 function renderConsultaOrgao() {
-    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
-    const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
-    const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
-    const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
-    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
-    
-    let filtrado = dadosCompletos.filter(r => {
+    const dados = dadosCompletos;
+    const orgaosSet = [...new Set(dados.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+    const gruposSet = [...new Set(dados.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
+    const classesSet = [...new Set(dados.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
+    const situSet = [...new Set(dados.map(r => r.situacao).filter(Boolean))].sort();
+    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort();
+
+    let filtrado = dados.filter(r => {
         if (orgaoState.ano && r.ano_referencia !== orgaoState.ano) return false;
         if (orgaoState.base && r.base !== orgaoState.base) return false;
         if (orgaoState.orgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== orgaoState.orgao) return false;
@@ -1136,180 +1427,174 @@ function renderConsultaOrgao() {
         }
         return true;
     });
-    
+
     orgaoState.resultados = filtrado;
     const total = filtrado.length;
     const totalPags = Math.ceil(total / orgaoState.pageSize) || 1;
     orgaoState.currentPage = Math.min(orgaoState.currentPage, totalPags);
     const pagina = filtrado.slice((orgaoState.currentPage - 1) * orgaoState.pageSize, orgaoState.currentPage * orgaoState.pageSize);
-    
-    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+
+    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0), 0);
     const somaQtd = filtrado.reduce((a, r) => a + (parseFloat(r.quantidade) || 0), 0);
-    
-    const colsOrdem = ['codigo_orgao', 'nome_orgao', 'planejamento_processo', 'procedimento', 'codigo_material', 'nome_material', 'descricao', 'situacao', 'grupo', 'classe', 'elemento_despesa', 'objeto', 'municipio', 'inicio_execucao', 'unidade', 'quantidade', 'valor_unitario', 'valor_total'];
+
+    const colsOrdem = ['codigo_orgao','nome_orgao','planejamento_processo','procedimento','codigo_material','nome_material','descricao','situacao','grupo','classe','elemento_despesa','objeto','municipio','inicio_execucao','unidade','quantidade','valor_unitario','valor_total'];
     const colsVis = colsOrdem.filter(c => orgaoState.colunas[c]);
-    
+
     function sortIcon(col) {
-        if (orgaoState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
-        return orgaoState.sortDir === 'asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
+        if (orgaoState.sortCol !== col) return '<i class="bi bi-chevron-expand sort-icon"></i>';
+        return orgaoState.sortDir === 'asc' ? '<i class="bi bi-chevron-up sort-icon"></i>' : '<i class="bi bi-chevron-down sort-icon"></i>';
     }
-    
+
     const html = `
     <div class="filter-container">
-        <div class="consulta-filters-row">
-            <div class="consulta-filter-group">
+        <div class="row">
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Ano</label>
                 <select class="form-select modern-select" id="co-ano">
                     <option value="" ${orgaoState.ano === '' ? 'selected' : ''}>Todos</option>
                     ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${orgaoState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Base</label>
                 <select class="form-select modern-select" id="co-base">
                     <option value="" ${orgaoState.base === '' ? 'selected' : ''}>Todas</option>
                     ${basesSet.map(b => `<option value="${esc(b)}" ${orgaoState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-4 col-12"><div class="mb-3">
                 <label class="filter-label">Órgão</label>
                 <select class="form-select modern-select" id="co-orgao">
                     <option value="">Todos</option>
                     ${orgaosSet.map(o => `<option value="${esc(o)}" ${orgaoState.orgao === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-4 col-12"><div class="mb-3">
                 <label class="filter-label">Material/Serviço</label>
-                <input type="text" class="form-control" id="co-material" value="${esc(orgaoState.material)}">
-            </div>
-            <div class="consulta-filter-group">
+                <input type="text" class="form-control" id="co-material" value="${esc(orgaoState.material)}" placeholder="Digite o material ou serviço...">
+            </div></div>
+            <div class="col-md-3 col-6"><div class="mb-3">
                 <label class="filter-label">Situação</label>
                 <select class="form-select modern-select" id="co-situacao">
                     <option value="">Todas</option>
                     ${situSet.map(s => `<option value="${esc(s)}" ${orgaoState.situacao === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-3 col-6"><div class="mb-3">
                 <label class="filter-label">Grupo</label>
                 <select class="form-select modern-select" id="co-grupo">
                     <option value="">Todos</option>
                     ${gruposSet.map(g => `<option value="${esc(g)}" ${orgaoState.grupo === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-3 col-6"><div class="mb-3">
                 <label class="filter-label">Classe</label>
                 <select class="form-select modern-select" id="co-classe">
                     <option value="">Todas</option>
                     ${classesSet.map(c => `<option value="${esc(c)}" ${orgaoState.classe === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
                 </select>
-            </div>
+            </div></div>
         </div>
-        <div class="consulta-buttons-row" style="margin-top:15px; display:flex; gap:10px;">
-            <button class="btn-pesquisa" onclick="aplicarFiltroOrgao()">
-                <i class="material-icons">search</i> Pesquisar
+        <div class="d-flex gap-3 flex-wrap">
+            <button class="btn-search-custom" onclick="aplicarFiltroOrgao()">
+                <i class="fas fa-search"></i> Pesquisar
             </button>
             <button class="btn-secondary-custom" onclick="limparFiltroOrgao()">
-                <i class="material-icons">clear</i> Limpar
+                <i class="fas fa-times"></i> Limpar Filtros
             </button>
         </div>
     </div>
-    
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarOrgaoCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarOrgaoPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+
+    <div class="actions-container mb-3">
+        <div class="export-buttons">
+            <button class="btn-export" onclick="exportarOrgaoCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+            <button class="btn-export" onclick="exportarOrgaoPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="fas fa-link"></i> Copiar Link</button>
         </div>
-        <div class="toolbar-right">
-            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${total} itens</span>
+        <div class="right-aligned-container">
+            <span class="table-badge">${total} itens</span>
             <div class="table-search-container">
-                <i class="material-icons">search</i>
-                <input class="table-search-input" id="buscaOrgao" placeholder="Busca rápida..." value="${esc(orgaoState.searchTerm)}" oninput="buscaOrgaoChange(this.value)">
+                <i class="bi bi-search search-icon"></i>
+                <input class="table-search-input" id="buscaOrgao" placeholder="Buscar..." value="${esc(orgaoState.searchTerm)}" oninput="buscaOrgaoChange(this.value)">
             </div>
             <div style="position:relative">
-                <button class="btn-export" onclick="toggleColSelectorOrgao()">
-                    <i class="material-icons">view_column</i> Colunas
-                </button>
+                <button class="btn-export" onclick="toggleColSelectorOrgao()"><i class="fas fa-columns"></i> Colunas</button>
                 <div class="column-selector-popup" id="colSelectorOrgao">
-                    <div style="font-size:11px;font-weight:700;padding:4px 8px;">Exibir colunas:</div>
+                    <div style="font-size:13px;font-weight:700;padding:4px 8px;color:#1a3a5c;">Exibir colunas:</div>
                     ${colsOrdem.map(c => `<label><input type="checkbox" ${orgaoState.colunas[c] ? 'checked' : ''} onchange="toggleColOrgao('${c}', this.checked)"> ${colLabelsOrgao[c]}</label>`).join('')}
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    ${colsVis.map(c => `<th class="sortable-header" onclick="ordenarOrgao('${c}')">${colLabelsOrgao[c]} ${sortIcon(c)}</th>`).join('')}
+        <div class="table-fixed-header-container">
+            <table class="table table-hover">
+                <thead><tr>
+                    ${colsVis.map(c => `<th onclick="ordenarOrgao('${c}')">${colLabelsOrgao[c]} ${sortIcon(c)}</th>`).join('')}
                     <th class="text-center">Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${pagina.map((row, idx) => `
-                <tr>
-                    ${colsVis.map(c => {
-                        let val = '';
-                        if (c === 'codigo_orgao') val = row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-';
-                        else if (c === 'nome_orgao') val = row.nome_do_orgao_do_planejamento_de_solicitacoes || '-';
-                        else if (c === 'planejamento_processo') val = row.numero_do_processo_do_planejamento_de_solicitacoes || '-';
-                        else if (c === 'procedimento') val = row.procedimento_de_contratacao || '-';
-                        else if (c === 'codigo_material') val = row.codigo_do_material_ou_servico || '-';
-                        else if (c === 'nome_material') val = row.nome_do_material_ou_servico || '-';
-                        else if (c === 'descricao') val = (row.desc_do_item_de_material_ou_servico || '').substring(0, 100);
-                        else if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
-                        else if (c === 'grupo') val = row.nome_do_grupo_material_ou_servico || '-';
-                        else if (c === 'classe') val = row.nome_da_classe_material_ou_servico || '-';
-                        else if (c === 'elemento_despesa') val = row.elemento_item_despesa || row.elemento_despesa || '-';
-                        else if (c === 'objeto') val = row.objeto_contratacao || '-';
-                        else if (c === 'municipio') val = row.nome_do_municipio || '-';
-                        else if (c === 'inicio_execucao') val = row.inicio_de_execucao_entrega || '-';
-                        else if (c === 'unidade') val = row.descricao_da_unidade_de_aquisicao || '-';
-                        else if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
-                        else if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
-                        else if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
-                        return `<td>${esc(val)}</td>`;
-                    }).join('')}
-                    <td class="text-center">
-                        <button class="btn-action" onclick="abrirModalDetalhe(${(orgaoState.currentPage - 1) * orgaoState.pageSize + idx}, 'orgao')">
-                            <i class="material-icons" style="font-size:15px">visibility</i>
-                        </button>
-                    </td>
-                </tr>`).join('')}
-                ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
-                    <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
-                    <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
+                </tr></thead>
+                <tbody>
+                    ${pagina.map((row, idx) => `
+                    <tr>
+                        ${colsVis.map(c => {
+                            if (c === 'codigo_orgao') return `<td>${esc(row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'nome_orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'planejamento_processo') return `<td>${esc(row.numero_do_processo_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'procedimento') return `<td>${esc(row.procedimento_de_contratacao || '-')}</td>`;
+                            if (c === 'codigo_material') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
+                            if (c === 'nome_material') return `<td>${esc(row.nome_do_material_ou_servico || '-')}</td>`;
+                            if (c === 'descricao') return `<td>${esc((row.desc_do_item_de_material_ou_servico || '').substring(0, 100))}</td>`;
+                            if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
+                            if (c === 'grupo') return `<td>${esc(row.nome_do_grupo_material_ou_servico || '-')}</td>`;
+                            if (c === 'classe') return `<td>${esc(row.nome_da_classe_material_ou_servico || '-')}</td>`;
+                            if (c === 'elemento_despesa') return `<td>${esc(row.elemento_item_despesa || row.elemento_despesa || '-')}</td>`;
+                            if (c === 'objeto') return `<td>${esc(row.objeto_contratacao || '-')}</td>`;
+                            if (c === 'municipio') return `<td>${esc(row.nome_do_municipio || '-')}</td>`;
+                            if (c === 'inicio_execucao') return `<td>${esc(row.inicio_de_execucao_entrega || '-')}</td>`;
+                            if (c === 'unidade') return `<td>${esc(row.descricao_da_unidade_de_aquisicao || '-')}</td>`;
+                            if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
+                            if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
+                            if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
+                            return `<td>-</td>`;
+                        }).join('')}
+                        <td class="text-center">
+                            <button class="btn-action" onclick="abrirModalDetalhe(${(orgaoState.currentPage - 1) * orgaoState.pageSize + idx}, 'orgao')">
+                                <i class="material-icons" style="font-size:15px">visibility</i>
+                            </button>
+                        </td>
+                    </tr>`).join('')}
+                    ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
+                        <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
+                        <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-    
+
     <div class="pagination-container">
         <div class="pagination-info">Página ${orgaoState.currentPage} de ${totalPags} — ${total} itens</div>
         <nav><ul class="pagination mb-0">${gerarPaginacao(orgaoState.currentPage, totalPags, 'mudarPgOrgao')}</ul></nav>
         <select class="items-per-page" onchange="mudarIppOrgao(this.value)">
-            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${orgaoState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${orgaoState.pageSize === n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
     </div>
-    
+
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
-        </button>
+        <button id="btnTopo" onclick="voltarAoTopo()"><i class="fas fa-arrow-up"></i> Voltar ao topo</button>
     </div>`;
-    
+
     document.getElementById('orgao-content').innerHTML = html;
 }
 
 function buscaOrgaoChange(valor) {
-    orgaoState.searchTerm = valor;
-    orgaoState.currentPage = 1;
+    orgaoState.searchTerm = valor; orgaoState.currentPage = 1;
     const pos = document.getElementById('buscaOrgao')?.selectionStart;
     renderConsultaOrgao();
     const el = document.getElementById('buscaOrgao');
@@ -1318,42 +1603,30 @@ function buscaOrgaoChange(valor) {
 function mudarPgOrgao(p) { if (p < 1) return; orgaoState.currentPage = p; renderConsultaOrgao(); }
 function mudarIppOrgao(val) { orgaoState.pageSize = parseInt(val); orgaoState.currentPage = 1; renderConsultaOrgao(); }
 function ordenarOrgao(col) {
-    if (orgaoState.sortCol === col) {
-        orgaoState.sortDir = orgaoState.sortDir === 'asc' ? 'desc' : 'asc';
-    } else {
-        orgaoState.sortCol = col;
-        orgaoState.sortDir = 'asc';
-    }
-    orgaoState.currentPage = 1;
-    renderConsultaOrgao();
+    if (orgaoState.sortCol === col) { orgaoState.sortDir = orgaoState.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { orgaoState.sortCol = col; orgaoState.sortDir = 'asc'; }
+    orgaoState.currentPage = 1; renderConsultaOrgao();
 }
-function aplicarFiltroOrgao() {
-    orgaoState.ano = document.getElementById('co-ano').value;
+async function aplicarFiltroOrgao() {
+    const anoSel = document.getElementById('co-ano').value;
+    if (anoSel) await garantirAnosCarregados([anoSel]);
+    else await garantirAnosCarregados(Object.keys(CSV_BY_YEAR));
+    orgaoState.ano = anoSel;
     orgaoState.base = document.getElementById('co-base').value;
     orgaoState.orgao = document.getElementById('co-orgao').value;
     orgaoState.material = document.getElementById('co-material').value;
     orgaoState.situacao = document.getElementById('co-situacao').value;
     orgaoState.grupo = document.getElementById('co-grupo').value;
     orgaoState.classe = document.getElementById('co-classe').value;
-    orgaoState.currentPage = 1;
-    renderConsultaOrgao();
+    orgaoState.currentPage = 1; renderConsultaOrgao();
 }
 function limparFiltroOrgao() {
-    orgaoState.ano = '';
-    orgaoState.base = '';
-    orgaoState.orgao = '';
-    orgaoState.material = '';
-    orgaoState.situacao = '';
-    orgaoState.grupo = '';
-    orgaoState.classe = '';
-    orgaoState.searchTerm = '';
-    orgaoState.currentPage = 1;
-    renderConsultaOrgao();
+    orgaoState.ano = '2026'; orgaoState.base = ''; orgaoState.orgao = ''; orgaoState.material = '';
+    orgaoState.situacao = ''; orgaoState.grupo = ''; orgaoState.classe = ''; orgaoState.searchTerm = '';
+    orgaoState.currentPage = 1; renderConsultaOrgao();
 }
 function toggleColSelectorOrgao() { document.getElementById('colSelectorOrgao').classList.toggle('show'); }
 function toggleColOrgao(col, val) { orgaoState.colunas[col] = val; renderConsultaOrgao(); }
-function toggleCodigosOrgao(val) { if (val) orgaoState.colunas['codigo_orgao'] = true; else delete orgaoState.colunas['codigo_orgao']; renderConsultaOrgao(); }
-function toggleCodigosMaterial(val) { if (val) orgaoState.colunas['codigo_material'] = true; else delete orgaoState.colunas['codigo_material']; renderConsultaOrgao(); }
 function exportarOrgaoCSV() {
     const linhas = [['Órgão', 'Material/Serviço', 'Situação', 'Quantidade', 'Valor Total']];
     orgaoState.resultados.forEach(r => linhas.push([r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_material_ou_servico, r.situacao, r.quantidade, r.valor_total_previsto_r]));
@@ -1362,13 +1635,12 @@ function exportarOrgaoCSV() {
 function exportarOrgaoPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
-    doc.text('PAC 2026 - Consulta por Órgão', 14, 10);
+    doc.text('PAC - Consulta por Órgão', 14, 10);
     doc.autoTable({
         startY: 16,
         head: [['Órgão', 'Material/Serviço', 'Situação', 'Qtd', 'Valor Total']],
         body: orgaoState.resultados.slice(0, 500).map(r => [r.nome_do_orgao_do_planejamento_de_solicitacoes, r.nome_do_material_ou_servico, r.situacao, r.quantidade, formatMoney(r.valor_total_previsto_r)]),
-        headStyles: { fillColor: [32, 68, 93] },
-        styles: { fontSize: 8 }
+        headStyles: { fillColor: [32, 68, 93] }, styles: { fontSize: 8 }
     });
     doc.save('pac_por_orgao.pdf');
 }
@@ -1377,59 +1649,35 @@ function exportarOrgaoPDF() {
 // CONSULTA POR ITEM
 // ============================================================
 let itemState = {
-    ano: '',
-    base: '',
-    orgao: '',
-    codigoItem: '',
-    nomeItem: '',
-    elementoDespesa: '',
-    situacao: '',
-    grupo: '',
-    classe: '',
-    searchTerm: '',
-    sortCol: 'nome_item',
-    sortDir: 'asc',
-    currentPage: 1,
-    pageSize: 25,
+    ano: '2026', base: '', orgao: '', codigoItem: '', nomeItem: '', elementoDespesa: '',
+    situacao: '', grupo: '', classe: '', searchTerm: '',
+    sortCol: 'nome_item', sortDir: 'asc', currentPage: 1, pageSize: 25,
     colunas: {
-        codigo_item: true, nome_item: true, elemento_despesa: true,
-        descricao: true, orgao: true, codigo_orgao: false, situacao: true,
-        grupo: true, classe: true, objeto: false, procedimento: false,
-        planejamento_processo: false, municipio: false, inicio_execucao: false,
-        unidade: true, quantidade: true, valor_unitario: true, valor_total: true
+        codigo_item: true, nome_item: true, elemento_despesa: true, descricao: true,
+        orgao: true, codigo_orgao: false, situacao: true, grupo: true, classe: true,
+        objeto: false, procedimento: false, planejamento_processo: false, municipio: false,
+        inicio_execucao: false, unidade: true, quantidade: true, valor_unitario: true, valor_total: true
     },
     resultados: []
 };
 
 const colLabelsItem = {
-    codigo_item:      'Código Item',
-    nome_item:        'Item (Material/Serviço)',
-    elemento_despesa: 'Elem. Despesa',
-    descricao:        'Descrição',
-    orgao:            'Órgão',
-    codigo_orgao:     'Código Órgão',
-    situacao:         'Situação',
-    grupo:            'Grupo',
-    classe:           'Classe',
-    objeto:           'Objeto',
-    procedimento:     'Procedimento',
-    planejamento_processo: 'Nº Planejamento',
-    municipio:        'Município',
-    inicio_execucao:  'Início Execução',
-    unidade:          'Unidade',
-    quantidade:       'Quantidade',
-    valor_unitario:   'Valor Unitário',
-    valor_total:      'Valor Total'
+    codigo_item: 'Código Item', nome_item: 'Item (Material/Serviço)', elemento_despesa: 'Elem. Despesa',
+    descricao: 'Descrição', orgao: 'Órgão', codigo_orgao: 'Código Órgão', situacao: 'Situação',
+    grupo: 'Grupo', classe: 'Classe', objeto: 'Objeto', procedimento: 'Procedimento',
+    planejamento_processo: 'Nº Planejamento', municipio: 'Município', inicio_execucao: 'Início Execução',
+    unidade: 'Unidade', quantidade: 'Quantidade', valor_unitario: 'Valor Unitário', valor_total: 'Valor Total'
 };
 
 function renderConsultaItem() {
-    const orgaosSet = [...new Set(dadosCompletos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
-    const gruposSet = [...new Set(dadosCompletos.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
-    const classesSet = [...new Set(dadosCompletos.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
-    const situSet = [...new Set(dadosCompletos.map(r => r.situacao).filter(Boolean))].sort();
-    const basesSet = [...new Set(dadosCompletos.map(r => r.base).filter(Boolean))].sort();
-    
-    let filtrado = dadosCompletos.filter(r => {
+    const dados = dadosCompletos;
+    const orgaosSet = [...new Set(dados.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
+    const gruposSet = [...new Set(dados.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
+    const classesSet = [...new Set(dados.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
+    const situSet = [...new Set(dados.map(r => r.situacao).filter(Boolean))].sort();
+    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort();
+
+    let filtrado = dados.filter(r => {
         if (itemState.ano && r.ano_referencia !== itemState.ano) return false;
         if (itemState.base && r.base !== itemState.base) return false;
         if (itemState.orgao && !(r.nome_do_orgao_do_planejamento_de_solicitacoes || '').toLowerCase().includes(itemState.orgao.toLowerCase())) return false;
@@ -1446,184 +1694,179 @@ function renderConsultaItem() {
         }
         return true;
     });
-    
+
     itemState.resultados = filtrado;
     const total = filtrado.length;
     const totalPags = Math.ceil(total / itemState.pageSize) || 1;
     itemState.currentPage = Math.min(itemState.currentPage, totalPags);
     const pagina = filtrado.slice((itemState.currentPage - 1) * itemState.pageSize, itemState.currentPage * itemState.pageSize);
-    
-    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r).replace(',','.')) || 0), 0);
+
+    const somaValorTotal = filtrado.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0), 0);
     const somaQtd = filtrado.reduce((a, r) => a + (parseFloat(r.quantidade) || 0), 0);
-    
-    const colsOrdem = ['codigo_item', 'nome_item', 'elemento_despesa', 'descricao', 'orgao', 'codigo_orgao', 'situacao', 'grupo', 'classe', 'objeto', 'procedimento', 'planejamento_processo', 'municipio', 'inicio_execucao', 'unidade', 'quantidade', 'valor_unitario', 'valor_total'];
+
+    const colsOrdem = ['codigo_item','nome_item','elemento_despesa','descricao','orgao','codigo_orgao','situacao','grupo','classe','objeto','procedimento','planejamento_processo','municipio','inicio_execucao','unidade','quantidade','valor_unitario','valor_total'];
     const colsVis = colsOrdem.filter(c => itemState.colunas[c]);
-    
+
     function sortIcon(col) {
-        if (itemState.sortCol !== col) return '<i class="material-icons" style="font-size:14px">unfold_more</i>';
-        return itemState.sortDir === 'asc' ? '<i class="material-icons">arrow_upward</i>' : '<i class="material-icons">arrow_downward</i>';
+        if (itemState.sortCol !== col) return '<i class="bi bi-chevron-expand sort-icon"></i>';
+        return itemState.sortDir === 'asc' ? '<i class="bi bi-chevron-up sort-icon"></i>' : '<i class="bi bi-chevron-down sort-icon"></i>';
     }
-    
+
     const html = `
     <div class="filter-container">
-        <div class="consulta-filters-row">
-            <div class="consulta-filter-group">
+        <div class="row">
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Ano</label>
                 <select class="form-select modern-select" id="ci-ano">
                     <option value="" ${itemState.ano === '' ? 'selected' : ''}>Todos</option>
                     ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${itemState.ano === a ? 'selected' : ''}>${a}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Base</label>
                 <select class="form-select modern-select" id="ci-base">
                     <option value="" ${itemState.base === '' ? 'selected' : ''}>Todas</option>
                     ${basesSet.map(b => `<option value="${esc(b)}" ${itemState.base === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-4 col-12"><div class="mb-3">
                 <label class="filter-label">Órgão</label>
-                <input type="text" class="form-control" id="ci-orgao" value="${esc(itemState.orgao)}">
-            </div>
-            <div class="consulta-filter-group">
-                <label class="filter-label">Código do Item</label>
-                <input type="text" class="form-control" id="ci-codigo-item" value="${esc(itemState.codigoItem)}">
-            </div>
-            <div class="consulta-filter-group">
+                <input type="text" class="form-control" id="ci-orgao" value="${esc(itemState.orgao)}" placeholder="Digite o órgão...">
+            </div></div>
+            <div class="col-md-4 col-12"><div class="mb-3">
                 <label class="filter-label">Nome do Item</label>
-                <input type="text" class="form-control" id="ci-nome-item" value="${esc(itemState.nomeItem)}">
-            </div>
-            <div class="consulta-filter-group">
+                <input type="text" class="form-control" id="ci-nome-item" value="${esc(itemState.nomeItem)}" placeholder="Digite o nome do item...">
+            </div></div>
+            <div class="col-md-3 col-6"><div class="mb-3">
+                <label class="filter-label">Código do Item</label>
+                <input type="text" class="form-control" id="ci-codigo-item" value="${esc(itemState.codigoItem)}" placeholder="Código...">
+            </div></div>
+            <div class="col-md-3 col-6"><div class="mb-3">
                 <label class="filter-label">Elem. Despesa</label>
-                <input type="text" class="form-control" id="ci-elemento" value="${esc(itemState.elementoDespesa)}">
-            </div>
-            <div class="consulta-filter-group">
+                <input type="text" class="form-control" id="ci-elemento" value="${esc(itemState.elementoDespesa)}" placeholder="Elemento...">
+            </div></div>
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Situação</label>
                 <select class="form-select modern-select" id="ci-situacao">
                     <option value="">Todas</option>
                     ${situSet.map(s => `<option value="${esc(s)}" ${itemState.situacao === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Grupo</label>
                 <select class="form-select modern-select" id="ci-grupo">
                     <option value="">Todos</option>
                     ${gruposSet.map(g => `<option value="${esc(g)}" ${itemState.grupo === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}
                 </select>
-            </div>
-            <div class="consulta-filter-group">
+            </div></div>
+            <div class="col-md-2 col-6"><div class="mb-3">
                 <label class="filter-label">Classe</label>
                 <select class="form-select modern-select" id="ci-classe">
                     <option value="">Todas</option>
                     ${classesSet.map(c => `<option value="${esc(c)}" ${itemState.classe === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
                 </select>
-            </div>
+            </div></div>
         </div>
-        <div class="consulta-buttons-row" style="margin-top:15px; display:flex; gap:10px;">
-            <button class="btn-pesquisa" onclick="aplicarFiltroItem()">
-                <i class="material-icons">search</i> Pesquisar
+        <div class="d-flex gap-3 flex-wrap">
+            <button class="btn-search-custom" onclick="aplicarFiltroItem()">
+                <i class="fas fa-search"></i> Pesquisar
             </button>
             <button class="btn-secondary-custom" onclick="limparFiltroItem()">
-                <i class="material-icons">clear</i> Limpar
+                <i class="fas fa-times"></i> Limpar Filtros
             </button>
         </div>
     </div>
-    
-    <div class="toolbar">
-        <div class="toolbar-left">
-            <button class="btn-export" onclick="exportarItemCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="exportarItemPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
-            <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+
+    <div class="actions-container mb-3">
+        <div class="export-buttons">
+            <button class="btn-export" onclick="exportarItemCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+            <button class="btn-export" onclick="exportarItemPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export" onclick="copiarLink()"><i class="fas fa-link"></i> Copiar Link</button>
         </div>
-        <div class="toolbar-right">
-            <span class="table-badge" style="background:#1a3a5c; color:white; padding:5px 12px; border-radius:12px;">${total} itens</span>
+        <div class="right-aligned-container">
+            <span class="table-badge">${total} itens</span>
             <div class="table-search-container">
-                <i class="material-icons">search</i>
-                <input class="table-search-input" id="buscaItem" placeholder="Busca rápida..." value="${esc(itemState.searchTerm)}" oninput="buscaItemChange(this.value)">
+                <i class="bi bi-search search-icon"></i>
+                <input class="table-search-input" id="buscaItem" placeholder="Buscar..." value="${esc(itemState.searchTerm)}" oninput="buscaItemChange(this.value)">
             </div>
             <div style="position:relative">
-                <button class="btn-export" onclick="toggleColSelectorItem()">
-                    <i class="material-icons">view_column</i> Colunas
-                </button>
+                <button class="btn-export" onclick="toggleColSelectorItem()"><i class="fas fa-columns"></i> Colunas</button>
                 <div class="column-selector-popup" id="colSelectorItem">
-                    <div style="font-size:11px;font-weight:700;padding:4px 8px;">Exibir colunas:</div>
+                    <div style="font-size:13px;font-weight:700;padding:4px 8px;color:#1a3a5c;">Exibir colunas:</div>
                     ${colsOrdem.map(c => `<label><input type="checkbox" ${itemState.colunas[c] ? 'checked' : ''} onchange="toggleColItem('${c}', this.checked)"> ${colLabelsItem[c]}</label>`).join('')}
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    ${colsVis.map(c => `<th class="sortable-header" onclick="ordenarItem('${c}')">${colLabelsItem[c]} ${sortIcon(c)}</th>`).join('')}
+        <div class="table-fixed-header-container">
+            <table class="table table-hover">
+                <thead><tr>
+                    ${colsVis.map(c => `<th onclick="ordenarItem('${c}')">${colLabelsItem[c]} ${sortIcon(c)}</th>`).join('')}
                     <th class="text-center">Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${pagina.map((row, idx) => `
-                <tr>
-                    ${colsVis.map(c => {
-                        if (c === 'codigo_item') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
-                        if (c === 'nome_item') return `<td>${esc(row.nome_do_material_ou_servico || '-')}</td>`;
-                        if (c === 'elemento_despesa') return `<td>${esc(row.elemento_item_despesa || row.elemento_despesa || '-')}</td>`;
-                        if (c === 'descricao') return `<td style="max-width:200px;">${esc((row.desc_do_item_de_material_ou_servico || '').substring(0, 80))}${(row.desc_do_item_de_material_ou_servico || '').length > 80 ? '…' : ''}</td>`;
-                        if (c === 'orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
-                        if (c === 'codigo_orgao') return `<td>${esc(row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
-                        if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
-                        if (c === 'grupo') return `<td>${esc(row.nome_do_grupo_material_ou_servico || '-')}</td>`;
-                        if (c === 'classe') return `<td>${esc(row.nome_da_classe_material_ou_servico || '-')}</td>`;
-                        if (c === 'objeto') return `<td>${esc(row.objeto_contratacao || '-')}</td>`;
-                        if (c === 'procedimento') return `<td>${esc(row.procedimento_de_contratacao || '-')}</td>`;
-                        if (c === 'planejamento_processo') return `<td>${esc(row.numero_do_processo_do_planejamento_de_solicitacoes || '-')}</td>`;
-                        if (c === 'municipio') return `<td>${esc(row.nome_do_municipio || '-')}</td>`;
-                        if (c === 'inicio_execucao') return `<td>${esc(row.inicio_de_execucao_entrega || '-')}</td>`;
-                        if (c === 'unidade') return `<td>${esc(row.descricao_da_unidade_de_aquisicao || '-')}</td>`;
-                        if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
-                        if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
-                        if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
-                        return `<td>-</td>`;
-                    }).join('')}
-                    <td class="text-center">
-                        <button class="btn-action" onclick="abrirModalDetalheItem(${(itemState.currentPage - 1) * itemState.pageSize + idx}, 'item')">
-                            <i class="material-icons" style="font-size:15px">visibility</i>
-                        </button>
-                    </td>
-                </tr>`).join('')}
-                ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
-                    <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
-                    <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
+                </tr></thead>
+                <tbody>
+                    ${pagina.map((row, idx) => `
+                    <tr>
+                        ${colsVis.map(c => {
+                            if (c === 'codigo_item') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
+                            if (c === 'nome_item') return `<td>${esc(row.nome_do_material_ou_servico || '-')}</td>`;
+                            if (c === 'elemento_despesa') return `<td>${esc(row.elemento_item_despesa || row.elemento_despesa || '-')}</td>`;
+                            if (c === 'descricao') return `<td style="max-width:200px;">${esc((row.desc_do_item_de_material_ou_servico || '').substring(0, 80))}${(row.desc_do_item_de_material_ou_servico || '').length > 80 ? '…' : ''}</td>`;
+                            if (c === 'orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'codigo_orgao') return `<td>${esc(row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'situacao') return `<td class="text-center">${badgeSit(row.situacao)}</td>`;
+                            if (c === 'grupo') return `<td>${esc(row.nome_do_grupo_material_ou_servico || '-')}</td>`;
+                            if (c === 'classe') return `<td>${esc(row.nome_da_classe_material_ou_servico || '-')}</td>`;
+                            if (c === 'objeto') return `<td>${esc(row.objeto_contratacao || '-')}</td>`;
+                            if (c === 'procedimento') return `<td>${esc(row.procedimento_de_contratacao || '-')}</td>`;
+                            if (c === 'planejamento_processo') return `<td>${esc(row.numero_do_processo_do_planejamento_de_solicitacoes || '-')}</td>`;
+                            if (c === 'municipio') return `<td>${esc(row.nome_do_municipio || '-')}</td>`;
+                            if (c === 'inicio_execucao') return `<td>${esc(row.inicio_de_execucao_entrega || '-')}</td>`;
+                            if (c === 'unidade') return `<td>${esc(row.descricao_da_unidade_de_aquisicao || '-')}</td>`;
+                            if (c === 'quantidade') return `<td class="text-end">${formatQtd(row.quantidade)}</td>`;
+                            if (c === 'valor_unitario') return `<td class="text-end money-val">${row.valor_unitario_previsto_r ? formatMoney(row.valor_unitario_previsto_r) : '-'}</td>`;
+                            if (c === 'valor_total') return `<td class="text-end money-val">${row.valor_total_previsto_r ? formatMoney(row.valor_total_previsto_r) : '-'}</td>`;
+                            return `<td>-</td>`;
+                        }).join('')}
+                        <td class="text-center">
+                            <button class="btn-action" onclick="abrirModalDetalheItem(${(itemState.currentPage - 1) * itemState.pageSize + idx}, 'item')">
+                                <i class="material-icons" style="font-size:15px">visibility</i>
+                            </button>
+                        </td>
+                    </tr>`).join('')}
+                    ${pagina.length === 0 ? `<tr><td colspan="${colsVis.length + 1}" class="text-center text-muted py-4">Nenhum item encontrado.</td></tr>` : ''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="${colsVis.length - 2}"><strong>TOTAL</strong></td>
+                        <td class="text-end">${somaQtd.toLocaleString('pt-BR')}</td>
+                        <td class="text-end money-total">${formatMoney(somaValorTotal)}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-    
+
     <div class="pagination-container">
         <div class="pagination-info">Página ${itemState.currentPage} de ${totalPags} — ${total} itens</div>
         <nav><ul class="pagination mb-0">${gerarPaginacao(itemState.currentPage, totalPags, 'mudarPgItem')}</ul></nav>
         <select class="items-per-page" onchange="mudarIppItem(this.value)">
-            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${itemState.pageSize === n ? 'selected' : ''}>${n} / pág</option>`).join('')}
+            ${[25, 50, 100, 200].map(n => `<option value="${n}" ${itemState.pageSize === n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
     </div>
-    
+
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-        <button class="btn-topo" onclick="voltarAoTopo()">
-            <i class="material-icons">arrow_upward</i> Voltar ao topo
-        </button>
+        <button id="btnTopo" onclick="voltarAoTopo()"><i class="fas fa-arrow-up"></i> Voltar ao topo</button>
     </div>`;
-    
+
     document.getElementById('item-content').innerHTML = html;
 }
 
 function buscaItemChange(valor) {
-    itemState.searchTerm = valor;
-    itemState.currentPage = 1;
+    itemState.searchTerm = valor; itemState.currentPage = 1;
     const pos = document.getElementById('buscaItem')?.selectionStart;
     renderConsultaItem();
     const el = document.getElementById('buscaItem');
@@ -1632,17 +1875,15 @@ function buscaItemChange(valor) {
 function mudarPgItem(p) { if (p < 1) return; itemState.currentPage = p; renderConsultaItem(); }
 function mudarIppItem(val) { itemState.pageSize = parseInt(val); itemState.currentPage = 1; renderConsultaItem(); }
 function ordenarItem(col) {
-    if (itemState.sortCol === col) {
-        itemState.sortDir = itemState.sortDir === 'asc' ? 'desc' : 'asc';
-    } else {
-        itemState.sortCol = col;
-        itemState.sortDir = 'asc';
-    }
-    itemState.currentPage = 1;
-    renderConsultaItem();
+    if (itemState.sortCol === col) { itemState.sortDir = itemState.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { itemState.sortCol = col; itemState.sortDir = 'asc'; }
+    itemState.currentPage = 1; renderConsultaItem();
 }
-function aplicarFiltroItem() {
-    itemState.ano = document.getElementById('ci-ano').value;
+async function aplicarFiltroItem() {
+    const anoSel = document.getElementById('ci-ano').value;
+    if (anoSel) await garantirAnosCarregados([anoSel]);
+    else await garantirAnosCarregados(Object.keys(CSV_BY_YEAR));
+    itemState.ano = anoSel;
     itemState.base = document.getElementById('ci-base').value;
     itemState.orgao = document.getElementById('ci-orgao').value;
     itemState.codigoItem = document.getElementById('ci-codigo-item').value;
@@ -1651,27 +1892,16 @@ function aplicarFiltroItem() {
     itemState.situacao = document.getElementById('ci-situacao').value;
     itemState.grupo = document.getElementById('ci-grupo').value;
     itemState.classe = document.getElementById('ci-classe').value;
-    itemState.currentPage = 1;
-    renderConsultaItem();
+    itemState.currentPage = 1; renderConsultaItem();
 }
 function limparFiltroItem() {
-    itemState.ano = '';
-    itemState.base = '';
-    itemState.orgao = '';
-    itemState.codigoItem = '';
-    itemState.nomeItem = '';
-    itemState.elementoDespesa = '';
-    itemState.situacao = '';
-    itemState.grupo = '';
-    itemState.classe = '';
-    itemState.searchTerm = '';
-    itemState.currentPage = 1;
-    renderConsultaItem();
+    itemState.ano = '2026'; itemState.base = ''; itemState.orgao = ''; itemState.codigoItem = '';
+    itemState.nomeItem = ''; itemState.elementoDespesa = ''; itemState.situacao = '';
+    itemState.grupo = ''; itemState.classe = ''; itemState.searchTerm = '';
+    itemState.currentPage = 1; renderConsultaItem();
 }
 function toggleColSelectorItem() { document.getElementById('colSelectorItem').classList.toggle('show'); }
 function toggleColItem(col, val) { itemState.colunas[col] = val; renderConsultaItem(); }
-function toggleCodigosItem(val) { if (val) itemState.colunas['codigo_orgao'] = true; else delete itemState.colunas['codigo_orgao']; renderConsultaItem(); }
-function toggleCodigosMaterialItem(val) { if (val) itemState.colunas['codigo_material'] = true; else delete itemState.colunas['codigo_material']; renderConsultaItem(); }
 function exportarItemCSV() {
     const linhas = [['Código', 'Item', 'Órgão', 'Situação', 'Quantidade', 'Valor Total']];
     itemState.resultados.forEach(r => linhas.push([r.codigo_do_material_ou_servico, r.nome_do_material_ou_servico, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.situacao, r.quantidade, r.valor_total_previsto_r]));
@@ -1680,13 +1910,12 @@ function exportarItemCSV() {
 function exportarItemPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
-    doc.text('PAC 2026 - Consulta por Item', 14, 10);
+    doc.text('PAC - Consulta por Item', 14, 10);
     doc.autoTable({
         startY: 16,
         head: [['Código', 'Item', 'Órgão', 'Situação', 'Qtd', 'Valor Total']],
         body: itemState.resultados.slice(0, 500).map(r => [r.codigo_do_material_ou_servico, r.nome_do_material_ou_servico, r.nome_do_orgao_do_planejamento_de_solicitacoes, r.situacao, r.quantidade, formatMoney(r.valor_total_previsto_r)]),
-        headStyles: { fillColor: [32, 68, 93] },
-        styles: { fontSize: 8 }
+        headStyles: { fillColor: [32, 68, 93] }, styles: { fontSize: 8 }
     });
     doc.save('pac_por_item.pdf');
 }
@@ -1699,7 +1928,7 @@ function abrirModalDetalhe(idx, origem) {
     const row = lista[idx];
     if (!row) return;
     currentModalItem = row;
-    
+
     const campos = [
         { label: 'Ano de Referência', val: row.ano_referencia },
         { label: 'Base', val: row.base },
@@ -1722,29 +1951,29 @@ function abrirModalDetalhe(idx, origem) {
         { label: 'Município', val: row.nome_do_municipio },
         { label: 'Início da Execução', val: row.inicio_de_execucao_entrega }
     ];
-    
+
     const html = `
-        <div class="row g-2">
-            <div class="col-md-12">
-                <div class="info-section">
-                    <h6>Informações Gerais</h6>
-                    ${campos.slice(0, 8).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${c.label === 'Situação' ? badgeSit(c.val) : esc(c.val) || '-'}</div></div>`).join('')}
-                </div>
+    <div class="row g-2">
+        <div class="col-md-12">
+            <div class="info-section">
+                <h6>Informações Gerais</h6>
+                ${campos.slice(0, 8).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${c.label === 'Situação' ? badgeSit(c.val) : esc(c.val) || '-'}</div></div>`).join('')}
             </div>
-            <div class="col-md-6">
-                <div class="info-section">
-                    <h6>Processo e Contratação</h6>
-                    ${campos.slice(8, 12).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-section">
+                <h6>Processo e Contratação</h6>
+                ${campos.slice(8, 14).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
             </div>
-            <div class="col-md-6">
-                <div class="info-section">
-                    <h6>Valores e Execução</h6>
-                    ${campos.slice(12).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-section">
+                <h6>Valores e Execução</h6>
+                ${campos.slice(14).map(c => `<div class="info-row"><div class="info-label-modal">${c.label}</div><div class="info-value-modal">${esc(c.val) || '-'}</div></div>`).join('')}
             </div>
-        </div>`;
-    
+        </div>
+    </div>`;
+
     document.getElementById('modalContent').innerHTML = html;
     new bootstrap.Modal(document.getElementById('detailModal')).show();
 }
@@ -1781,7 +2010,6 @@ function exportarModalCSV() {
 // ============================================================
 function renderDownloads() {
     const metadados = [
-        ['Campo', 'Descrição', 'Tipo'],
         ['codigo_do_orgao_do_planejamento_de_solicitacoes', 'Código identificador do órgão responsável pelo planejamento', 'Texto'],
         ['nome_do_orgao_do_planejamento_de_solicitacoes', 'Nome do órgão ou entidade responsável pelo planejamento', 'Texto'],
         ['codigo_do_material_ou_servico', 'Código identificador do material ou serviço', 'Texto'],
@@ -1801,49 +2029,75 @@ function renderDownloads() {
         ['procedimento_de_contratacao', 'Procedimento licitatório ou contratação direta', 'Texto'],
         ['objeto_contratacao', 'Descrição do objeto da contratação', 'Texto']
     ];
-    
+
     document.getElementById('downloads-content').innerHTML = `
-    <div class="filter-container" style="text-align:center;">
-        <i class="material-icons" style="font-size:48px;color:#20445d;">cloud_download</i>
-        <h5 style="margin-top:8px;">Portal de Dados Abertos</h5>
-        <p style="color:#6c757d;font-size:13px;">Acesse os dados completos do Plano Anual de Contratações 2026</p>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-            <a href="https://dados.mg.gov.br/" target="_blank" class="btn-pesquisa">
-                <i class="material-icons">open_in_new</i> Portal Dados MG
-            </a>
-            <button class="btn-export" onclick="exportarTudoCSV()">
-                <i class="material-icons">description</i> Baixar CSV Completo
+    <div class="filter-container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="filter-label">Ano</label>
+                    <select class="form-select modern-select" id="anoDownload">
+                        ${['2023','2024','2025','2026'].map(a => `<option value="${a}" ${a === '2026' ? 'selected' : ''}>${a}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="filter-label">Formato</label>
+                    <select class="form-select modern-select" id="formatoDownload">
+                        <option value="csv" selected>CSV</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-3 flex-wrap">
+            <button class="btn-search-custom" onclick="exportarTudoCSV()">
+                <i class="fas fa-download"></i> Baixar Dados
             </button>
+            <a href="https://dados.mg.gov.br/" target="_blank" class="btn-secondary-custom text-decoration-none">
+                <i class="fas fa-external-link-alt"></i> Acessar Portal de Dados Abertos
+            </a>
         </div>
     </div>
-    
-    <div class="filter-container">
-        <h5 style="margin-bottom:12px;">Metadados - Dicionário de Variáveis</h5>
-        <div style="display:flex;gap:10px;margin-bottom:15px;">
-            <button class="btn-export" onclick="baixarDicionarioCSV()"><i class="material-icons">description</i> CSV</button>
-            <button class="btn-export" onclick="baixarDicionarioPDF()"><i class="material-icons">picture_as_pdf</i> PDF</button>
-        </div>
-        <div class="table-container">
-            <table class="table">
-                <thead><tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
-                <tbody>${metadados.slice(1).map(m => `<tr><td><code>${esc(m[0])}</code></td><td>${esc(m[1])}</td><td>${esc(m[2])}</td></tr>`).join('')}</tbody>
-            </table>
+
+    <div class="table-container mt-4">
+        <div class="p-4">
+            <h5 class="mb-3" style="color: var(--primary-dark); border-bottom: 2px solid var(--info-blue); padding-bottom: 10px;">Dicionário de Dados</h5>
+            <div class="d-flex gap-2 mb-3">
+                <button class="btn-export" onclick="baixarDicionarioCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+                <button class="btn-export" onclick="baixarDicionarioPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+            </div>
+            <div class="table-fixed-header-container">
+                <table class="table">
+                    <thead><tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
+                    <tbody>
+                        ${metadados.map(m => `<tr><td><code>${esc(m[0])}</code></td><td>${esc(m[1])}</td><td>${esc(m[2])}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>`;
 }
 
+function exportarTudoCSV() {
+    const ano = document.getElementById('anoDownload')?.value || '2026';
+    const dados = dadosPorAno[ano] || dadosCompletos;
+    const csv = Papa.unparse(dados, { delimiter: ';' });
+    baixarArquivo('\uFEFF' + csv, `pac_${ano}_completo.csv`, 'text/csv');
+}
+
 function baixarDicionarioCSV() {
     const linhas = [
-        ['Campo', 'Descrição', 'Tipo'],
-        ['codigo_do_orgao_do_planejamento_de_solicitacoes', 'Código do órgão', 'Texto'],
-        ['nome_do_orgao_do_planejamento_de_solicitacoes', 'Nome do órgão', 'Texto'],
-        ['codigo_do_material_ou_servico', 'Código do material/serviço', 'Texto'],
-        ['nome_do_material_ou_servico', 'Nome do material/serviço', 'Texto'],
-        ['desc_do_item_de_material_ou_servico', 'Descrição do item', 'Texto'],
-        ['situacao', 'Situação', 'Texto'],
-        ['quantidade', 'Quantidade', 'Número'],
-        ['valor_unitario_previsto_r', 'Valor unitário', 'Número'],
-        ['valor_total_previsto_r', 'Valor total', 'Número']
+        ['Campo','Descrição','Tipo'],
+        ['codigo_do_orgao...','Código do órgão','Texto'],
+        ['nome_do_orgao...','Nome do órgão','Texto'],
+        ['codigo_do_material...','Código do material','Texto'],
+        ['nome_do_material...','Nome do material','Texto'],
+        ['desc_do_item...','Descrição','Texto'],
+        ['situacao','Situação','Texto'],
+        ['quantidade','Quantidade','Número'],
+        ['valor_unitario...','Valor unitário','Número'],
+        ['valor_total...','Valor total','Número']
     ];
     baixarArquivo('\uFEFF' + linhas.map(l => l.join(';')).join('\n'), 'dicionario_pac.csv', 'text/csv');
 }
@@ -1851,131 +2105,81 @@ function baixarDicionarioCSV() {
 function baixarDicionarioPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text('Dicionário de Dados - PAC 2026', 14, 15);
+    doc.text('Dicionário de Dados - PAC', 14, 15);
     doc.autoTable({
         startY: 25,
         head: [['Campo', 'Descrição', 'Tipo']],
         body: [
-            ['codigo_do_orgao...', 'Código do órgão', 'Texto'],
-            ['nome_do_orgao...', 'Nome do órgão', 'Texto'],
-            ['codigo_do_material...', 'Código do material', 'Texto'],
-            ['nome_do_material...', 'Nome do material', 'Texto'],
-            ['desc_do_item...', 'Descrição', 'Texto'],
-            ['situacao', 'Situação', 'Texto'],
-            ['quantidade', 'Quantidade', 'Número'],
-            ['valor_unitario...', 'Valor unitário', 'Número'],
-            ['valor_total...', 'Valor total', 'Número']
+            ['codigo_do_orgao...','Código do órgão','Texto'],
+            ['nome_do_orgao...','Nome do órgão','Texto'],
+            ['codigo_do_material...','Código do material','Texto'],
+            ['situacao','Situação','Texto'],
+            ['quantidade','Quantidade','Número'],
+            ['valor_total...','Valor total','Número']
         ],
-        headStyles: { fillColor: [32, 68, 93] },
-        styles: { fontSize: 8 }
+        headStyles: { fillColor: [32, 68, 93] }, styles: { fontSize: 8 }
     });
     doc.save('dicionario_pac.pdf');
 }
 
-function exportarTudoCSV() {
-    const csv = Papa.unparse(dadosCompletos, { delimiter: ';' });
-    baixarArquivo('\uFEFF' + csv, 'pac_2026_completo.csv', 'text/csv');
+// ============================================================
+// TOOLTIPS
+// ============================================================
+function inicializarTooltips() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(el => {
+        const tooltip = bootstrap.Tooltip.getInstance(el);
+        if (tooltip) tooltip.dispose();
+        new bootstrap.Tooltip(el, { placement: 'top', trigger: 'hover', html: false });
+    });
 }
 
 // ============================================================
-// FUNÇÕES AUXILIARES
-// ============================================================
-function gerarPaginacao(pagAtual, totalPags, fnName) {
-    if (totalPags <= 0) return '';
-    const items = [];
-    items.push(`<li class="page-item ${pagAtual <= 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual - 1});return false;">«</a></li>`);
-    const inicio = Math.max(1, Math.min(pagAtual - 2, Math.max(1, totalPags - 4)));
-    for (let p = inicio; p <= Math.min(inicio + 4, totalPags); p++) {
-        items.push(`<li class="page-item ${p === pagAtual ? 'active' : ''}"><a class="page-link" href="#" onclick="${fnName}(${p});return false;">${p}</a></li>`);
-    }
-    items.push(`<li class="page-item ${pagAtual >= totalPags ? 'disabled' : ''}"><a class="page-link" href="#" onclick="${fnName}(${pagAtual + 1});return false;">»</a></li>`);
-    return items.join('');
-}
-
-// ============================================================
-// INICIALIZAÇÃO
+// DATA DE ATUALIZAÇÃO
 // ============================================================
 async function setupDataAtualizacao() {
     try {
-        // Tenta buscar a data do último commit do arquivo mais recente (pac_2026.csv)
-        const commitResp = await fetch(`https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data/pac_2026.csv&per_page=1`);
-        if (commitResp.ok) {
-            const commits = await commitResp.json();
+        const r = await fetch('https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data&per_page=1');
+        if (r.ok) {
+            const commits = await r.json();
             if (commits && commits.length > 0) {
                 document.getElementById('data-atualizacao-header').textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
                 return;
             }
         }
-        // Fallback: lista os arquivos da pasta e pega o mais recente
-        const resp = await fetch(GITHUB_API);
-        if (resp.ok) {
-            const arquivos = await resp.json();
-            const csvFiles = arquivos.filter(f => f.name && f.name.match(/pac_\d{4}\.csv$/i)).sort((a, b) => b.name.localeCompare(a.name));
-            if (csvFiles.length > 0) {
-                const cr = await fetch(`https://api.github.com/repos/transparencia-mg/portal_plano_anual_contratacao/commits?path=dataset/data/${csvFiles[0].name}&per_page=1`);
-                if (cr.ok) {
-                    const c2 = await cr.json();
-                    if (c2 && c2.length > 0) {
-                        document.getElementById('data-atualizacao-header').textContent = new Date(c2[0].commit.committer.date).toLocaleDateString('pt-BR');
-                        return;
-                    }
-                }
-            }
-        }
         document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
-    } catch (e) {
+    } catch(e) {
         document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
     }
 }
 
+// ============================================================
+// INICIALIZAÇÃO — carrega APENAS 2026
+// ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
     setupDataAtualizacao();
-    mostrarLoading(true, 'Carregando dados do PAC 2023–2026...');
+    mostrarLoading(true, 'Carregando dados de 2026...');
+
     try {
-        function inferirAno(url) {
-            const m = url.match(/pac_(\d{4})_/);
-            return m ? m[1] : '2026';
-        }
-        function inferirBase(url) {
-            // O campo "base" já vem no CSV; este fallback serve apenas se não vier
-            const m = url.match(/pac_\d{4}_(\w+)\d+\.csv/);
-            return m ? m[1] : 'inicial';
-        }
-        const promises = CSV_URLS.map(url =>
-            new Promise((resolve, reject) => {
-                Papa.parse(url, {
-                    download: true, header: true, delimiter: ';', skipEmptyLines: true,
-                    complete: res => {
-                        const ano = inferirAno(url);
-                        const baseDefault = inferirBase(url);
-                        res.data.forEach(r => {
-                            if (!r.ano_referencia) r.ano_referencia = ano;
-                            // Normaliza o campo base: usa o do CSV se presente, senão infere
-                            if (!r.base) r.base = baseDefault;
-                        });
-                        resolve(res.data);
-                    },
-                    error: reject
-                });
-            })
-        );
-        const total = CSV_URLS.length;
-        let done = 0;
-        const allResults = await Promise.all(promises.map(p => p.then(d => { done++; document.querySelector('.loading-progress').textContent = `Carregando dados... (${done}/${total} arquivos)`; return d; })));
-        dadosCompletos = allResults.flat();
+        await carregarAno('2026');
+        recalcularDadosCompletos();
         mostrarLoading(false);
-    } catch (e) {
+    } catch(e) {
         mostrarLoading(false);
-        document.getElementById('visao-content').innerHTML = `<div class="filter-container text-center py-5"><i class="material-icons" style="font-size:48px;color:#b93c42">error_outline</i><p class="mt-3">Não foi possível carregar os dados. Verifique sua conexão.</p></div>`;
+        document.getElementById('visao-content').innerHTML = `
+            <div class="filter-container text-center py-5">
+                <i class="fas fa-exclamation-circle" style="font-size:48px;color:#b93c42"></i>
+                <p class="mt-3">Não foi possível carregar os dados. Verifique sua conexão.</p>
+            </div>`;
         return;
     }
-    
+
     renderVisaoGeral();
     renderDownloads();
-    
+
     document.getElementById('orgao-tab').addEventListener('shown.bs.tab', () => renderConsultaOrgao());
     document.getElementById('item-tab').addEventListener('shown.bs.tab', () => renderConsultaItem());
-    
+
     document.addEventListener('click', e => {
         if (!e.target.closest('#colSelectorOrgao') && !e.target.closest('[onclick*="toggleColSelectorOrgao"]')) {
             document.getElementById('colSelectorOrgao')?.classList.remove('show');
@@ -1986,7 +2190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Iframe resize observer
+// Iframe resize
 (function() {
     function sendHeight() {
         const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 10;
