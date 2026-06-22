@@ -407,7 +407,7 @@
         /* ============================================================
            10. NAVEGAÇÃO (abas)
         ============================================================ */
-        .nav-tabs-container { background: transparent; padding: 10px 0; margin-top: 15px; margin-bottom: 15px; width: 100%; }
+        .nav-tabs-container { background: transparent; padding: 10px 0; margin-top: 15px; margin-bottom: 15px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .nav-tabs { border: none !important; gap: 10px; width: 100%; flex-wrap: wrap; }
         .nav-tabs .nav-link {
             border: none !important;
@@ -665,8 +665,16 @@
         /* ============================================================
            19. RESPONSIVIDADE
         ============================================================ */
+        @media (max-width: 900px) {
+            .nav-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+            .nav-tabs::-webkit-scrollbar { height: 3px; }
+            .nav-tabs::-webkit-scrollbar-thumb { background: #c1c9d2; border-radius: 3px; }
+            .nav-tabs .nav-link { flex-shrink: 0; }
+        }
+
         @media (max-width: 992px) {
             .container-fluid, .dashboard-container, .container { padding: 0 15px !important; max-width: 100% !important; }
+            .main-container { padding: 0 !important; }
         }
 
         @media (max-width: 768px) {
@@ -677,7 +685,7 @@
             .filter-group { min-width: 100%; width: 100%; }
             .filter-buttons-group { width: 100%; }
             .botoes-abaixo { flex-direction: column; }
-            .btn-pesquisa, .btn-search-custom, .btn-secondary-custom { width: 100%; justify-content: center; }
+            .btn-pesquisa, .btn-search-custom, .btn-secondary-custom, .btn-primary-custom { width: 100%; justify-content: center; }
             .metric-value { font-size: 17px; }
             .actions-container { flex-direction: column; align-items: flex-start; }
             .right-aligned-container { margin-left: 0; width: 100%; }
@@ -687,6 +695,9 @@
             .table thead th, .table tbody td { padding: 8px 6px; font-size: 11px; }
             .modal-full-custom { max-width: 98% !important; width: 98% !important; margin: 4px auto; }
             .chart-wrapper { height: 200px; }
+            .table-search-container { min-width: 140px; max-width: 100%; flex: 1; }
+            .consulta-filter-group { flex: 1 1 100%; min-width: 100%; }
+            .export-buttons { flex-wrap: wrap; gap: 4px; }
         }
 
         @media (max-width: 480px) {
@@ -694,6 +705,12 @@
             .metric-value { font-size: 15px; }
             .btn-export { font-size: 11px; padding: 0 8px; }
             .table-badge { font-size: 11px; }
+            .table-search-container { min-width: 100px; max-width: 100%; }
+            .actions-container { gap: 6px; }
+            .nav-tabs .nav-link { font-size: 12px; padding: 9px 12px !important; }
+            .modal-full-custom { max-width: 100% !important; width: 100% !important; margin: 0; border-radius: 0; }
+            .chart-wrapper { height: 180px; }
+            .pagination .page-link { width: 30px; height: 30px; font-size: 12px; }
         }
 
         /* ============================================================
@@ -993,7 +1010,10 @@ async function carregarAno(ano) {
                 download: true, header: true, delimiter: ';', skipEmptyLines: true,
                 complete: res => {
                     res.data.forEach(r => {
-                        if (!r.ano_referencia) r.ano_referencia = ano;
+                        // Usa o campo nativo do CSV como fonte primária do ano
+                        if (!r.ano_referencia) {
+                            r.ano_referencia = String(r.ano_base_planejamento_de_solicitacoes || ano).trim();
+                        }
                         if (!r.base) {
                             const m = url.match(/pac_\d{4}_(\w+)\d+\.csv/);
                             r.base = m ? m[1] : 'inicial';
@@ -1022,11 +1042,8 @@ async function garantirAnosCarregados(anosNecessarios) {
     const pendentes = anosNecessarios.filter(a => !anosCarregados.has(a));
     if (!pendentes.length) return;
 
-    mostrarLoading(true, `Carregando dados de ${pendentes.join(', ')}...`);
+    // Carrega em paralelo SEM bloquear a tela (loading overlay removido)
     await Promise.all(pendentes.map(a => carregarAno(a)));
-    mostrarLoading(false);
-
-    // Recalcula dadosCompletos com todos os anos carregados
     recalcularDadosCompletos();
 }
 
@@ -1356,130 +1373,96 @@ function renderVisaoGeral() {
     document.getElementById('visao-content').innerHTML = html;
     inicializarTooltips();
 
-    // Garante que todos os anos 2023–2026 estejam carregados para o gráfico histórico
-    setTimeout(async () => {
-        await garantirAnosCarregados(['2023','2024','2025','2026']);
+    // Renderiza o gráfico histórico imediatamente com os dados já disponíveis,
+    // e agenda re-renderização automática conforme anos forem carregados em background
+    renderGraficoHistorico();
+}
 
-        // Gráfico série histórica — duas linhas: inicial vs revisão por ano (2023–2026)
+function renderGraficoHistorico() {
+    setTimeout(() => {
         const ctxSerie = document.getElementById('chartSerie');
-        if (ctxSerie) {
-            const todosAnos = ['2023','2024','2025','2026'];
-            const somaInicial = {};
-            const somaRevisao = {};
-            todosAnos.forEach(a => { somaInicial[a] = 0; somaRevisao[a] = 0; });
+        if (!ctxSerie) return;
 
-            // Aplica filtro de órgão se houver, caso contrário usa todos os dados carregados
-            const dadosBase = visaoState.nomeOrgao
-                ? Object.values(dadosPorAno).flat().filter(r => r.nome_do_orgao_do_planejamento_de_solicitacoes === visaoState.nomeOrgao)
-                : Object.values(dadosPorAno).flat();
+        // Destrói instância anterior do Chart.js para evitar erro de canvas reutilizado
+        const instanciaExistente = Chart.getChart(ctxSerie);
+        if (instanciaExistente) instanciaExistente.destroy();
 
-            for (const r of dadosBase) {
-                const ano = r.ano_referencia;
+        const todosAnos = ['2023','2024','2025','2026'];
+        const somaInicial = { '2023': 0, '2024': 0, '2025': 0, '2026': 0 };
+
+        // Varre TODOS os registros de todos os anos carregados
+        // Usa ano_base_planejamento_de_solicitacoes OU ano_referencia como fonte do ano
+        for (const registros of Object.values(dadosPorAno)) {
+            for (const r of registros) {
+                // Determina o ano do registro pela fonte mais confiável
+                const ano = String(r.ano_base_planejamento_de_solicitacoes || r.ano_referencia || '').trim();
                 if (!todosAnos.includes(ano)) continue;
-                const val = parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0;
-                if (r.base === 'inicial') somaInicial[ano] += val;
-                else if (r.base === 'revisao') somaRevisao[ano] += val;
+                // Somente versão inicial
+                const base = String(r.base || '').toLowerCase().trim();
+                if (base !== 'inicial') continue;
+                // Aplica filtro de órgão se houver
+                if (visaoState.nomeOrgao && r.nome_do_orgao_do_planejamento_de_solicitacoes !== visaoState.nomeOrgao) continue;
+                const val = parseFloat(String(r.valor_total_previsto_r || '0').replace(',', '.')) || 0;
+                somaInicial[ano] += val;
             }
+        }
 
-            // Atualiza tag de órgão no cabeçalho do gráfico
-            const orgaoTag = document.getElementById('chartSerieOrgaoTag');
-            const chartTitle = document.getElementById('chartSerieTitle');
-            if (visaoState.nomeOrgao && orgaoTag) {
-                orgaoTag.textContent = getSiglaOrgao(visaoState.nomeOrgao) || visaoState.nomeOrgao;
-                orgaoTag.style.display = 'inline-block';
-                if (chartTitle) chartTitle.textContent = 'Evolução Histórica — PAC Inicial vs Revisão (2023–2026)';
-            } else if (orgaoTag) {
-                orgaoTag.style.display = 'none';
-                if (chartTitle) chartTitle.textContent = 'Evolução Histórica — PAC Inicial vs Revisão Anual (2023–2026)';
-            }
+        // Atualiza título
+        const orgaoTag = document.getElementById('chartSerieOrgaoTag');
+        const chartTitle = document.getElementById('chartSerieTitle');
+        if (visaoState.nomeOrgao && orgaoTag) {
+            orgaoTag.textContent = getSiglaOrgao(visaoState.nomeOrgao) || visaoState.nomeOrgao;
+            orgaoTag.style.display = 'inline-block';
+            if (chartTitle) chartTitle.textContent = 'Evolução Histórica — PAC Inicial (2023–2026)';
+        } else if (orgaoTag) {
+            orgaoTag.style.display = 'none';
+            if (chartTitle) chartTitle.textContent = 'Evolução Histórica — PAC Inicial (2023–2026)';
+        }
 
-            // Recalcula métricas para visão 2023–2026 quando órgão está selecionado
-            if (visaoState.nomeOrgao) {
-                const totalItensHist = dadosBase.length;
-                const somaValorHist = dadosBase.reduce((a, r) => a + (parseFloat(String(r.valor_total_previsto_r || '0').replace(',','.')) || 0), 0);
-                const mediaPorItemHist = totalItensHist ? somaValorHist / totalItensHist : 0;
-                const orgaosHist = getOrgaosAgregados(dadosBase);
-                const el = document.getElementById('summaryCardsVG');
-                if (el) {
-                    el.innerHTML = `
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card">
-                            <div class="metric-header">Total de Itens (2023–2026)<i class="material-icons" data-bs-toggle="tooltip" title="Total de itens de 2023 a 2026 para o órgão selecionado">info_outline</i></div>
-                            <div class="metric-body">
-                                <div class="metric-value">${totalItensHist.toLocaleString('pt-BR')}</div>
-                                <div class="metric-subtitle">todos os anos</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card">
-                            <div class="metric-header">Valor Total (2023–2026)<i class="material-icons" data-bs-toggle="tooltip" title="Soma dos valores totais previstos de 2023 a 2026">info_outline</i></div>
-                            <div class="metric-body"><div class="metric-value" style="font-size:18px">${formatMoney(somaValorHist)}</div></div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card">
-                            <div class="metric-header">Valor Médio por Item<i class="material-icons" data-bs-toggle="tooltip" title="Valor médio por item no período completo">info_outline</i></div>
-                            <div class="metric-body"><div class="metric-value" style="font-size:18px">${formatMoney(mediaPorItemHist)}</div></div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="metric-card">
-                            <div class="metric-header">Maior Valor Único (Inicial)<i class="material-icons" data-bs-toggle="tooltip" title="Maior valor encontrado nas versões iniciais do PAC para este órgão">info_outline</i></div>
-                            <div class="metric-body">
-                                <div class="metric-value" style="font-size:18px">${formatMoney(todosAnos.map(a => somaInicial[a]).reduce((m,v)=>v>m?v:m,0))}</div>
-                                <div class="metric-subtitle">PAC Inicial — pico histórico</div>
-                            </div>
-                        </div>
-                    </div>`;
-                    inicializarTooltips();
-                }
-            }
+        // Mostra apenas anos que já foram carregados (sem ponto zerado de ano pendente)
+        const anosComDados = todosAnos.filter(a => anosCarregados.has(a));
+        const labels = anosComDados;
+        const valores = anosComDados.map(a => somaInicial[a]);
 
-            new Chart(ctxSerie, {
-                type: 'line',
-                data: {
-                    labels: todosAnos,
-                    datasets: [
-                        {
-                            label: 'PAC Inicial',
-                            data: todosAnos.map(a => somaInicial[a]),
-                            borderColor: '#20445d',
-                            backgroundColor: 'rgba(32,68,93,0.08)',
-                            pointBackgroundColor: '#20445d',
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            tension: 0.35,
-                            fill: true,
-                            borderWidth: 3
-                        },
-                        {
-                            label: 'Revisão Anual',
-                            data: todosAnos.map(a => somaRevisao[a]),
-                            borderColor: '#b93c42',
-                            backgroundColor: 'rgba(185,60,66,0.06)',
-                            pointBackgroundColor: '#b93c42',
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            tension: 0.35,
-                            fill: true,
-                            borderWidth: 3
-                        }
-                    ]
+        new Chart(ctxSerie, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'PAC Inicial',
+                    data: valores,
+                    borderColor: '#20445d',
+                    backgroundColor: 'rgba(32,68,93,0.10)',
+                    pointBackgroundColor: '#20445d',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 7,
+                    pointHoverRadius: 9,
+                    tension: 0.35,
+                    fill: true,
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: { callbacks: { label: ctx => 'PAC Inicial: ' + formatMoney(ctx.raw) } },
+                    legend: { display: false }
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatMoney(ctx.raw) } },
-                        legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, padding: 16, usePointStyle: true, pointStyleWidth: 16 } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M', font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
                     },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v / 1e6).toFixed(1) + 'M', font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        x: { ticks: { font: { size: 12, weight: '600' } }, grid: { color: 'rgba(0,0,0,0.05)' } }
+                    x: {
+                        ticks: { font: { size: 13, weight: '600' } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
                     }
                 }
-            });
-        }
+            }
+        });
     }, 100);
 }
 
@@ -2410,7 +2393,40 @@ async function setupDataAtualizacao() {
 }
 
 // ============================================================
-// INICIALIZAÇÃO — carrega APENAS 2026
+// INDICADOR DE CARREGAMENTO EM BACKGROUND
+// ============================================================
+function criarIndicadorBackground() {
+    const el = document.createElement('div');
+    el.id = 'bgLoadIndicator';
+    el.style.cssText = `
+        position: fixed; bottom: 18px; right: 18px;
+        background: #20445d; color: white;
+        border-radius: 10px; padding: 10px 16px;
+        font-size: 12px; font-weight: 600;
+        display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        z-index: 8000; opacity: 0;
+        transition: opacity 0.3s ease;
+        max-width: calc(100vw - 36px);
+    `;
+    el.innerHTML = `
+        <div style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.9s linear infinite;flex-shrink:0;"></div>
+        <span id="bgLoadText">Carregando dados históricos...</span>
+    `;
+    document.body.appendChild(el);
+    return el;
+}
+
+function mostrarIndicadorBG(show, texto) {
+    let el = document.getElementById('bgLoadIndicator');
+    if (!el) el = criarIndicadorBackground();
+    if (texto) document.getElementById('bgLoadText').textContent = texto;
+    el.style.opacity = show ? '1' : '0';
+    if (!show) setTimeout(() => { if (el.style.opacity === '0') el.remove(); }, 400);
+}
+
+// ============================================================
+// INICIALIZAÇÃO — carrega 2026 primeiro, demais em background
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
     setupDataAtualizacao();
@@ -2443,6 +2459,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('colSelectorItem')?.classList.remove('show');
         }
     });
+
+    // ── Carregamento em background dos anos anteriores ──
+    // Aguarda 2s após o dashboard estar visível para não competir com o render inicial
+    setTimeout(async () => {
+        const anosBackground = ['2025', '2024', '2023'];
+        for (const ano of anosBackground) {
+            if (anosCarregados.has(ano)) continue;
+            mostrarIndicadorBG(true, `Carregando dados de ${ano} em segundo plano...`);
+            try {
+                await carregarAno(ano);
+                recalcularDadosCompletos();
+                // Atualiza o gráfico histórico silenciosamente após cada ano carregar
+                renderGraficoHistorico();
+            } catch(e) {
+                console.warn(`Falha ao carregar ano ${ano} em background:`, e);
+            }
+        }
+        mostrarIndicadorBG(false);
+    }, 2000);
 });
 
 // Iframe resize
