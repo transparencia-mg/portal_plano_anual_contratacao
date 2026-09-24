@@ -932,7 +932,16 @@ const GITHUB_API = 'https://api.github.com/repos/transparencia-mg/portal_plano_a
 const CSV_BY_YEAR = {
     '2026': [
         'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial2.csv',
-        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial1.csv'
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_inicial1.csv',
+        // 2ª revisão do PAC 2026 (dividida em 3 arquivos)
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao7.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao6.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao5.csv',
+        // 1ª revisão do PAC 2026 (dividida em 4 arquivos)
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao4.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao3.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao2.csv',
+        'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2026_revisao1.csv'
     ],
     '2025': [
         'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2025_inicial4.csv',
@@ -966,6 +975,19 @@ const CSV_BY_YEAR = {
         'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_revisao2.csv',
         'https://raw.githubusercontent.com/transparencia-mg/portal_plano_anual_contratacao/refs/heads/main/dataset/data/pac_2023_revisao1.csv'
     ]
+};
+
+// Versão do PAC definida pelo arquivo — sobrepõe o campo "base" do CSV.
+// Necessário porque os arquivos da 1ª revisão de 2026 vêm com "base" = "revisão"
+// (revisao1 e 2) ou sem a coluna "base" (revisao3 e 4).
+const BASE_POR_ARQUIVO = {
+    'pac_2026_revisao1.csv': '1ª revisão',
+    'pac_2026_revisao2.csv': '1ª revisão',
+    'pac_2026_revisao3.csv': '1ª revisão',
+    'pac_2026_revisao4.csv': '1ª revisão',
+    'pac_2026_revisao5.csv': '2ª revisão',
+    'pac_2026_revisao6.csv': '2ª revisão',
+    'pac_2026_revisao7.csv': '2ª revisão'
 };
 
 // Estado dos dados carregados por ano (cache)
@@ -1009,7 +1031,9 @@ async function carregarAno(ano) {
             Papa.parse(url, {
                 download: true, header: true, delimiter: ';', skipEmptyLines: true,
                 complete: res => {
+                    const baseForcada = BASE_POR_ARQUIVO[url.split('/').pop()];
                     res.data.forEach(r => {
+                        if (baseForcada) r.base = baseForcada;
                         // Usa o campo nativo do CSV como fonte primária do ano
                         if (!r.ano_referencia) {
                             r.ano_referencia = String(r.ano_base_planejamento_de_solicitacoes || ano).trim();
@@ -1049,6 +1073,42 @@ async function garantirAnosCarregados(anosNecessarios) {
 
 function recalcularDadosCompletos() {
     dadosCompletos = Object.values(dadosPorAno).flat();
+}
+
+// ============================================================
+// VERSÕES DO PAC (campo "base"): "inicial", "revisão", "2ª revisão"...
+// ============================================================
+// Tipo genérico da versão: 'inicial' ou 'revisao' (ignora acento e número)
+function tipoBase(b) {
+    const t = String(b || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    if (t.includes('revis')) return 'revisao';
+    if (t.includes('inicial')) return 'inicial';
+    return t;
+}
+// Rótulo amigável para selects, badges e modal
+function rotuloBase(b, curto) {
+    const tipo = tipoBase(b);
+    if (tipo === 'inicial') return curto ? 'Inicial' : 'PAC Inicial';
+    if (tipo === 'revisao') {
+        const n = String(b || '').match(/\d+/);
+        if (n) return `${n[0]}ª Revisão`;
+        return curto ? 'Revisão' : 'Revisão Anual';
+    }
+    return String(b || '-');
+}
+// Badge colorido da versão (tabelas)
+function badgeBase(b) {
+    const tipo = tipoBase(b);
+    const bg = tipo === 'inicial' ? '#dbeafe' : tipo === 'revisao' ? '#fce7f3' : '#e2e8f0';
+    const cor = tipo === 'inicial' ? '#1e40af' : tipo === 'revisao' ? '#9d174d' : '#475569';
+    return `<span style="background:${bg};color:${cor};padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;white-space:nowrap;">${esc(rotuloBase(b, true))}</span>`;
+}
+// Ordena: Inicial primeiro, depois revisões em ordem numérica
+function ordenarBases(a, b) {
+    const pa = tipoBase(a) === 'inicial' ? 0 : 1, pb = tipoBase(b) === 'inicial' ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    const na = parseInt((String(a).match(/\d+/) || ['0'])[0]), nb = parseInt((String(b).match(/\d+/) || ['0'])[0]);
+    return na - nb || String(a).localeCompare(String(b));
 }
 
 // ============================================================
@@ -1159,7 +1219,7 @@ function getOrgaosAgregados(dados) {
 
 function renderVisaoGeral() {
     const dadosAtivos = dadosCompletos;
-    const basesSet = [...new Set(dadosAtivos.map(r => r.base).filter(Boolean))].sort();
+    const basesSet = [...new Set(dadosAtivos.map(r => r.base).filter(Boolean))].sort(ordenarBases);
     const orgaosList = [...new Set(dadosAtivos.map(r => r.nome_do_orgao_do_planejamento_de_solicitacoes).filter(Boolean))].sort();
 
     let filtrado = dadosAtivos.filter(r => {
@@ -1217,7 +1277,7 @@ function renderVisaoGeral() {
                     <label class="filter-label"><i class="material-icons"></i> Versão do PAC</label>
                     <select class="form-select modern-select" id="vg-base">
                         <option value="" ${visaoState.base === '' ? 'selected' : ''}>Todas as versões</option>
-                        ${basesSet.map(b => `<option value="${esc(b)}" ${visaoState.base === b ? 'selected' : ''}>${b === 'inicial' ? 'PAC Inicial' : b === 'revisao' ? 'Revisão Anual' : esc(b)}</option>`).join('')}
+                        ${basesSet.map(b => `<option value="${esc(b)}" ${visaoState.base === b ? 'selected' : ''}>${esc(rotuloBase(b))}</option>`).join('')}
                     </select>
                 </div>
             </div>
@@ -1555,7 +1615,7 @@ function renderConsultaOrgao() {
     const gruposSet = [...new Set(dados.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
     const classesSet = [...new Set(dados.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
     const situSet = [...new Set(dados.map(r => r.situacao).filter(Boolean))].sort();
-    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort();
+    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort(ordenarBases);
 
     let filtrado = dados.filter(r => {
         if (orgaoState.ano && r.ano_referencia !== orgaoState.ano) return false;
@@ -1604,7 +1664,7 @@ function renderConsultaOrgao() {
                 <label class="filter-label">Versão do PAC</label>
                 <select class="form-select modern-select" id="co-base">
                     <option value="" ${orgaoState.base === '' ? 'selected' : ''}>Todas as versões</option>
-                    ${basesSet.map(b => `<option value="${esc(b)}" ${orgaoState.base === b ? 'selected' : ''}>${b === 'inicial' ? 'PAC Inicial' : b === 'revisao' ? 'Revisão Anual' : esc(b)}</option>`).join('')}
+                    ${basesSet.map(b => `<option value="${esc(b)}" ${orgaoState.base === b ? 'selected' : ''}>${esc(rotuloBase(b))}</option>`).join('')}
                 </select>
             </div></div>
             <div class="col-md-4 col-12"><div class="mb-3">
@@ -1685,7 +1745,7 @@ function renderConsultaOrgao() {
                         ${colsVis.map(c => {
                             if (c === 'codigo_orgao') return `<td>${esc(row.codigo_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
                             if (c === 'nome_orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
-                            if (c === 'versao_pac') { const b = row.base || '-'; return `<td><span style="background:${b==='inicial'?'#dbeafe':b==='revisao'?'#fce7f3':'#e2e8f0'};color:${b==='inicial'?'#1e40af':b==='revisao'?'#9d174d':'#475569'};padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;">${b==='inicial'?'Inicial':b==='revisao'?'Revisão':esc(b)}</span></td>`; }
+                            if (c === 'versao_pac') return `<td>${badgeBase(row.base)}</td>`;
                             if (c === 'planejamento_processo') return `<td>${esc(row.numero_do_processo_do_planejamento_de_solicitacoes || '-')}</td>`;
                             if (c === 'procedimento') return `<td>${esc(row.procedimento_de_contratacao || '-')}</td>`;
                             if (c === 'codigo_material') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
@@ -1821,7 +1881,7 @@ function renderConsultaItem() {
     const gruposSet = [...new Set(dados.map(r => r.nome_do_grupo_material_ou_servico).filter(Boolean))].sort();
     const classesSet = [...new Set(dados.map(r => r.nome_da_classe_material_ou_servico).filter(Boolean))].sort();
     const situSet = [...new Set(dados.map(r => r.situacao).filter(Boolean))].sort();
-    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort();
+    const basesSet = [...new Set(dados.map(r => r.base).filter(Boolean))].sort(ordenarBases);
 
     let filtrado = dados.filter(r => {
         if (itemState.ano && r.ano_referencia !== itemState.ano) return false;
@@ -1872,7 +1932,7 @@ function renderConsultaItem() {
                 <label class="filter-label">Versão do PAC</label>
                 <select class="form-select modern-select" id="ci-base">
                     <option value="" ${itemState.base === '' ? 'selected' : ''}>Todas as versões</option>
-                    ${basesSet.map(b => `<option value="${esc(b)}" ${itemState.base === b ? 'selected' : ''}>${b === 'inicial' ? 'PAC Inicial' : b === 'revisao' ? 'Revisão Anual' : esc(b)}</option>`).join('')}
+                    ${basesSet.map(b => `<option value="${esc(b)}" ${itemState.base === b ? 'selected' : ''}>${esc(rotuloBase(b))}</option>`).join('')}
                 </select>
             </div></div>
             <div class="col-md-4 col-12"><div class="mb-3">
@@ -1958,7 +2018,7 @@ function renderConsultaItem() {
                         ${colsVis.map(c => {
                             if (c === 'codigo_item') return `<td>${esc(row.codigo_do_material_ou_servico || '-')}</td>`;
                             if (c === 'nome_item') return `<td>${esc(row.nome_do_material_ou_servico || '-')}</td>`;
-                            if (c === 'versao_pac') { const b = row.base || '-'; return `<td><span style="background:${b==='inicial'?'#dbeafe':b==='revisao'?'#fce7f3':'#e2e8f0'};color:${b==='inicial'?'#1e40af':b==='revisao'?'#9d174d':'#475569'};padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;">${b==='inicial'?'Inicial':b==='revisao'?'Revisão':esc(b)}</span></td>`; }
+                            if (c === 'versao_pac') return `<td>${badgeBase(row.base)}</td>`;
                             if (c === 'elemento_despesa') return `<td>${esc(row.elemento_item_despesa || row.elemento_despesa || '-')}</td>`;
                             if (c === 'descricao') return `<td style="max-width:200px;">${esc((row.desc_do_item_de_material_ou_servico || '').substring(0, 80))}${(row.desc_do_item_de_material_ou_servico || '').length > 80 ? '…' : ''}</td>`;
                             if (c === 'orgao') return `<td>${esc(row.nome_do_orgao_do_planejamento_de_solicitacoes || '-')}</td>`;
@@ -2078,7 +2138,7 @@ function abrirModalDetalhe(idx, origem) {
 
     const campos = [
         { label: 'Ano de Referência', val: row.ano_referencia },
-        { label: 'Base', val: row.base },
+        { label: 'Versão do PAC', val: rotuloBase(row.base) },
         { label: 'Código do Órgão', val: row.codigo_do_orgao_do_planejamento_de_solicitacoes },
         { label: 'Órgão', val: row.nome_do_orgao_do_planejamento_de_solicitacoes },
         { label: 'Código do Material', val: row.codigo_do_material_ou_servico },
@@ -2216,7 +2276,7 @@ function renderDownloads() {
 const DICIONARIO_PAC = {
     'principal': [
         { campo: 'ano_referencia', descricao: 'Ano de referência do planejamento (ano fiscal do PAC)', tipo: 'Número (AAAA)' },
-        { campo: 'base', descricao: 'Versão do PAC: "inicial" (planejamento original do exercício) ou "revisao" (atualização periódica realizada ao longo do exercício)', tipo: 'Texto' },
+        { campo: 'base', descricao: 'Versão do PAC: "inicial" (planejamento original do exercício) ou revisão, ex.: "revisão", "2ª revisão" (atualizações realizadas ao longo do exercício)', tipo: 'Texto' },
         { campo: 'codigo_do_orgao_do_planejamento_de_solicitacoes', descricao: 'Código identificador do órgão responsável pelo planejamento de contratações', tipo: 'Texto' },
         { campo: 'nome_do_orgao_do_planejamento_de_solicitacoes', descricao: 'Nome do órgão ou entidade responsável pelo planejamento e solicitação de contratações', tipo: 'Texto' },
         { campo: 'codigo_do_material_ou_servico', descricao: 'Código identificador do material ou serviço no catálogo de compras', tipo: 'Texto' },
@@ -2356,7 +2416,7 @@ function exportarTudoCSV() {
     const ano = document.getElementById('anoDownload')?.value || '2026';
     const versao = document.getElementById('versaoDownload')?.value || 'todos';
     let dados = dadosPorAno[ano] || dadosCompletos;
-    if (versao !== 'todos') dados = dados.filter(r => r.base === versao);
+    if (versao !== 'todos') dados = dados.filter(r => tipoBase(r.base) === versao);
     const csv = Papa.unparse(dados, { delimiter: ';' });
     baixarArquivo('\uFEFF' + csv, `pac_${ano}_${versao}.csv`, 'text/csv');
 }
