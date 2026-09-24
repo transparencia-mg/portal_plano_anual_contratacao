@@ -1,10 +1,9 @@
 {
   "name": "portal_plano_anual_contratacao",
-  "owner_org": "",
+  "owner_org": "secretaria-de-estado-de-planejamento-e-gestao-seplag",
   "profile": "data-package",
   "resources": [
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -220,10 +219,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - INICIAL 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -439,10 +437,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - INICIAL 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -658,10 +655,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - INICIAL 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -877,10 +873,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - INICIAL 4"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -1096,10 +1091,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - REVISÃO 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -1315,10 +1309,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2023 - REVISÃO 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -1534,10 +1527,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -1753,10 +1745,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -1972,10 +1963,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -2191,10 +2181,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 4"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -2410,10 +2399,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 5"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -2629,10 +2617,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - INICIAL 6"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -2848,10 +2835,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -3067,10 +3053,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -3286,10 +3271,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -3505,10 +3489,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 4"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -3724,10 +3707,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 5"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -3943,10 +3925,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2024 - REVISÃO 6"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -4162,10 +4143,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - INICIAL 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -4381,10 +4361,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - INICIAL 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -4600,10 +4579,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - INICIAL 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -4819,10 +4797,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - INICIAL 4"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -5038,10 +5015,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - REVISÃO 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -5257,10 +5233,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - REVISÃO 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -5476,10 +5451,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - REVISÃO 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -5695,10 +5669,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2025 - REVISÃO 4"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -5914,10 +5887,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - INICIAL 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -6133,10 +6105,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - INICIAL 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -6356,10 +6327,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - REVISÃO 1"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -6579,10 +6549,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - REVISÃO 2"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";",
         "quoteChar": "\""
@@ -6798,10 +6767,9 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - REVISÃO 3"
     },
     {
-      "description": "Insira a descrição/explicação detalhada deste recurso.",
       "dialect": {
         "delimiter": ";"
       },
@@ -7016,8 +6984,662 @@
         ]
       },
       "scheme": "file",
-      "title": "Insira um título humanamente legível para este recurso."
+      "title": "PAC 2026 - REVISÃO 4"
+    },
+    {
+      "dialect": {
+        "delimiter": ";",
+        "quoteChar": "\""
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "pac_2026_revisao5",
+      "path": "data/pac_2026_revisao5.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "base",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "data_aprovacao_reprovacao_do_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "unidade_de_pedido_aprovadora_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "data_limite_de_envio_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "data_limite_de_aprovacao_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "proveniente_de_revisao",
+            "type": "boolean"
+          },
+          {
+            "name": "data_de_criacao_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "ano_base_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "situacao",
+            "type": "string"
+          },
+          {
+            "name": "centralizado",
+            "type": "boolean"
+          },
+          {
+            "name": "no_do_item_de_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "item_de_planejamento_ativo",
+            "type": "boolean"
+          },
+          {
+            "name": "codigo_do_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_item_de_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "desc_do_item_de_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_grupo_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_grupo_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_classe_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_classe_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "elemento_item_de_despesa",
+            "type": "integer"
+          },
+          {
+            "name": "unidade_de_aquisicao",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_da_unidade_de_aquisicao",
+            "type": "string"
+          },
+          {
+            "name": "quantidade",
+            "type": "string"
+          },
+          {
+            "name": "valor_unitario_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_total_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "inicio_de_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_do_inicio_execucao_entrega",
+            "type": "string"
+          },
+          {
+            "name": "ano_de_inicio_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "municipio",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_municipio",
+            "type": "string"
+          },
+          {
+            "name": "unidade_orcamentaria",
+            "type": "integer"
+          },
+          {
+            "name": "projeto_atividade",
+            "type": "integer"
+          },
+          {
+            "name": "fonte",
+            "type": "integer"
+          },
+          {
+            "name": "procedencia",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_da_unidade_de_compra_vinculada_na_aprovacao",
+            "type": "integer"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_processo",
+            "type": "string"
+          },
+          {
+            "name": "data_de_criacao_do_planejamento_de_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "data_de_abertura_da_solicitacao_de_material_ou_servico",
+            "type": "datetime"
+          },
+          {
+            "name": "data_aprovacao_do_pedido_de_material_ou_servico",
+            "type": "date"
+          },
+          {
+            "name": "data_conclusao_do_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "procedimento_de_contratacao",
+            "type": "string"
+          },
+          {
+            "name": "objeto",
+            "type": "string"
+          },
+          {
+            "name": "justificativa_desativacao",
+            "type": "string"
+          },
+          {
+            "name": "complementacao_de_especificacao",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "PAC 2026 - 2ª REVISÃO 1"
+    },
+    {
+      "dialect": {
+        "delimiter": ";",
+        "quoteChar": "\""
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "pac_2026_revisao6",
+      "path": "data/pac_2026_revisao6.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "base",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "data_aprovacao_reprovacao_do_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "unidade_de_pedido_aprovadora_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "data_limite_de_envio_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "data_limite_de_aprovacao_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "proveniente_de_revisao",
+            "type": "boolean"
+          },
+          {
+            "name": "data_de_criacao_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "ano_base_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "situacao",
+            "type": "string"
+          },
+          {
+            "name": "centralizado",
+            "type": "boolean"
+          },
+          {
+            "name": "no_do_item_de_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "item_de_planejamento_ativo",
+            "type": "boolean"
+          },
+          {
+            "name": "codigo_do_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_item_de_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "desc_do_item_de_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_grupo_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_grupo_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_classe_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_classe_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "elemento_item_de_despesa",
+            "type": "integer"
+          },
+          {
+            "name": "unidade_de_aquisicao",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_da_unidade_de_aquisicao",
+            "type": "string"
+          },
+          {
+            "name": "quantidade",
+            "type": "string"
+          },
+          {
+            "name": "valor_unitario_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_total_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "inicio_de_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_do_inicio_execucao_entrega",
+            "type": "string"
+          },
+          {
+            "name": "ano_de_inicio_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "municipio",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_municipio",
+            "type": "string"
+          },
+          {
+            "name": "unidade_orcamentaria",
+            "type": "integer"
+          },
+          {
+            "name": "projeto_atividade",
+            "type": "integer"
+          },
+          {
+            "name": "fonte",
+            "type": "integer"
+          },
+          {
+            "name": "procedencia",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_da_unidade_de_compra_vinculada_na_aprovacao",
+            "type": "integer"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_processo",
+            "type": "string"
+          },
+          {
+            "name": "data_de_criacao_do_planejamento_de_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "data_de_abertura_da_solicitacao_de_material_ou_servico",
+            "type": "datetime"
+          },
+          {
+            "name": "data_aprovacao_do_pedido_de_material_ou_servico",
+            "type": "date"
+          },
+          {
+            "name": "data_conclusao_do_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "procedimento_de_contratacao",
+            "type": "string"
+          },
+          {
+            "name": "objeto",
+            "type": "string"
+          },
+          {
+            "name": "justificativa_desativacao",
+            "type": "string"
+          },
+          {
+            "name": "complementacao_de_especificacao",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "PAC 2026 - 2ª REVISÃO 2"
+    },
+    {
+      "dialect": {
+        "delimiter": ";",
+        "quoteChar": "\""
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "pac_2026_revisao7",
+      "path": "data/pac_2026_revisao7.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "base",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_orgao_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_unidade_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "data_aprovacao_reprovacao_do_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "unidade_de_pedido_aprovadora_do_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "data_limite_de_envio_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "data_limite_de_aprovacao_de_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_solicitacoes",
+            "type": "string"
+          },
+          {
+            "name": "proveniente_de_revisao",
+            "type": "boolean"
+          },
+          {
+            "name": "data_de_criacao_planejamento_de_solicitacoes",
+            "type": "date"
+          },
+          {
+            "name": "ano_base_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "situacao",
+            "type": "string"
+          },
+          {
+            "name": "centralizado",
+            "type": "boolean"
+          },
+          {
+            "name": "no_do_item_de_planejamento_de_solicitacoes",
+            "type": "integer"
+          },
+          {
+            "name": "item_de_planejamento_ativo",
+            "type": "boolean"
+          },
+          {
+            "name": "codigo_do_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_item_de_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "desc_do_item_de_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_do_grupo_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_grupo_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "codigo_da_classe_material_ou_servico",
+            "type": "integer"
+          },
+          {
+            "name": "nome_da_classe_material_ou_servico",
+            "type": "string"
+          },
+          {
+            "name": "elemento_item_de_despesa",
+            "type": "integer"
+          },
+          {
+            "name": "unidade_de_aquisicao",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_da_unidade_de_aquisicao",
+            "type": "string"
+          },
+          {
+            "name": "quantidade",
+            "type": "string"
+          },
+          {
+            "name": "valor_unitario_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_total_previsto_r",
+            "type": "string"
+          },
+          {
+            "name": "inicio_de_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "descricao_do_inicio_execucao_entrega",
+            "type": "string"
+          },
+          {
+            "name": "ano_de_inicio_execucao_entrega",
+            "type": "integer"
+          },
+          {
+            "name": "municipio",
+            "type": "integer"
+          },
+          {
+            "name": "nome_do_municipio",
+            "type": "string"
+          },
+          {
+            "name": "unidade_orcamentaria",
+            "type": "integer"
+          },
+          {
+            "name": "projeto_atividade",
+            "type": "integer"
+          },
+          {
+            "name": "fonte",
+            "type": "integer"
+          },
+          {
+            "name": "procedencia",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_da_unidade_de_compra_vinculada_na_aprovacao",
+            "type": "integer"
+          },
+          {
+            "name": "numero_formatado_do_planejamento_de_processo",
+            "type": "string"
+          },
+          {
+            "name": "data_de_criacao_do_planejamento_de_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "data_de_abertura_da_solicitacao_de_material_ou_servico",
+            "type": "datetime"
+          },
+          {
+            "name": "data_aprovacao_do_pedido_de_material_ou_servico",
+            "type": "date"
+          },
+          {
+            "name": "data_conclusao_do_processo_de_compra",
+            "type": "date"
+          },
+          {
+            "name": "procedimento_de_contratacao",
+            "type": "string"
+          },
+          {
+            "name": "objeto",
+            "type": "string"
+          },
+          {
+            "name": "justificativa_desativacao",
+            "type": "string"
+          },
+          {
+            "name": "complementacao_de_especificacao",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "PAC 2026 - 2ª REVISÃO 3"
     }
   ],
-  "title": "Portal_plano_anual_contratacao"
+  "title": "Plano Anual de Contratação"
 }
