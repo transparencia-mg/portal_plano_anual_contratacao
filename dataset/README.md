@@ -1,0 +1,1 @@
+O Plano Anual de Contratações (PAC), é um instrumento de governança pública que consolida todas as compras, serviços, obras e soluções de tecnologia que um órgão ou entidade pública pretende realizar ou prorrogar no ano seguinte
